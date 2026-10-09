@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Elsa 追赶追踪器 · 单词剧本杀合集</title>
+<style>
+:root{
+  --bg:#0d1310; --ink:#f2f6f3; --dim:rgba(242,246,243,.62); --faint:rgba(242,246,243,.38);
+  --line:rgba(255,255,255,.13); --panel:rgba(255,255,255,.045);
+  --acc:#4fd1a5; --acc2:#ffd166; --danger:#ff7b7b;
+  --serif:Georgia,'Times New Roman','Songti SC','SimSun',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;touch-action:manipulation;
+  background-image:radial-gradient(1100px 480px at 50% -10%,rgba(79,209,165,.10),transparent 60%)}
+.wrap{max-width:680px;margin:0 auto;padding:12px 14px 86px}
+.topbar{display:flex;align-items:center;gap:10px;padding:4px 2px 14px}
+.hall{color:var(--faint);text-decoration:none;font-size:.85rem;padding:4px 6px;border-radius:8px}
+.hall:active{background:var(--panel)}
+.top-title{flex:1;font-size:.72rem;letter-spacing:.28em;color:var(--faint)}
+.beans{font-size:.85rem;color:var(--acc2);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.page{animation:pgIn .3s ease}
+@keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hidden{display:none}
+.card{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:16px;margin-bottom:14px}
+.cttl{font-size:.72rem;letter-spacing:.22em;color:var(--acc);margin-bottom:10px}
+.big{font-family:var(--serif);font-size:1.5rem;line-height:1.35}
+.mut{color:var(--dim);font-size:.85rem;line-height:1.7}
+.faint{color:var(--faint);font-size:.78rem;line-height:1.6}
+.btn{display:block;width:100%;text-align:center;border:none;border-radius:12px;padding:13px;font-size:.95rem;
+  font-weight:700;letter-spacing:.08em;background:var(--acc);color:#0b1f17;cursor:pointer;transition:.15s;margin-top:10px}
+.btn:active{transform:scale(.96);filter:brightness(1.12)}
+.btn.ghost{background:transparent;color:var(--acc);border:1px solid var(--acc)}
+.btn.warn{background:var(--danger);color:#2a0d0d}
+.btn.gold{background:var(--acc2);color:#2a1e08}
+.btn:disabled{opacity:.35}
+.row{display:flex;gap:8px;align-items:center}
+.row .btn{margin-top:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.tile{border:1px solid var(--line);border-radius:14px;padding:14px 12px;background:rgba(255,255,255,.03);
+  cursor:pointer;transition:.15s;user-select:none}
+.tile:active{transform:scale(.95)}
+.tile .t-ic{font-size:1.3rem}
+.tile .t-nm{font-weight:700;font-size:.92rem;margin-top:6px}
+.tile .t-sb{color:var(--faint);font-size:.72rem;margin-top:3px;line-height:1.5}
+.tile.done{border-color:var(--acc);background:rgba(79,209,165,.10)}
+.tile.done .t-nm{color:var(--acc)}
+.ring{display:flex;gap:10px;margin-top:10px}
+.step{flex:1;border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.step .s-n{font-size:.72rem;color:var(--faint)}
+.step .s-c{font-family:var(--serif);font-size:1.25rem;margin:4px 0}
+.step .s-b{border:none;border-radius:8px;background:rgba(255,255,255,.09);color:var(--ink);
+  font-size:.8rem;padding:6px 0;width:100%;cursor:pointer}
+.step .s-b:active{background:var(--acc);color:#0b1f17}
+.step.full{border-color:var(--acc)}
+.step.full .s-c{color:var(--acc)}
+.bar{height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:999px;transition:width .4s}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:rgba(10,14,12,.94);
+  border-top:1px solid var(--line);backdrop-filter:blur(8px);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+.tabbar button{flex:1;border:none;background:none;color:var(--faint);font-size:.68rem;padding:6px 0 4px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:10px}
+.tabbar button .i{font-size:1.15rem}
+.tabbar button.on{color:var(--acc)}
+.tabbar button:active{background:rgba(255,255,255,.06)}
+.pill{display:inline-block;font-size:.7rem;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--dim);margin:3px 4px 3px 0;cursor:pointer;transition:.15s}
+.pill:active{transform:scale(.93)}
+.pill.on{border-color:var(--acc2);color:var(--acc2)}
+.flag{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;border-radius:7px;
+  border:1px solid var(--line);font-size:.75rem;margin:3px;color:var(--faint)}
+.flag.hit{background:rgba(79,209,165,.18);border-color:var(--acc)}
+.vcard{border:1px solid var(--line);border-radius:20px;padding:30px 18px;text-align:center;background:rgba(255,255,255,.035);
+  cursor:pointer;user-select:none;transition:.15s;margin-top:12px}
+.vcard:active{transform:scale(.97)}
+.vw{font-family:var(--serif);font-size:2.1rem;letter-spacing:.02em}
+.vipa{color:var(--acc2);font-size:1.05rem;margin-top:8px}
+.vcn{color:var(--dim);font-size:1.05rem;margin-top:8px;line-height:1.6}
+.vtag{display:inline-block;font-size:.68rem;color:var(--faint);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-top:12px}
+.stars{color:var(--acc2);font-size:.8rem;margin-top:6px;letter-spacing:.15em}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03);
+  color:var(--ink);padding:13px 14px;font-size:.95rem;line-height:1.55;margin-top:8px;cursor:pointer;transition:.15s}
+.opt:active{transform:scale(.98)}
+.opt.right{border-color:var(--acc);background:rgba(79,209,165,.12)}
+.opt.wrong{border-color:var(--danger);background:rgba(255,123,123,.10)}
+.grow{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}
+.grow .g-nm{font-weight:700;font-size:.95rem}
+.grow .g-mp{color:var(--faint);font-size:.72rem;margin-top:2px}
+.stg{display:flex;gap:6px;margin-top:8px}
+.stg span{flex:1;text-align:center;font-size:.72rem;border:1px solid var(--line);border-radius:8px;padding:6px 0;color:var(--faint);cursor:pointer;transition:.15s}
+.stg span:active{transform:scale(.93)}
+.stg span.on{border-color:var(--acc);color:var(--acc);background:rgba(79,209,165,.10)}
+details{border:1px solid var(--line);border-radius:12px;margin-top:8px;background:rgba(255,255,255,.02)}
+summary{padding:11px 13px;font-size:.9rem;font-weight:600;cursor:pointer;list-style:none}
+summary::before{content:'▸ ';color:var(--acc)}
+details[open] summary::before{content:'▾ '}
+.tpl{padding:8px 14px 12px;border-top:1px dashed var(--line);font-size:.85rem;line-height:1.8;color:var(--dim)}
+.tpl .say{float:right;border:1px solid var(--line);border-radius:8px;background:none;color:var(--acc2);font-size:.72rem;padding:2px 8px;cursor:pointer}
+.tpl .say:active{background:var(--acc2);color:#2a1e08}
+.aurow{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px}
+.aurow .nm{flex:1;font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aub{border:1px solid var(--line);border-radius:8px;background:none;color:var(--ink);font-size:.75rem;padding:5px 9px;cursor:pointer;flex:none}
+.aub:active{background:var(--acc);color:#0b1f17}
+.bdg{display:inline-block;width:31%;margin:1%;border:1px solid var(--line);border-radius:14px;padding:12px 4px;text-align:center;vertical-align:top}
+.bdg .bi{font-size:1.5rem;filter:grayscale(1);opacity:.4}
+.bdg .bn{font-size:.68rem;color:var(--faint);margin-top:6px;line-height:1.4}
+.bdg.on{border-color:var(--acc2)}
+.bdg.on .bi{filter:none;opacity:1}
+.bdg.on .bn{color:var(--acc2)}
+.inp{width:100%;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.05);color:var(--ink);
+  padding:11px 12px;font-size:.95rem;font-family:var(--sans)}
+#toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:#1e2b25;border:1px solid var(--acc);
+  color:var(--ink);padding:10px 18px;border-radius:999px;font-size:.85rem;opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:86%;text-align:center}
+#toast.show{opacity:1;bottom:100px}
+#cvc{position:fixed;inset:0;pointer-events:none;z-index:55}
+.rule{font-size:.82rem;color:var(--dim);line-height:1.75;padding-left:1.1em;text-indent:-1.1em;margin-top:6px}
+.rule b{color:var(--acc2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="hall" href="index.html">‹ 大厅</a>
+    <div class="top-title">ELSA · 追赶追踪器</div>
+    <div class="beans">🫘 <b id="beanTop">0</b></div>
+  </div>
+  <main id="main">
+    <section class="page" id="pg-today"></section>
+    <section class="page hidden" id="pg-vocab"></section>
+    <section class="page hidden" id="pg-quest"></section>
+    <section class="page hidden" id="pg-audio"></section>
+    <section class="page hidden" id="pg-me"></section>
+  </main>
+</div>
+<nav class="tabbar" id="tabbar">
+  <button data-tab="today"><span class="i">🎯</span>今日</button>
+  <button data-tab="vocab"><span class="i">🃏</span>词汇</button>
+  <button data-tab="quest"><span class="i">⚔️</span>闯关</button>
+  <button data-tab="audio"><span class="i">🎧</span>听力库</button>
+  <button data-tab="me"><span class="i">🏅</span>我的</button>
+</nav>
+<input type="file" id="audioInp" accept="audio/*" multiple class="hidden">
+<input type="file" id="bakInp" accept="application/json,.json" class="hidden">
+<div id="toast"></div>
+<canvas id="cvc"></canvas>
+<script>
+(function(){
+'use strict';
+/* ============ 数据区 ============ */
+const PHASES=[
+ {w:[1,3],name:'地基 + 耳朵启动',tip:'初中词过筛 · 五大基本句型 · 632X 泛听启动',
+  daily:{listen:'黑猫/书虫入门级：每段裸听3遍起步',card:'高频词每天 20~25 个 + 滚动复习',read:'五大基本句型 + 句子成分（去闯关页）',review:'把今天卡住的词收进修炼洞窟',frag:'上下学/吃饭叠 20~30 分钟泛听'}},
+ {w:[4,11],name:'选必一速通',tip:'每周一单元 · 课文 632X · 周末剧本杀通关仪式',
+  daily:{listen:'本单元课文 632X（先听6遍再看文本）',card:'本单元课标词 + 高频词',read:'课文精读：Learning aid 只能在"读"阶段用',review:'错题宝藏：复盘=破案',frag:'碎片泛听：黑猫/书虫继续'}},
+ {w:[12,19],name:'寒假黄金期',tip:'3500 高频词第一轮 · 语法八考点并网 · 每周3句仿写',
+  daily:{listen:'泛听升级：神奇树屋 → 夏洛的网',card:'高频词每天可加到 40 个',read:'语法八考点系统过（去闯关页打卡）',review:'每周3句课文金句仿写（去作文弹药库）',frag:'每天听读强度 1.5~2 小时'}},
+ {w:[20,27],name:'题型期',tip:'真题副本接管 · 听力真题进场 · 应用文+读后续写',
+  daily:{listen:'听力真题此时才进场 + 维持经典泛听',card:'3500 第二轮：只过遗忘词',read:'阅读/七选五/完形/语法填空轮换',review:'读后续写每周1篇，从仿写起步',frag:'泛听保持每天20分钟'}},
+ {w:[28,32],name:'套卷冲刺',tip:'整卷限时模拟 · 错题回炉 · 作文素材定稿',
+  daily:{listen:'听力套题限时练',card:'只看洞窟里的错卡',read:'整卷限时模拟',review:'错题宝藏全部回炉',frag:'作文素材定稿背诵'}}
+];
+const ORDER=['U2','U1','U3','U4','U5','U6'];
+const UNITS={
+ U2:{name:'U2 · 海伦·凯勒',sub:'Onwards and Upwards · 她的处境就是这篇课文',gram:'动词-ing / 不定式作宾语',game:'games/midnight-archive.html',gameName:'午夜编辑部'},
+ U1:{name:'U1 · 幽默与喜剧',sub:'Laugh Out Loud · 小丑与笑声',gram:'非限制性定语从句',game:'games/circus-night.html',gameName:'马戏团之夜'},
+ U3:{name:'U3 · 体育精神',sub:'Faster, Higher, Stronger · 库里之路',gram:'动词-ing 作主语',game:'',gameName:''},
+ U4:{name:'U4 · 艺术与灵感',sub:'Meeting the Muse',gram:'非谓语动词作表语',game:'',gameName:''},
+ U5:{name:'U5 · 达尔文与进化',sub:'Revealing Nature · 贝格尔号',gram:'过去完成时',game:'',gameName:''},
+ U6:{name:'U6 · 自然保护',sub:'Nurturing Nature',gram:'现在完成进行时',game:'',gameName:''}
+};
+const T632=[['l','听','不看文本，闭目听',6],['r','读','现在才打开文本',3],['rl','回听','体会听懂率飙升',2]];
+const GRAM8=[
+ ['时态语态','选必一并网：U5 过去完成时 · U6 现在完成进行时'],
+ ['非谓语动词','选必一并网：U2 -ing/不定式作宾语 · U3 -ing作主语 · U4 非谓语作表语'],
+ ['定语从句','选必一并网：U1 非限制性定语从句'],
+ ['名词性从句','主语/宾语/表语/同位语从句'],
+ ['状语从句','时间/原因/条件/让步/结果'],
+ ['特殊句式','强调句 · 倒装 · 省略 · there be'],
+ ['主谓一致','就近/就远原则'],
+ ['虚拟语气','低频考点，略看即可']
+];
+const STG=['看懂','造句','过关'];
+const SENT=[
+ {name:'第一关 · 五大基本句型',desc:'一切长难句的骨架。过关标准：能划任何句子的主谓宾。',
+  qs:[
+   {q:'The sun rises.',opts:['主谓','主谓宾','主系表','主谓双宾'],a:0,why:'rises 是不及物动词，后面不需要宾语——主谓（SV）。'},
+   {q:'We love English.',opts:['主谓','主谓宾','主系表','主谓宾补'],a:1,why:'love 后面接了宾语 English——主谓宾（SVO）。'},
+   {q:'Helen Keller became a famous writer.',opts:['主谓宾','主谓双宾','主系表','主谓宾补'],a:2,why:'became 是系动词，a famous writer 说明主语身份——主系表（SVP）。'},
+   {q:'She gave the students a book.',opts:['主谓宾','主谓双宾','主系表','主谓宾补'],a:1,why:'the students 和 a book 是两个宾语（人+物）——主谓双宾（SVOO）。'},
+   {q:'The clown made everyone laugh.',opts:['主谓宾','主系表','主谓双宾','主谓宾补'],a:3,why:'laugh 补充说明 everyone 的动作——主谓宾补（SVOC）。'},
+   {q:'The medicine tastes bitter.',opts:['主谓宾','主系表','主谓','主谓宾补'],a:1,why:'tastes 是感官系动词，bitter 是表语——主系表（SVP）。'}
+  ]},
+ {name:'第二关 · 句子成分',desc:'主谓宾定状补，各就各位。',
+  qs:[
+   {q:'The little girl found a beautiful shell on the beach.\n"a beautiful shell" 是什么成分？',opts:['主语','谓语','宾语','状语'],a:2,why:'found 的对象——宾语。'},
+   {q:'He speaks English fluently.\n"fluently" 是什么成分？',opts:['定语','状语','宾语','表语'],a:1,why:'修饰动词 speaks，说明"怎么说"——状语。'},
+   {q:'My dream is to travel around the world.\n"to travel around the world" 是什么成分？',opts:['表语','宾语','定语','状语'],a:0,why:'系动词 is 后面说明主语内容——表语。'},
+   {q:'The boy in a red coat is my brother.\n"in a red coat" 是什么成分？',opts:['状语','补语','定语','表语'],a:2,why:'限定"哪个男孩"——定语。'},
+   {q:'The teacher asked us to read aloud.\n"to read aloud" 是什么成分？',opts:['宾语','宾语补足语','状语','定语'],a:1,why:'补充说明宾语 us 要做的动作——宾补。'},
+   {q:'There are thirty students in our class.\n"thirty students" 是什么成分？',opts:['宾语','表语','主语','定语'],a:2,why:'there be 句型中，名词才是真主语。'}
+  ]},
+ {name:'第三关 · 从句识别',desc:'定语从句、名词性从句、状语从句——高考语法的半壁江山。',
+  qs:[
+   {q:'I still remember the day when I first came here.\n"when I first came here" 是？',opts:['定语从句','状语从句','宾语从句','主语从句'],a:0,why:'修饰名词 the day——定语从句（关系副词 when）。'},
+   {q:'What he said made me cry.\n"What he said" 是？',opts:['定语从句','状语从句','名词性从句（主语从句）','宾语从句'],a:2,why:'整个从句充当句子的主语——名词性从句里的主语从句。'},
+   {q:'Because it rained, the match was cancelled.\n"Because it rained" 是？',opts:['定语从句','状语从句','主语从句','表语从句'],a:1,why:'说明原因——状语从句。'},
+   {q:'Charlie Chaplin, who was born in 1889, became a legend.\n"who was born in 1889" 是？',opts:['限制性定语从句','非限制性定语从句','状语从句','主语从句'],a:1,why:'有逗号隔开、补充说明——非限制性定语从句（选必一 U1 考点）。'},
+   {q:'I know that you can do it.\n"that you can do it" 是？',opts:['定语从句','状语从句','名词性从句（宾语从句）','同位语从句'],a:2,why:'作 know 的宾语——名词性从句里的宾语从句。'},
+   {q:'Seeing is believing.\n这句话里有从句吗？',opts:['有，定语从句','有，宾语从句','没有——-ing 分别作主语和表语','有，状语从句'],a:2,why:'Seeing 作主语、believing 作表语——选必一 U3/U4 考点，不是从句！'}
+  ]}
+];
+const WRITE={
+ app:{name:'应用文 10 类模板',items:[
+  ['邀请信',["I'm writing to invite you to ...","We would be honored by your presence at ..."]],
+  ['通知',["Attention, please. ...","All students are required to ..."]],
+  ['建议信',["I'm sorry to hear that ... Here are some suggestions.","It would be better if you could ..."]],
+  ['感谢信',["I'm writing to express my sincere gratitude for ...","Without your help, I couldn't have ..."]],
+  ['道歉信',["I'm terribly sorry for ...","I hope you can accept my sincere apology."]],
+  ['申请信',["I'm writing to apply for ...","I believe I am qualified for ..."]],
+  ['求助信',["Would you be so kind as to ...?","I'd appreciate it if you could ..."]],
+  ['投诉信',["I'm writing to complain about ...","I hope you can look into the matter."]],
+  ['祝贺信',["Congratulations on ...","I'm so proud of your achievement."]],
+  ['活动报道',["In order to enrich ..., our school held ...","The activity turned out to be a great success."]]
+ ]},
+ cont:{name:'读后续写 · 情绪动作句库',items:[
+  ['高兴',["Her eyes sparkled with joy.","A big smile spread across his face."]],
+  ['紧张',["My heart was pounding wildly.","I held my breath, palms sweating."]],
+  ['害怕',["Fear seized me and I froze.","Trembling, she stepped back."]],
+  ['感动',["Tears welled up in my eyes.","Warmth flooded through my heart."]],
+  ['动作链',["He rushed to the door, opened it and dashed out.","She picked up the letter, unfolded it and began to read."]],
+  ['环境烘托',["The wind was howling outside.","The setting sun painted the sky orange."]]
+ ]}
+};
+const AUGROUPS=[['text','课文音频（632X 专用）'],['bc','黑猫/书虫 · 入门'],['mth','神奇树屋'],['web','夏洛的网'],['exam','听力真题（第20周后）']];
+const BADGES={
+ diag:{i:'🧭',n:'初诊完成',d:'完成地基诊断卷'},
+ ear:{i:'👂',n:'听不懂勋章',d:'坚持听完6遍没懂也不放弃'},
+ t100:{i:'🚩',n:'驯兽师·百词',d:'掌握 100 个词（驯服盒≥3）'},
+ cave:{i:'🕳️',n:'洞窟修炼者',d:'征服 10 张错卡'},
+ s3:{i:'⚔️',n:'句型大师',d:'句型三关全部通关'},
+ pen:{i:'✒️',n:'下笔有神',d:'第一次作文打卡'},
+ pretty:{i:'🌷',n:'漂亮的错误',d:'记录第一个"有信息量的错误"'},
+ bean100:{i:'🫘',n:'勇气富翁',d:'攒够 100 颗勇气豆'}
+};
+const RULES=[
+ '听不懂勋章：坚持听完 6 遍没全懂也不放弃，<b>本身就领奖</b>——奖励过程，不奖励结果。',
+ '错卡是未驯服的兽：答错的词进修炼洞窟，<b>征服后双倍印记</b>——错误越多，收获越大。',
+ '错题宝藏图：错题叫"线索"，每周复盘 5 个 = 破一个案。',
+ '失败开启支线，不是重来：小测不过关就解锁支线任务，<b>多路径过关，没有死路</b>。',
+ '每周"漂亮的错误"评选：全家挑出本周<b>最有信息量的一个错误</b>公开表彰；连续全对反而触发难度升级。'
+];
+const VOCAB=[["U1-01","mood","/muːd/","心情",1,"U1 课标"],["U1-02","circus","/ˈsɜːkəs/","马戏团",2,"U1 课标"],["U1-03","amusement","/əˈmjuːzmənt/","娱乐，消遣",2,"U1 课标"],["U1-04","amusement park","","游乐场",3,"U1 课标"],["U1-05","spot","/spɔt/","发现，注意到，看出",1,"U1 课标"],["U1-06","ankle","/ˈæŋk(ə)l/","脚踝",1,"U1 课标"],["U1-07","entertain","/ˌentəˈteɪn/","使快乐",2,"U1 课标"],["U1-08","health care","","医疗保健",3,"U1 课标"],["U1-09","cheer up","","（使）高兴起来，（使）振作起来",2,"U1 课标"],["U1-10","do the trick","","奏效，达到预期效果",3,"U1 课标"],["U1-11","examine","/ɪɡˈzæmɪn/","检查（身体）",2,"U1 课标"],["U1-12","advertisement","/ədˈvɜːtɪsmənt/","广告",3,"U1 课标"],["U1-13","employer","/ɪmˈplɔɪə/","雇用者，雇主",2,"U1 课标"],["U1-14","essential","/ɪˈsenʃ(ə)l/","极其重要的，必不可少的",2,"U1 课标"],["U1-15","impress","/ɪmˈpres/","使钦佩，使留下深刻印象",2,"U1 课标"],["U1-16","deserve","/dɪˈzɜːv/","应得，应受到",2,"U1 课标"],["U1-17","long face","","愁眉苦脸",2,"U1 课标"],["U1-18","laughing stock","","笑料，笑柄",3,"U1 课标"],["U1-19","crack a smile","","笑了起来",3,"U1 课标"],["U1-20","practical joke","","恶作剧",3,"U1 课标"],["U1-21","literary","/ˈlɪt(ə)rəri/","文学的",2,"U1 课标"],["U1-22","tale","/teɪl/","故事",1,"U1 课标"],["U1-23","consistently","/kənˈsɪst(ə)ntli/","一贯地，一致地",3,"U1 课标"],["U1-24","optimism","/ˈɒptɪmɪz(ə)m/","乐观；乐观主义",2,"U1 课标"],["U1-25","interaction","/ˌɪntərˈækʃ(ə)n/","交流",3,"U1 课标"],["U1-26","shave","/ʃeɪv/","刮脸，刮胡子",1,"U1 课标"],["U1-27","fellow","/ˈfeləʊ/","男人；家伙",2,"U1 课标"],["U1-28","brand of humour","","某种类型的幽默",3,"U1 课标"],["U1-29","essay","/ˈeseɪ/","短文，论说文",1,"U1 课标"],["U1-30","conclude","/kənˈkluːd/","作出⋯⋯结论，推断出",2,"U1 课标"],["U1-31","amusing","/əˈmjuːzɪŋ/","逗人发笑的，好笑的，有趣的",2,"U1 课标"],["U1-32","flatter","/ˈflætə/","奉承，讨好",2,"U1 课标"],["U1-33","gentle","/ˈdʒentl/","和蔼友善的，温和的，温柔的",2,"U1 课标"],["U1-34","complicated","/ˈkɒmplɪkeɪtɪd/","难处理的；难懂的",3,"U1 课标"],["U1-35","cruel","/ˈkruːəl/","残忍的",1,"U1 课标"],["U1-36","enthusiasm","/ɪnˈθjuːziæz(ə)m/","热情，热忱",3,"U1 课标"],["U1-37","composer","/kəmˈpəʊzə/","作曲家",2,"U1 课标"],["U1-38","fall behind","","不能按时完成（工作）",3,"U1 课标"],["U2-01","debt","/det/","债务，欠款",1,"U2 课标"],["U2-02","pace","/peɪs/","速度；进度",1,"U2 课标"],["U2-03","rarely","/ˈreəli/","很少，难得",2,"U2 课标"],["U2-04","rejection","/rɪˈdʒekʃ(ə)n/","拒绝，否决",2,"U2 课标"],["U2-05","nevertheless","/ˌnevəðəˈles/","然而，不过",3,"U2 课标"],["U2-06","criticism","/ˈkrɪtɪsɪz(ə)m/","批评；指责",2,"U2 课标"],["U2-07","Poet Laureate","","桂冠诗人",3,"U2 课标"],["U2-08","classic","/ˈklæsɪk/","名著；经典作品",2,"U2 课标"],["U2-09","guarantee","/ˌɡærənˈtiː/","保证；确保",2,"U2 课标"],["U2-10","outcome","/ˈaʊtkʌm/","结果，后果",2,"U2 课标"],["U2-11","worthwhile","/ˌwɜːθˈwaɪl/","重要的；值得做的",3,"U2 课标"],["U2-12","blanket","/ˈblæŋkɪt/","毯子，毛毯",2,"U2 课标"],["U2-13","enthusiastic","/ɪnˌθjuːziˈæstɪk/","热心的，热衷的",3,"U2 课标"],["U2-14","contest","/ˈkɒntest/","比赛，竞赛",2,"U2 课标"],["U2-15","upset","/ˌʌpˈset/","心烦意乱的，烦恼的",1,"U2 课标"],["U2-16","elect","/ɪˈlekt/","选举，推选",1,"U2 课标"],["U2-17","blessing","/ˈblesɪŋ/","幸事，幸运",2,"U2 课标"],["U2-18","appreciative","/əˈpriːʃətɪv/","感激的",3,"U2 课标"],["U2-19","worthy","/ˈwɜːði/","值得尊敬的；值得赞赏的",2,"U2 课标"],["U2-20","worthy of","","值得……的",2,"U2 课标"],["U2-21","mere","/mɪə/","仅仅，只不过",1,"U2 课标"],["U2-22","gentleness","/ˈdʒentlnɪs/","和蔼，温和",3,"U2 课标"],["U2-23","outline","/ˈaʊtlaɪn/","外形，轮廓",2,"U2 课标"],["U2-24","the pageant of","","（历史事件的）缤纷场景",3,"U2 课标"],["U2-25","permanent","/ˈpɜːmənənt/","长久的；永久的",2,"U2 课标"],["U2-26","strains of","","音乐的曲调或旋律",3,"U2 课标"],["U2-27","embarrassed","/ɪmˈbærəst/","难堪的，尴尬的",3,"U2 课标"],["U3-01","a far cry from","","与……大不相同",3,"U3 课标"],["U3-02","association","/əˌsəʊsiˈeɪʃ(ə)n/","协会，社团",3,"U3 课标"],["U3-03","muddy","/ˈmʌdi/","沾满泥的，泥泞的",1,"U3 课标"],["U3-04","give way","","倒塌，向下垮",2,"U3 课标"],["U3-05","bounce","/baʊns/","（使）弹起，（使）反弹",2,"U3 课标"],["U3-06","follow in one’s footsteps","","仿效某人；继承某人（尤指家人）的事业",3,"U3 课标"],["U3-07","carry on","","继续",2,"U3 课标"],["U3-08","expectation","/ˌekspekˈteɪʃ(ə)n/","预料，预期",3,"U3 课标"],["U3-09","beyond one’s expectations","","超出某人的预期",3,"U3 课标"],["U3-10","in a row","","连续地",2,"U3 课标"],["U3-11","philosophy","/fɪˈlɒsəfi/","人生哲学",3,"U3 课标"],["U3-12","cheat","/tʃiːt/","欺骗，作弊",1,"U3 课标"],["U3-13","roller skating","","滑旱冰",3,"U3 课标"],["U3-14","remarkable","/rɪˈmɑːkəb(ə)l/","非凡的；不寻常的",3,"U3 课标"],["U3-15","net","/net/","球网",1,"U3 课标"],["U3-16","burst onto","","突然出现在……（指突然成功）",3,"U3 课标"],["U3-17","vivid","/ˈvɪvɪd/","生动的，逼真的",1,"U3 课标"],["U3-18","assign","/əˈsaɪn/","分配，分派",2,"U3 课标"],["U3-19","opponent","/əˈpəʊnənt/","（竞争、比赛等的）对手",2,"U3 课标"],["U3-20","surgery","/ˈsɜːdʒ(ə)ri/","外科手术",2,"U3 课标"],["U3-21","pay off","","取得成功",2,"U3 课标"],["U3-22","defeat","/dɪˈfiːt/","战胜，打败",2,"U3 课标"],["U3-23","steely","/ˈstiːli/","钢铁般的；坚定的",2,"U3 课标"],["U3-24","seize","/siːz/","夺取",1,"U3 课标"],["U3-25","cooperation","/kəʊˌɒpəˈreɪʃ(ə)n/","合作，协作",3,"U3 课标"],["U3-26","tournament","/ˈtʊənəmənt/","锦标赛",3,"U3 课标"],["U3-27","intense","/ɪnˈtens/","紧张的，激烈的",2,"U3 课标"],["U4-01","quote","/kwəʊt/","引文，引语",1,"U4 课标"],["U4-02","folk","/fəʊk/","民间的，民俗的",1,"U4 课标"],["U4-03","folk tale","","民间故事",2,"U4 课标"],["U4-04","motion","/ˈməʊʃ(ə)n/","动，运动",2,"U4 课标"],["U4-05","set… in motion","","使……开始",3,"U4 课标"],["U4-06","compose","/kəmˈpəʊz/","作（曲）",2,"U4 课标"],["U4-07","abstract","/ˈæbstrækt/","抽象（派）的",2,"U4 课标"],["U4-08","wire","/waɪə/","金属丝；电线",1,"U4 课标"],["U4-09","innovative","/ˈɪnəvətɪv/","新颖的，创新的",3,"U4 课标"],["U4-10","trend","/trend/","趋势，动向",1,"U4 课标"],["U4-11","wire fence","","铁丝网，铁丝栅栏",3,"U4 课标"],["U4-12","contrast","/ˈkɒntrɑːst/","反差，对比",2,"U4 课标"],["U4-13","literally","/ˈlɪt(ə)rəli/","根据字面意思",2,"U4 课标"],["U4-14","concept","/ˈkɒnsept/","概念，观念",2,"U4 课标"],["U4-15","distinct","/dɪˈstɪŋkt/","清晰的；明显不同的",2,"U4 课标"],["U4-16","innovation","/ˌɪnəˈveɪʃ(ə)n/","革新，创新",3,"U4 课标"],["U5-01","seed","/siːd/","种子，籽",1,"U5 课标"],["U5-02","distant","/ˈdɪstənt/","遥远的",2,"U5 课标"],["U5-03","answer the call","","响应号召",3,"U5 课标"],["U5-04","be a disgrace","","是耻辱，是丢脸的事",3,"U5 课标"],["U5-05","sample","/ˈsɑːmp(ə)l/","样本",2,"U5 课标"],["U5-06","suspect","/səˈspekt/","猜想，怀疑，觉得",2,"U5 课标"],["U5-07","ancestor","/ˈænsəstə/","（动物的）原种，祖先",2,"U5 课标"],["U5-08","generate","/ˈdʒenəreɪt/","产生，创造",2,"U5 课标"],["U5-09","characteristic","/ˌkærɪktəˈrɪstɪk/","特征，特性",3,"U5 课标"],["U5-10","decline","/dɪˈklaɪn/","减少",2,"U5 课标"],["U5-11","blame","/bleɪm/","责怪，指责；把……归咎于",1,"U5 课标"],["U5-12","goat","/ɡəʊt/","山羊",1,"U5 课标"],["U5-13","be native to","","源于……的，原产于……",3,"U5 课标"],["U5-14","primitive","/ˈprɪmɪtɪv/","原始的，低等的",2,"U5 课标"],["U5-15","giant tortoise","","巨型陆龟",3,"U5 课标"],["U5-16","detect","/dɪˈtekt/","发现，察觉（尤指不易觉察到的事物）",2,"U5 课标"],["U5-17","root","/ruːt/","根",1,"U5 课标"],["U5-18","link","/lɪŋk/","把……联系起来；连接",1,"U5 课标"],["U5-19","centimetre","/ˈsentɪˌmiːtə/","厘米",3,"U5 课标"],["U6-01","massive","/ˈmæsɪv/","巨大的",2,"U6 课标"],["U6-02","delicate","/ˈdelɪkɪt/","脆弱的",2,"U6 课标"],["U6-03","splendid","/ˈsplendɪd/","壮丽的",2,"U6 课标"],["U6-04","leisure","/ˈleʒə/","空闲，闲暇",2,"U6 课标"],["U6-05","at one’s leisure","","空闲时",3,"U6 课标"],["U6-06","radiation","/ˌreɪdiˈeɪʃ(ə)n/","辐射",2,"U6 课标"],["U6-07","mirror-like","/ˈmɪrəˌlaɪk/","如镜面般的",3,"U6 课标"],["U6-08","wander","/ˈwɒndə/","徘徊",2,"U6 课标"],["U6-09","economy","/ɪˈkɒnəmi/","经济",2,"U6 课标"],["U6-10","jungle","/ˈdʒʌŋɡ(ə)l/","（热带）丛林",2,"U6 课标"],["U6-11","disturb","/dɪˈstɜːb/","干扰，扰乱",2,"U6 课标"],["U6-12","operator","/ˈɒpəreɪtə/","经营者",2,"U6 课标"],["U6-13","conservationist","/ˌkɒnsəˈveɪʃ(ə)nɪst/","（动植物或古旧建筑的）保护工作者；环境保护主义者",3,"U6 课标"],["U6-14","candidate","/ˈkændɪdɪt/","申请者",2,"U6 课标"],["U6-15","applicant","/ˈæplɪkənt/","申请人",2,"U6 课标"],["U6-16","favour","/ˈfeɪvə/","支持，赞同",2,"U6 课标"],["U6-17","in favour of","","支持，赞同",3,"U6 课标"],["U6-18","advertise","/ˈædvətaɪz/","（为……）做广告（宣传）",2,"U6 课标"],["U6-19","genuine","/ˈdʒenjuɪn/","真的，真正的",2,"U6 课标"],["U6-20","salary","/ˈsæləri/","薪金，工资",2,"U6 课标"],["U6-21","negotiable","/nɪˈɡəʊʃiəb(ə)l/","可协商的",3,"U6 课标"],["U6-22","preference","/ˈpref(ə)rəns/","优先（权）",3,"U6 课标"],["U6-23","qualification","/ˌkwɒlɪfɪˈkeɪʃ(ə)n/","技能条件，资格",3,"U6 课标"],["U6-24","waist","/weɪst/","腰，腰部",1,"U6 课标"],["HF1-01","achieve","/əˈtʃiːv/","取得；实现",2,"高频·1档"],["HF1-02","actually","/ˈæktʃuəli/","实际上",2,"高频·1档"],["HF1-03","admire","/ədˈmaɪə/","钦佩；欣赏",2,"高频·1档"],["HF1-04","admit","/ədˈmɪt/","承认；准许进入",2,"高频·1档"],["HF1-05","advance","/ədˈvɑːns/","前进；提前",2,"高频·1档"],["HF1-06","advantage","/ədˈvɑːntɪdʒ/","优势",2,"高频·1档"],["HF1-07","adventure","/ədˈventʃə/","冒险",2,"高频·1档"],["HF1-08","affect","/əˈfekt/","影响",2,"高频·1档"],["HF1-09","afford","/əˈfɔːd/","买得起；承担得起",2,"高频·1档"],["HF1-10","allow","/əˈlaʊ/","允许",2,"高频·1档"],["HF1-11","amount","/əˈmaʊnt/","数量",2,"高频·1档"],["HF1-12","announce","/əˈnaʊns/","宣布",2,"高频·1档"],["HF1-13","apologize","/əˈpɒlədʒaɪz/","道歉",3,"高频·1档"],["HF1-14","apply","/əˈplaɪ/","申请；应用",2,"高频·1档"],["HF1-15","appreciate","/əˈpriːʃieɪt/","欣赏；感激",3,"高频·1档"],["HF1-16","argue","/ˈɑːɡjuː/","争论",2,"高频·1档"],["HF1-17","arrange","/əˈreɪndʒ/","安排",2,"高频·1档"],["HF1-18","ashamed","/əˈʃeɪmd/","惭愧的",2,"高频·1档"],["HF1-19","attend","/əˈtend/","参加；出席",2,"高频·1档"],["HF1-20","attitude","/ˈætɪtjuːd/","态度",2,"高频·1档"],["HF1-21","attract","/əˈtrækt/","吸引",2,"高频·1档"],["HF1-22","award","/əˈwɔːd/","奖；授予",2,"高频·1档"],["HF1-23","aware","/əˈweə/","意识到的",2,"高频·1档"],["HF1-24","balance","/ˈbæləns/","平衡",2,"高频·1档"],["HF1-25","behave","/bɪˈheɪv/","表现；举止",2,"高频·1档"],["HF1-26","benefit","/ˈbenɪfɪt/","益处；受益",2,"高频·1档"],["HF1-27","bother","/ˈbɒðə/","打扰；烦恼",2,"高频·1档"],["HF1-28","breathe","/briːð/","呼吸",1,"高频·1档"],["HF1-29","burden","/ˈbɜːdən/","负担",2,"高频·1档"],["HF1-30","cancel","/ˈkænsəl/","取消",2,"高频·1档"],["HF1-31","career","/kəˈrɪə/","职业；生涯",2,"高频·1档"],["HF1-32","celebrate","/ˈselɪbreɪt/","庆祝",2,"高频·1档"],["HF1-33","challenge","/ˈtʃælɪndʒ/","挑战",2,"高频·1档"],["HF1-34","charge","/tʃɑːdʒ/","收费；负责；充电",1,"高频·1档"],["HF1-35","collect","/kəˈlekt/","收集",2,"高频·1档"],["HF1-36","combine","/kəmˈbaɪn/","结合",2,"高频·1档"],["HF1-37","command","/kəˈmɑːnd/","命令；掌握",2,"高频·1档"],["HF1-38","comment","/ˈkɒment/","评论",2,"高频·1档"],["HF1-39","communicate","/kəˈmjuːnɪkeɪt/","交流",3,"高频·1档"],["HF1-40","compete","/kəmˈpiːt/","竞争",2,"高频·1档"],["HF1-41","concern","/kənˈsɜːn/","关心；担忧；涉及",2,"高频·1档"],["HF1-42","confident","/ˈkɒnfɪdənt/","自信的",2,"高频·1档"],["HF1-43","consider","/kənˈsɪdə/","考虑；认为",2,"高频·1档"],["HF1-44","contribute","/kənˈtrɪbjuːt/","贡献；促成",3,"高频·1档"],["HF1-45","courage","/ˈkʌrɪdʒ/","勇气",2,"高频·1档"],["HF1-46","create","/kriˈeɪt/","创造",2,"高频·1档"],["HF1-47","crowded","/ˈkraʊdɪd/","拥挤的",2,"高频·1档"],["HF1-48","curious","/ˈkjʊəriəs/","好奇的",3,"高频·1档"],["HF1-49","deliver","/dɪˈlɪvə/","递送；发表",2,"高频·1档"],["HF1-50","demand","/dɪˈmɑːnd/","要求；需求",2,"高频·1档"],["HF1-51","describe","/dɪˈskraɪb/","描述",2,"高频·1档"],["HF1-52","desert","/ˈdezət/","沙漠",2,"高频·1档"],["HF1-53","design","/dɪˈzaɪn/","设计",2,"高频·1档"],["HF1-54","despite","/dɪˈspaɪt/","尽管",2,"高频·1档"],["HF1-55","destroy","/dɪˈstrɔɪ/","破坏",2,"高频·1档"],["HF1-56","determined","/dɪˈtɜːmɪnd/","坚定的",3,"高频·1档"],["HF1-57","develop","/dɪˈveləp/","发展；培养",2,"高频·1档"],["HF1-58","devote","/dɪˈvəʊt/","奉献；致力于",2,"高频·1档"],["HF1-59","disappear","/ˌdɪsəˈpɪə/","消失",3,"高频·1档"],["HF1-60","disappoint","/ˌdɪsəˈpɔɪnt/","使失望",3,"高频·1档"],["HF1-61","discover","/dɪˈskʌvə/","发现",2,"高频·1档"],["HF1-62","distance","/ˈdɪstəns/","距离",2,"高频·1档"],["HF1-63","effect","/ɪˈfekt/","效果；影响",2,"高频·1档"],["HF1-64","effort","/ˈefət/","努力",2,"高频·1档"],["HF1-65","encourage","/ɪnˈkʌrɪdʒ/","鼓励",2,"高频·1档"],["HF1-66","energy","/ˈenədʒi/","能量；精力",2,"高频·1档"],["HF1-67","environment","/ɪnˈvaɪrənmənt/","环境",3,"高频·1档"],["HF1-68","equal","/ˈiːkwəl/","平等的；等于",2,"高频·1档"],["HF1-69","escape","/ɪˈskeɪp/","逃跑",2,"高频·1档"],["HF1-70","especially","/ɪˈspeʃəli/","尤其",3,"高频·1档"],["HF1-71","exchange","/ɪksˈtʃeɪndʒ/","交换",2,"高频·1档"],["HF1-72","expect","/ɪkˈspekt/","期待",2,"高频·1档"],["HF1-73","experience","/ɪkˈspɪəriəns/","经历；经验",3,"高频·1档"],["HF1-74","experiment","/ɪkˈsperɪmənt/","实验",3,"高频·1档"],["HF1-75","explain","/ɪkˈspleɪn/","解释",2,"高频·1档"],["HF1-76","explore","/ɪkˈsplɔː/","探索",2,"高频·1档"],["HF1-77","express","/ɪkˈspres/","表达",2,"高频·1档"],["HF1-78","fail","/feɪl/","失败；未能做到",1,"高频·1档"],["HF1-79","fair","/feə/","公平的；集市",1,"高频·1档"],["HF1-80","familiar","/fəˈmɪliə/","熟悉的",3,"高频·1档"],["HF1-81","fetch","/fetʃ/","取来",1,"高频·1档"],["HF1-82","force","/fɔːs/","力量；强迫",1,"高频·1档"],["HF1-83","forgive","/fəˈɡɪv/","原谅",2,"高频·1档"],["HF1-84","forward","/ˈfɔːwəd/","向前",2,"高频·1档"],["HF1-85","found","/faʊnd/","建立",1,"高频·1档"],["HF1-86","free","/friː/","自由的；免费的",1,"高频·1档"],["HF1-87","frightened","/ˈfraɪtnd/","害怕的",2,"高频·1档"],["HF1-88","gather","/ˈɡæðə/","聚集",1,"高频·1档"],["HF1-89","generous","/ˈdʒenərəs/","慷慨的",3,"高频·1档"],["HF1-90","gradually","/ˈɡrædʒuəli/","逐渐地",3,"高频·1档"],["HF1-91","grateful","/ˈɡreɪtfəl/","感激的",2,"高频·1档"],["HF1-92","guilty","/ˈɡɪlti/","内疚的；有罪的",2,"高频·1档"],["HF1-93","habit","/ˈhæbɪt/","习惯",1,"高频·1档"],["HF1-94","handle","/ˈhændl/","处理；把手",1,"高频·1档"],["HF1-95","harm","/hɑːm/","伤害",1,"高频·1档"],["HF1-96","honest","/ˈɒnɪst/","诚实的",2,"高频·1档"],["HF1-97","honour","/ˈɒnə/","荣誉；尊敬",2,"高频·1档"],["HF1-98","ignore","/ɪɡˈnɔː/","忽视",2,"高频·1档"],["HF1-99","imagine","/ɪˈmædʒɪn/","想象",2,"高频·1档"],["HF1-100","immediately","/ɪˈmiːdiətli/","立即",3,"高频·1档"],["HF2-01","improve","/ɪmˈpruːv/","提高",2,"高频·2档"],["HF2-02","include","/ɪnˈkluːd/","包括",2,"高频·2档"],["HF2-03","increase","/ɪnˈkriːs/","增加",2,"高频·2档"],["HF2-04","independent","/ˌɪndɪˈpendənt/","独立的",3,"高频·2档"],["HF2-05","influence","/ˈɪnfluəns/","影响",2,"高频·2档"],["HF2-06","injure","/ˈɪndʒə/","使受伤",2,"高频·2档"],["HF2-07","insist","/ɪnˈsɪst/","坚持",2,"高频·2档"],["HF2-08","inspire","/ɪnˈspaɪə/","鼓舞；启发",2,"高频·2档"],["HF2-09","instead","/ɪnˈsted/","代替；反而",2,"高频·2档"],["HF2-10","instruction","/ɪnˈstrʌkʃn/","指示；说明",2,"高频·2档"],["HF2-11","interrupt","/ˌɪntəˈrʌpt/","打断",3,"高频·2档"],["HF2-12","interview","/ˈɪntəvjuː/","采访；面试",3,"高频·2档"],["HF2-13","invent","/ɪnˈvent/","发明",2,"高频·2档"],["HF2-14","journey","/ˈdʒɜːni/","旅程",2,"高频·2档"],["HF2-15","judge","/dʒʌdʒ/","判断；法官",1,"高频·2档"],["HF2-16","knowledge","/ˈnɒlɪdʒ/","知识",2,"高频·2档"],["HF2-17","lack","/læk/","缺乏",1,"高频·2档"],["HF2-18","last","/lɑːst/","持续；上一个",1,"高频·2档"],["HF2-19","lazy","/ˈleɪzi/","懒惰的",1,"高频·2档"],["HF2-20","lecture","/ˈlektʃə/","讲座",2,"高频·2档"],["HF2-21","likely","/ˈlaɪkli/","可能的",2,"高频·2档"],["HF2-22","limit","/ˈlɪmɪt/","限制",2,"高频·2档"],["HF2-23","load","/ləʊd/","装载；负担",1,"高频·2档"],["HF2-24","locate","/ləʊˈkeɪt/","位于",2,"高频·2档"],["HF2-25","lonely","/ˈləʊnli/","孤独的",2,"高频·2档"],["HF2-26","manage","/ˈmænɪdʒ/","设法做到；管理",2,"高频·2档"],["HF2-27","master","/ˈmɑːstə/","掌握；大师",2,"高频·2档"],["HF2-28","measure","/ˈmeʒə/","测量；措施",2,"高频·2档"],["HF2-29","mention","/ˈmenʃn/","提到",2,"高频·2档"],["HF2-30","mistake","/mɪˈsteɪk/","错误",2,"高频·2档"],["HF2-31","nervous","/ˈnɜːvəs/","紧张的",2,"高频·2档"],["HF2-32","normal","/ˈnɔːml/","正常的",2,"高频·2档"],["HF2-33","notice","/ˈnəʊtɪs/","注意到；通知",2,"高频·2档"],["HF2-34","obey","/əˈbeɪ/","服从",2,"高频·2档"],["HF2-35","object","/ˈɒbdʒɪkt/","物体；反对",2,"高频·2档"],["HF2-36","observe","/əbˈzɜːv/","观察",2,"高频·2档"],["HF2-37","obvious","/ˈɒbviəs/","明显的",2,"高频·2档"],["HF2-38","occasion","/əˈkeɪʒn/","场合；时刻",3,"高频·2档"],["HF2-39","offer","/ˈɒfə/","主动提供",2,"高频·2档"],["HF2-40","operate","/ˈɒpəreɪt/","操作；动手术",2,"高频·2档"],["HF2-41","opinion","/əˈpɪnjən/","观点",3,"高频·2档"],["HF2-42","opportunity","/ˌɒpəˈtjuːnəti/","机会",3,"高频·2档"],["HF2-43","organize","/ˈɔːɡənaɪz/","组织",2,"高频·2档"],["HF2-44","otherwise","/ˈʌðəwaɪz/","否则",3,"高频·2档"],["HF2-45","overcome","/ˌəʊvəˈkʌm/","克服",3,"高频·2档"],["HF2-46","owe","/əʊ/","欠；归功于",1,"高频·2档"],["HF2-47","patient","/ˈpeɪʃnt/","病人；耐心的",2,"高频·2档"],["HF2-48","perform","/pəˈfɔːm/","表演；执行",2,"高频·2档"],["HF2-49","permit","/pəˈmɪt/","许可",2,"高频·2档"],["HF2-50","persuade","/pəˈsweɪd/","说服",2,"高频·2档"],["HF2-51","pioneer","/ˌpaɪəˈnɪə/","先锋",3,"高频·2档"],["HF2-52","pleasant","/ˈpleznt/","令人愉快的",2,"高频·2档"],["HF2-53","polite","/pəˈlaɪt/","礼貌的",2,"高频·2档"],["HF2-54","position","/pəˈzɪʃn/","位置；职位",3,"高频·2档"],["HF2-55","possess","/pəˈzes/","拥有",2,"高频·2档"],["HF2-56","praise","/preɪz/","赞扬",1,"高频·2档"],["HF2-57","predict","/prɪˈdɪkt/","预测",2,"高频·2档"],["HF2-58","prepare","/prɪˈpeə/","准备",2,"高频·2档"],["HF2-59","present","/ˈpreznt/","礼物；现在的；呈现",2,"高频·2档"],["HF2-60","pressure","/ˈpreʃə/","压力",2,"高频·2档"],["HF2-61","pretend","/prɪˈtend/","假装",2,"高频·2档"],["HF2-62","prevent","/prɪˈvent/","阻止",2,"高频·2档"],["HF2-63","process","/ˈprəʊses/","过程；处理",2,"高频·2档"],["HF2-64","produce","/prəˈdjuːs/","生产；产生",2,"高频·2档"],["HF2-65","progress","/ˈprəʊɡres/","进步",2,"高频·2档"],["HF2-66","promise","/ˈprɒmɪs/","承诺",2,"高频·2档"],["HF2-67","pronounce","/prəˈnaʊns/","发音",2,"高频·2档"],["HF2-68","proper","/ˈprɒpə/","合适的",2,"高频·2档"],["HF2-69","protect","/prəˈtekt/","保护",2,"高频·2档"],["HF2-70","prove","/pruːv/","证明",1,"高频·2档"],["HF2-71","provide","/prəˈvaɪd/","提供",2,"高频·2档"],["HF2-72","publish","/ˈpʌblɪʃ/","出版",2,"高频·2档"],["HF2-73","punish","/ˈpʌnɪʃ/","惩罚",2,"高频·2档"],["HF2-74","purpose","/ˈpɜːpəs/","目的",2,"高频·2档"],["HF2-75","quality","/ˈkwɒləti/","质量；品质",2,"高频·2档"],["HF2-76","quit","/kwɪt/","停止；离开",1,"高频·2档"],["HF2-77","rare","/reə/","稀有的",1,"高频·2档"],["HF2-78","realize","/ˈrɪəlaɪz/","意识到；实现",2,"高频·2档"],["HF2-79","receive","/rɪˈsiːv/","收到",2,"高频·2档"],["HF2-80","recognize","/ˈrekəɡnaɪz/","认出；认可",2,"高频·2档"],["HF2-81","recover","/rɪˈkʌvə/","恢复",2,"高频·2档"],["HF2-82","reduce","/rɪˈdjuːs/","减少",2,"高频·2档"],["HF2-83","refer","/rɪˈfɜː/","参考；指的是",2,"高频·2档"],["HF2-84","reflect","/rɪˈflekt/","反映；反思",2,"高频·2档"],["HF2-85","refuse","/rɪˈfjuːz/","拒绝",2,"高频·2档"],["HF2-86","regret","/rɪˈɡret/","后悔；遗憾",2,"高频·2档"],["HF2-87","regular","/ˈreɡjələ/","规律的",3,"高频·2档"],["HF2-88","reject","/rɪˈdʒekt/","拒绝；退回",2,"高频·2档"],["HF2-89","relax","/rɪˈlæks/","放松",2,"高频·2档"],["HF2-90","remain","/rɪˈmeɪn/","保持；剩余",2,"高频·2档"],["HF2-91","remind","/rɪˈmaɪnd/","提醒",2,"高频·2档"],["HF2-92","remove","/rɪˈmuːv/","移开；去除",2,"高频·2档"],["HF2-93","replace","/rɪˈpleɪs/","取代",2,"高频·2档"],["HF2-94","reply","/rɪˈplaɪ/","回复",2,"高频·2档"],["HF2-95","report","/rɪˈpɔːt/","报告",2,"高频·2档"],["HF2-96","require","/rɪˈkwaɪə/","需要；要求",2,"高频·2档"],["HF2-97","rescue","/ˈreskjuː/","营救",2,"高频·2档"],["HF2-98","respect","/rɪˈspekt/","尊重",2,"高频·2档"],["HF2-99","responsible","/rɪˈspɒnsəbl/","负责任的",3,"高频·2档"],["HF2-100","reward","/rɪˈwɔːd/","奖励",2,"高频·2档"],["HF3-01","ruin","/ˈruːɪn/","毁坏",2,"高频·3档"],["HF3-02","satisfy","/ˈsætɪsfaɪ/","使满意",3,"高频·3档"],["HF3-03","schedule","/ˈʃedjuːl/","日程安排",2,"高频·3档"],["HF3-04","search","/sɜːtʃ/","搜寻",1,"高频·3档"],["HF3-05","secret","/ˈsiːkrət/","秘密",2,"高频·3档"],["HF3-06","seldom","/ˈseldəm/","很少",2,"高频·3档"],["HF3-07","sense","/sens/","感觉；意义",1,"高频·3档"],["HF3-08","separate","/ˈsepərət/","分开的；分开",3,"高频·3档"],["HF3-09","serious","/ˈsɪəriəs/","严肃的；严重的",3,"高频·3档"],["HF3-10","serve","/sɜːv/","服务；端上",1,"高频·3档"],["HF3-11","settle","/ˈsetl/","解决；定居",1,"高频·3档"],["HF3-12","share","/ʃeə/","分享",1,"高频·3档"],["HF3-13","sharp","/ʃɑːp/","锋利的；敏锐的",1,"高频·3档"],["HF3-14","signal","/ˈsɪɡnəl/","信号",2,"高频·3档"],["HF3-15","similar","/ˈsɪmələ/","相似的",3,"高频·3档"],["HF3-16","society","/səˈsaɪəti/","社会",3,"高频·3档"],["HF3-17","solve","/sɒlv/","解决",1,"高频·3档"],["HF3-18","spare","/speə/","空闲的；匀出",1,"高频·3档"],["HF3-19","spread","/spred/","传播；展开",1,"高频·3档"],["HF3-20","standard","/ˈstændəd/","标准",2,"高频·3档"],["HF3-21","steal","/stiːl/","偷",1,"高频·3档"],["HF3-22","stick","/stɪk/","粘；坚持；棍子",1,"高频·3档"],["HF3-23","stomach","/ˈstʌmək/","胃",2,"高频·3档"],["HF3-24","stranger","/ˈstreɪndʒə/","陌生人",2,"高频·3档"],["HF3-25","strength","/streŋθ/","力量",1,"高频·3档"],["HF3-26","struggle","/ˈstrʌɡl/","奋斗；挣扎",2,"高频·3档"],["HF3-27","succeed","/səkˈsiːd/","成功",2,"高频·3档"],["HF3-28","suffer","/ˈsʌfə/","遭受",2,"高频·3档"],["HF3-29","suggest","/səˈdʒest/","建议",2,"高频·3档"],["HF3-30","support","/səˈpɔːt/","支持",2,"高频·3档"],["HF3-31","suppose","/səˈpəʊz/","猜想；认为",2,"高频·3档"],["HF3-32","surface","/ˈsɜːfɪs/","表面",2,"高频·3档"],["HF3-33","surprise","/səˈpraɪz/","惊讶",2,"高频·3档"],["HF3-34","survive","/səˈvaɪv/","幸存",2,"高频·3档"],["HF3-35","swallow","/ˈswɒləʊ/","吞；燕子",2,"高频·3档"],["HF3-36","sweat","/swet/","汗水；出汗",1,"高频·3档"],["HF3-37","talent","/ˈtælənt/","天赋",2,"高频·3档"],["HF3-38","tear","/tɪə/","眼泪；撕",1,"高频·3档"],["HF3-39","technique","/tekˈniːk/","技巧",2,"高频·3档"],["HF3-40","temperature","/ˈtemprətʃə/","温度",3,"高频·3档"],["HF3-41","tend","/tend/","倾向于；照料",1,"高频·3档"],["HF3-42","terrible","/ˈterəbl/","糟糕的",2,"高频·3档"],["HF3-43","therefore","/ˈðeəfɔː/","因此",2,"高频·3档"],["HF3-44","thief","/θiːf/","小偷",1,"高频·3档"],["HF3-45","throughout","/θruːˈaʊt/","贯穿；遍及",2,"高频·3档"],["HF3-46","thus","/ðʌs/","因此",1,"高频·3档"],["HF3-47","tide","/taɪd/","潮水",1,"高频·3档"],["HF3-48","tiny","/ˈtaɪni/","极小的",1,"高频·3档"],["HF3-49","tough","/tʌf/","艰难的；坚韧的",1,"高频·3档"],["HF3-50","trade","/treɪd/","贸易",1,"高频·3档"],["HF3-51","tradition","/trəˈdɪʃn/","传统",2,"高频·3档"],["HF3-52","trap","/træp/","困住；陷阱",1,"高频·3档"],["HF3-53","treasure","/ˈtreʒə/","宝藏",2,"高频·3档"],["HF3-54","treat","/triːt/","对待；治疗；款待",1,"高频·3档"],["HF3-55","trust","/trʌst/","信任",1,"高频·3档"],["HF3-56","truth","/truːθ/","真相",1,"高频·3档"],["HF3-57","typical","/ˈtɪpɪkl/","典型的",2,"高频·3档"],["HF3-58","ugly","/ˈʌɡli/","丑陋的",1,"高频·3档"],["HF3-59","unfair","/ʌnˈfeə/","不公平的",2,"高频·3档"],["HF3-60","uniform","/ˈjuːnɪfɔːm/","制服；统一的",3,"高频·3档"],["HF3-61","unique","/juːˈniːk/","独一无二的",2,"高频·3档"],["HF3-62","unite","/juːˈnaɪt/","团结",2,"高频·3档"],["HF3-63","universe","/ˈjuːnɪvɜːs/","宇宙",3,"高频·3档"],["HF3-64","unless","/ənˈles/","除非",2,"高频·3档"],["HF3-65","unusual","/ʌnˈjuːʒuəl/","不寻常的",3,"高频·3档"],["HF3-66","value","/ˈvæljuː/","价值；重视",2,"高频·3档"],["HF3-67","variety","/vəˈraɪəti/","多样性",3,"高频·3档"],["HF3-68","various","/ˈveəriəs/","各种各样的",3,"高频·3档"],["HF3-69","victory","/ˈvɪktəri/","胜利",2,"高频·3档"],["HF3-70","volunteer","/ˌvɒlənˈtɪə/","志愿者；自愿",3,"高频·3档"],["HF3-71","vote","/vəʊt/","投票",1,"高频·3档"],["HF3-72","waste","/weɪst/","浪费",1,"高频·3档"],["HF3-73","wealth","/welθ/","财富",1,"高频·3档"],["HF3-74","weigh","/weɪ/","称重；权衡",1,"高频·3档"],["HF3-75","whisper","/ˈwɪspə/","低语",2,"高频·3档"],["HF3-76","willing","/ˈwɪlɪŋ/","乐意的",2,"高频·3档"],["HF3-77","withdraw","/wɪðˈdrɔː/","撤回；取款",2,"高频·3档"],["HF3-78","witness","/ˈwɪtnəs/","目击；证人",2,"高频·3档"],["HF3-79","wonder","/ˈwʌndə/","想知道；奇迹",2,"高频·3档"],["HF3-80","worry","/ˈwʌri/","担心",1,"高频·3档"],["HF3-81","worth","/wɜːθ/","值得的",1,"高频·3档"],["HF3-82","wound","/wuːnd/","伤口；使受伤",1,"高频·3档"],["HF3-83","youth","/juːθ/","青春",1,"高频·3档"],["HF3-84","zone","/zəʊn/","区域",1,"高频·3档"],["HF3-85","absorb","/əbˈzɔːb/","吸收",2,"高频·3档"],["HF3-86","accent","/ˈæksənt/","口音",2,"高频·3档"],["HF3-87","access","/ˈækses/","进入；使用权",2,"高频·3档"],["HF3-88","account","/əˈkaʊnt/","账户；解释；占比",2,"高频·3档"],["HF3-89","accustom","/əˈkʌstəm/","使习惯",2,"高频·3档"],["HF3-90","adapt","/əˈdæpt/","适应；改编",2,"高频·3档"],["HF3-91","addict","/əˈdɪkt/","使上瘾",2,"高频·3档"],["HF3-92","adjust","/əˈdʒʌst/","调整",2,"高频·3档"],["HF3-93","ambition","/æmˈbɪʃn/","抱负；野心",3,"高频·3档"],["HF3-94","analyze","/ˈænəlaɪz/","分析",2,"高频·3档"],["HF3-95","rely","/rɪˈlaɪ/","依靠；信赖",2,"高频·3档"],["HF3-96","resist","/rɪˈzɪst/","抵抗；忍住",2,"高频·3档"],["HF3-97","seek","/siːk/","寻找；寻求",1,"高频·3档"],["HF3-98","assist","/əˈsɪst/","协助",2,"高频·3档"],["HF3-99","confirm","/kənˈfɜːm/","确认；证实",2,"高频·3档"],["HF3-100","deny","/dɪˈnaɪ/","否认；拒绝给予",2,"高频·3档"]];
+/* ============ 状态 ============ */
+const KEY='elsaTracker.v1';
+function defState(){return {v:1,startDate:null,weekAdj:0,curUnit:0,daily:{},texts:{},vocab:{},caveOrder:[],
+ audioMeta:[],gram:{},sent:{},sentWrong:[],write:{},beans:0,badges:{},pretty:{},conquered:0};}
+let S=defState();
+try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);S=Object.assign(defState(),o);}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function curWeek(){if(!S.startDate)return 0;const ms=Date.now()-new Date(S.startDate+'T00:00:00').getTime();
+ let w=Math.floor(ms/86400000/7)+1+(S.weekAdj||0);return Math.max(1,Math.min(32,w));}
+function phaseOf(w){for(const p of PHASES)if(w>=p.w[0]&&w<=p.w[1])return p;return PHASES[PHASES.length-1];}
+function dayRec(){const t=today();if(!S.daily[t])S.daily[t]={};return S.daily[t];}
+let toastT=null;
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200);}
+function addBean(n){S.beans+=n;const b=$('beanTop');if(b)b.textContent=S.beans;
+ if(S.beans>=100&&!S.badges.bean100){S.badges.bean100=1;setTimeout(()=>{toast('🏅 解锁徽章：勇气富翁！');},600);}
+ save();}
+function award(k,msg){if(S.badges[k])return false;S.badges[k]=1;confetti();toast(msg||('🏅 解锁徽章：'+BADGES[k].n));save();return true;}
+/* confetti */
+function confetti(){const cv=$('cvc'),ctx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+ const cols=['#4fd1a5','#ffd166','#ff8fa3','#7fb0ff','#f5d78e'];const ps=[];
+ for(let i=0;i<80;i++)ps.push({x:innerWidth/2,y:innerHeight*0.35,vx:(Math.random()-0.5)*9,vy:-Math.random()*8-3,
+  c:cols[i%5],r:Math.random()*4+2,ro:Math.random()*6});
+ let f=0;(function tick(){ctx.clearRect(0,0,cv.width,cv.height);f++;
+  for(const p of ps){p.x+=p.vx;p.y+=p.vy;p.vy+=0.22;p.ro+=0.1;
+   ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.ro);ctx.fillStyle=p.c;ctx.fillRect(-p.r,-p.r,p.r*2,p.r*1.2);ctx.restore();}
+  if(f<110)requestAnimationFrame(tick);else ctx.clearRect(0,0,cv.width,cv.height);})();}
+function speak(txt){try{const u=new SpeechSynthesisUtterance(txt);u.lang='en-US';u.rate=0.92;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
+function copyTxt(t){function fb(){const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
+ document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('已复制，去粘贴吧');}catch(e){toast('复制失败，请长按手动复制');}
+ document.body.removeChild(ta);}
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast('已复制到剪贴板')).catch(fb);}else fb();}
+/* IndexedDB 音频库 */
+const IDB={db:null,
+ open(){return new Promise((res,rej)=>{if(IDB.db)return res(IDB.db);
+  const r=indexedDB.open('elsa-audio',1);
+  r.onupgradeneeded=()=>{r.result.createObjectStore('files');};
+  r.onsuccess=()=>{IDB.db=r.result;res(IDB.db);};r.onerror=()=>rej(r.error);});},
+ put(id,blob){return IDB.open().then(db=>new Promise((res,rej)=>{const tx=db.transaction('files','readwrite');
+  tx.objectStore('files').put(blob,id);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);}));},
+ get(id){return IDB.open().then(db=>new Promise((res,rej)=>{const rq=db.transaction('files').objectStore('files').get(id);
+  rq.onsuccess=()=>res(rq.result);rq.onerror=()=>rej(rq.error);}));},
+ del(id){return IDB.open().then(db=>new Promise((res,rej)=>{const tx=db.transaction('files','readwrite');
+  tx.objectStore('files').delete(id);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);}));}};
+let curAudio=null,curAudioId=null;
+/* ============ 今日页 ============ */
+const DAYKEYS=[['listen','🎧 聆听 25 分钟'],['card','🃏 词汇卡牌 15 分钟'],['read','📖 精读/语法 15 分钟'],['review','🕳️ 错题复盘 5 分钟'],['frag','🧩 碎片泛听打卡']];
+function unit632Target(){const w=curWeek();if(w>=4&&w<=9)return ORDER[w-4];return ORDER[S.curUnit]||'U2';}
+function renderToday(){
+ const w=curWeek(),el=$('pg-today');
+ if(!S.startDate){
+  el.innerHTML='<div class="card"><div class="cttl">出发前 · 只设置一次</div>'+
+  '<div class="big">追赶计划从哪天开始？</div>'+
+  '<p class="mut" style="margin-top:8px">默认按 2027 年 6 月高考的 32 周压缩版排期。选定起始日后，"今日任务"会自动按阶段变化。</p>'+
+  '<input class="inp" type="date" id="startD" style="margin-top:12px" value="'+today()+'">'+
+  '<button class="btn" data-act="setStart">出发 🚀</button></div>'+
+  '<div class="card"><div class="cttl">先做什么</div><p class="mut">第一周就做两件事：<br>① 完成《Elsa英语地基诊断卷》（第一天就用数字证明"你不是零基础"）<br>② 开始黑猫/书虫泛听，每段裸听 3 遍</p></div>';
+  return;
+ }
+ const ph=phaseOf(w),rec=dayRec();
+ let tiles='';
+ for(const [k,nm] of DAYKEYS){
+  const done=rec[k]?' done':'';
+  tiles+='<div class="tile'+done+'" data-act="day" data-arg="'+k+'"><div class="t-ic">'+(rec[k]?'✅':nm.split(' ')[0])+'</div>'+
+   '<div class="t-nm">'+nm.slice(nm.indexOf(' ')+1)+'</div><div class="t-sb">'+ph.daily[k]+'</div></div>';
+ }
+ const uk=unit632Target(),U=UNITS[uk],tx=S.texts[uk]||{l:0,r:0,rl:0,x:0};
+ let steps='';
+ for(const [k,nm,desc,tg] of T632){
+  const cur=tx[k]||0,full=cur>=tg?' full':'';
+  steps+='<div class="step'+full+'"><div class="s-n">'+nm+' '+cur+'/'+tg+'</div><div class="s-c">'+(cur>=tg?'✓':tg-cur)+'</div>'+
+   '<button class="s-b" data-act="b632" data-arg="'+k+'" '+((cur>=tg)?'disabled':'')+'>+1 遍</button></div>';
+ }
+ const earBtn=(tx.l>=6)?'<button class="btn gold" data-act="ear">👂 听完 6 遍还没全懂？点这里领"听不懂勋章"</button>':'';
+ const gameBtn=(U.game&&w>=4&&w<=11)?'<button class="btn ghost" data-act="game" data-arg="'+U.game+'">🎭 周末通关仪式：'+U.gameName+'</button>':'';
+ el.innerHTML=
+ '<div class="card"><div class="cttl">当前阶段 · 第 '+w+' / 32 周</div><div class="big">'+ph.name+'</div>'+
+ '<p class="mut" style="margin-top:6px">'+ph.tip+'</p>'+
+ '<div class="bar"><i style="width:'+Math.round(w/32*100)+'%"></i></div>'+
+ '<div class="faint" style="margin-top:6px">话术换框：不说补课追赶，说通关解锁 · 进度条每动一格，"债"就少一点</div></div>'+
+ '<div class="card"><div class="cttl">今日任务 · 点格子打卡</div><div class="tiles">'+tiles+'</div></div>'+
+ '<div class="card"><div class="cttl">课文 632X · '+esc(U.name)+'</div>'+
+ '<div class="faint">'+esc(U.sub)+'<br>语法点：'+esc(U.gram)+'</div>'+
+ '<div class="ring">'+steps+'</div>'+
+ '<div class="row" style="margin-top:10px"><button class="btn ghost" data-act="x632" style="flex:1">'+(tx.x?'✅ X 扩展已完成（跟读+复述）':'⬜ X 扩展：影子跟读 + 复述大意')+'</button></div>'+
+ '<div class="row" style="margin-top:8px"><button class="aub" data-act="unitNav" data-arg="-1">‹ 上一单元</button>'+
+ '<span class="faint" style="flex:1;text-align:center">'+esc(uk)+'</span>'+
+ '<button class="aub" data-act="unitNav" data-arg="1">下一单元 ›</button></div>'+
+ earBtn+gameBtn+'</div>'+
+ '<div class="card"><div class="cttl">漂亮的错误 · 每周评选</div>'+
+ '<p class="faint">把本周"最有信息量的一个错误"记下来，周末全家一起评选表彰。</p>'+
+ '<div class="row" style="margin-top:8px"><input class="inp" id="prettyInp" placeholder="例如：often 的 e 不发音我却读出来了">'+
+ '<button class="aub" data-act="pretty" style="flex:none">记下</button></div>'+prettyList()+'</div>';
+}
+function prettyList(){
+ const arr=Object.keys(S.pretty).sort().slice(-5);
+ if(!arr.length)return '';
+ return '<div style="margin-top:8px">'+arr.map(k=>'<div class="rule">🌷 '+esc(S.pretty[k].t)+' <span class="faint">'+k+'</span></div>').join('')+'</div>';
+}
+/* ============ 词汇页 ============ */
+function vrec(id){if(!S.vocab[id])S.vocab[id]={b:0,m:0};return S.vocab[id];}
+function masteredCount(){let n=0;for(const k in S.vocab)if(S.vocab[k].b>=3)n++;return n;}
+let SES=null;
+function buildSession(n){
+ const ids=[];
+ const cave=S.caveOrder.slice(0,4);
+ const uk=unit632Target();
+ const unitPool=VOCAB.filter(v=>v[0].indexOf(uk+'-')===0&&ids.indexOf(v[0])<0)
+  .sort((a,b)=>(vrec(a[0]).b-vrec(b[0]).b)).map(v=>v[0]);
+ const hfPool=VOCAB.filter(v=>v[0].indexOf('HF')===0)
+  .sort((a,b)=>(vrec(a[0]).b-vrec(b[0]).b)||(a[0]<b[0]?-1:1)).map(v=>v[0]);
+ for(const c of [cave,unitPool,hfPool])for(const id of c){if(ids.length>=n)break;if(!ids.includes(id))ids.push(id);}
+ return ids;
+}
+function renderVocab(){
+ const el=$('pg-vocab');
+ const mc=masteredCount(),flags=Math.ceil(451/20);
+ let flagHtml='';
+ for(let i=0;i<flags;i++)flagHtml+='<span class="flag'+(mc>=(i+1)*20||(i===flags-1&&mc>=451)?' hit':'')+'">'+(mc>=(i+1)*20?'🚩':(i+1)*20)+'</span>';
+ let html='<div class="card"><div class="cttl">3500 词插旗地图 · 第一批 451 词</div>'+
+ '<div class="big">已掌握 '+mc+' / '+VOCAB.length+'</div>'+
+ '<div class="bar"><i style="width:'+Math.round(mc/VOCAB.length*100)+'%"></i></div>'+
+ '<div style="margin-top:8px">'+flagHtml+'</div>'+
+ '<div class="faint" style="margin-top:6px">掌握 = 驯服等级 ≥3 · 每 20 词插一面旗 · 每 100 词庆祝一次里程碑</div></div>';
+ if(SES){
+  html+='<div id="sesBox"></div>';
+ }else{
+  html+='<div class="card"><div class="cttl">今日驯兽</div>'+
+  '<p class="mut">每次 12 张卡：点卡翻面 → 诚实选择"驯服了"或"还没驯服"。错卡会<b style="color:var(--acc2)">回流到第 3 张之后</b>再见一次；洞窟里征服的错卡得<b style="color:var(--acc2)">双倍印记</b>。</p>'+
+  '<button class="btn" data-act="sesStart">🃏 开始今日 12 张</button>'+
+  (S.caveOrder.length?'<button class="btn warn" data-act="sesCave">🕳️ 修炼洞窟（'+S.caveOrder.length+' 张错卡待征服）</button>':'')+
+  '</div>';
+ }
+ const caveList=S.caveOrder.slice(0,8).map(id=>{const v=VOCAB.find(x=>x[0]===id);return v?'<span class="pill" data-act="say" data-arg="'+esc(v[1])+'">'+esc(v[1])+'</span>':'';}).join('');
+ if(caveList)html+='<div class="card"><div class="cttl">修炼洞窟 · 未驯服的兽</div>'+caveList+'<div class="faint" style="margin-top:6px">点词可发音 · 征服后双倍印记 +2</div></div>';
+ el.innerHTML=html;
+ if(SES)renderSes();
+}
+function renderSes(){
+ const box=$('sesBox');if(!box)return;
+ if(SES.idx>=SES.queue.length){
+  const t=SES.tamed,f=SES.failed;
+  S.caveOrder=S.caveOrder.filter(id=>!(S.vocab[id]&&S.vocab[id].b>=3));
+  save();SES=null;
+  box.innerHTML='<div class="card"><div class="cttl">本场战绩</div><div class="big">驯服 '+t+' 张 · 回流 '+f+' 张</div>'+
+  '<p class="mut" style="margin-top:8px">回流的卡没有失败——它们只是还没被驯服的兽，明天还会再见。</p>'+
+  '<button class="btn" data-act="sesDone">收下战绩</button></div>';
+  const mc=masteredCount();
+  if(mc>=100)award('t100','🏅 百词里程碑！地图上第 5 面旗插下了');
+  return;
+ }
+ const id=SES.queue[SES.idx],v=VOCAB.find(x=>x[0]===id);
+ if(!v){SES.idx++;return renderSes();}
+ const r=vrec(id),inCave=S.caveOrder.includes(id);
+ const back=SES.flip?'<div class="vipa">'+esc(v[2]||'')+'</div><div class="vcn">'+esc(v[3])+'</div>'+
+  '<div><span class="vtag">'+esc(v[5]||'')+'</span></div>'+
+  '<button class="aub" data-act="say" data-arg="'+esc(v[1])+'" style="margin-top:10px">🔊 朗读</button>'
+  :'<div class="faint" style="margin-top:10px">点卡片翻面看词义</div>';
+ box.innerHTML='<div class="card"><div class="cttl">第 '+(SES.idx+1)+' / '+SES.queue.length+' 张'+(inCave?' · 🕳️洞窟卡':'')+'</div>'+
+ '<div class="vcard" data-act="flip"><div class="vw">'+esc(v[1])+'</div>'+
+ '<div class="stars">'+'★'.repeat(v[4]||1)+'</div>'+back+'</div>'+
+ '<div class="row" style="margin-top:12px"><button class="btn warn" data-act="sesFail" style="flex:1">🌀 还没驯服</button>'+
+ '<button class="btn" data-act="sesOk" style="flex:1" '+(!SES.flip?'disabled':'')+'>✨ 驯服了</button></div>'+
+ '<div class="faint" style="margin-top:8px">驯服等级：'+'🟢'.repeat(r.b)+'⚪'.repeat(Math.max(0,5-r.b))+' · 印记 '+r.m+'</div></div>';
+}
+/* ============ 闯关页 ============ */
+function renderQuest(){
+ const el=$('pg-quest');
+ let html='<div class="card"><div class="cttl">句型闯关 · 三关</div>';
+ SENT.forEach((lv,li)=>{
+  const st=S.sent[li]||{qi:0,done:false};
+  html+='<div class="grow"><div class="g-nm">'+esc(lv.name)+(st.done?' ✅':'')+'</div>'+
+  '<div class="g-mp">'+esc(lv.desc)+'</div>'+
+  '<div class="faint" style="margin-top:4px">进度 '+Math.min(st.qi,lv.qs.length)+'/'+lv.qs.length+'</div>'+
+  '<button class="btn ghost" data-act="qStart" data-arg="'+li+'">'+(st.done?'再练一次':(st.qi>0?'继续':'开始'))+'</button></div>';
+ });
+ html+='</div><div id="quizBox"></div>';
+ if(S.sentWrong.length){
+  html+='<div class="card"><div class="cttl">🕳️ 错题宝藏 · 线索库（'+S.sentWrong.length+'）</div>'+
+  '<p class="faint">错题不是红叉，是破案的线索。点"复盘"逐条消灭它们。</p>'+
+  '<button class="btn gold" data-act="qReview">🔍 复盘错题（'+S.sentWrong.length+'）</button></div>';
+ }
+ let gs=0;for(let i=0;i<8;i++)gs+=(S.gram[i]||0);
+ html+='<div class="card"><div class="cttl">语法八考点 · 进度 '+gs+'/24</div>'+
+ '<div class="bar"><i style="width:'+Math.round(gs/24*100)+'%"></i></div>';
+ GRAM8.forEach((g,i)=>{
+  const st=S.gram[i]||0;
+  html+='<div class="grow"><div class="g-nm">'+esc(g[0])+'</div><div class="g-mp">'+esc(g[1])+'</div><div class="stg">'+
+   STG.map((s,j)=>'<span data-act="gram" data-arg="'+i+':'+j+'" class="'+(st>j?'on':'')+'">'+s+'</span>').join('')+'</div></div>';
+ });
+ html+='</div>';
+ const w=curWeek(),wk=S.write['W'+w]||{};
+ html+='<div class="card"><div class="cttl">作文弹药库</div>';
+ for(const grp of ['app','cont']){
+  const G=WRITE[grp];
+  html+='<details><summary>'+esc(G.name)+'</summary>'+G.items.map(it=>
+   '<div class="tpl"><b style="color:var(--ink)">'+esc(it[0])+'</b>'+it[1].map(s=>
+    '<br>· '+esc(s)+' <button class="say" data-act="say" data-arg="'+esc(s)+'">🔊</button>').join('')+'</div>').join('')+'</details>';
+ }
+ html+='<div style="margin-top:12px"><div class="faint">本周作文（第 '+w+' 周）：'+(wk.done?'✅ 已写':'还没写')+'</div>'+
+ '<div style="margin-top:6px">'+WRITE.app.items.map((it,i)=>'<span class="pill'+(wk.tpl&&wk.tpl.includes(i)?' on':'')+'" data-act="wtpl" data-arg="'+i+'">'+esc(it[0])+'</span>').join('')+'</div>'+
+ '<button class="btn" data-act="wdone">'+(wk.done?'✅ 本周作文已打卡':'✒️ 本周作文写完了，打卡')+'</button></div></div>';
+ el.innerHTML=html;
+ if(QUIZ)renderQuiz();
+}
+let QUIZ=null;
+function renderQuiz(){
+ const box=$('quizBox');if(!box)return;
+ const lv=SENT[QUIZ.li],st=S.sent[QUIZ.li]||(S.sent[QUIZ.li]={qi:0,done:false});
+ if(QUIZ.review&&!QUIZ.q){
+  if(!S.sentWrong.length){QUIZ=null;renderQuest();return;}
+  const k=S.sentWrong[0],p=k.split(':'),q=SENT[+p[0]].qs[+p[1]];
+  QUIZ.q={li:+p[0],qi:+p[1],review:true};renderQuizQ(box,q);return;
+ }
+ if(!QUIZ.review){
+  if(st.qi>=lv.qs.length){
+   st.done=true;addBean(15);save();
+   const all=SENT.every((l,i)=>(S.sent[i]||{}).done);
+   if(all)award('s3','🏅 句型大师！三关全通');
+   else toast('🎉 '+lv.name+' 通关！+15 勇气豆');
+   QUIZ=null;renderQuest();return;
+  }
+  renderQuizQ(box,lv.qs[st.qi]);return;
+ }
+}
+function renderQuizQ(box,q){
+ box.innerHTML='<div class="card"><div class="cttl">'+(QUIZ.review?'错题复盘':'第 '+(QUIZ.qi+1)+' 题')+'</div>'+
+ '<p class="mut" style="white-space:pre-line">'+esc(q.q)+'</p>'+
+ q.opts.map((o,i)=>'<button class="opt" data-act="qAns" data-arg="'+i+'">'+esc(o)+'</button>').join('')+
+ '<div id="qWhy"></div></div>';
+ box.scrollIntoView({behavior:'smooth',block:'start'});
+}
+/* 修正版 renderQuiz（覆盖上方定义） */
+renderQuiz=function(){
+ const box=$('quizBox');if(!box)return;
+ if(QUIZ.review){
+  if(!S.sentWrong.length){toast('🎉 错题宝藏清空了！');QUIZ=null;renderQuest();return;}
+  const p=S.sentWrong[0].split(':');
+  QUIZ.li=+p[0];QUIZ.qi=+p[1];
+  renderQuizQ(box,SENT[QUIZ.li].qs[QUIZ.qi]);return;
+ }
+ const lv=SENT[QUIZ.li],st=S.sent[QUIZ.li]||(S.sent[QUIZ.li]={qi:0,done:false});
+ if(st.qi>=lv.qs.length){
+  st.done=true;addBean(15);save();
+  const all=SENT.every((l,i)=>(S.sent[i]||{}).done);
+  if(all)award('s3','🏅 句型大师！三关全通');else toast('🎉 '+lv.name+' 通关！+15 勇气豆');
+  QUIZ=null;renderQuest();return;
+ }
+ QUIZ.qi=st.qi;
+ renderQuizQ(box,lv.qs[st.qi]);
+};
+function answerQuiz(ai,btn){
+ if(QUIZ.lock)return;
+ const q=SENT[QUIZ.li].qs[QUIZ.qi];
+ const opts=btn.parentNode.querySelectorAll('.opt');
+ if(ai===q.a){
+  QUIZ.lock=true;btn.classList.add('right');
+  if(QUIZ.review){S.sentWrong.shift();addBean(3);toast('✅ 线索消灭！+3 勇气豆');}
+  else{const st=S.sent[QUIZ.li];st.qi++;addBean(1);}
+  save();
+  setTimeout(()=>{QUIZ.lock=false;renderQuiz();},700);
+ }else{
+  btn.classList.add('wrong');btn.disabled=true;
+  const key=QUIZ.li+':'+QUIZ.qi;
+  if(!QUIZ.review&&!S.sentWrong.includes(key)){S.sentWrong.push(key);save();}
+  const why=$('qWhy');
+  if(why)why.innerHTML='<div class="rule" style="margin-top:10px">🕵️ 线索解析：'+esc(q.why)+'</div>';
+ }
+}
+/* ============ 听力库页 ============ */
+let importGroup='bc';
+function renderAudio(){
+ const el=$('pg-audio');
+ let html='<div class="card"><div class="cttl">音频库 · 导入一次，离线点击即播</div>'+
+ '<p class="mut">音频存在<b>这台设备的浏览器</b>里，不联网也能播。课文官方录音找到后，导入"课文音频"组即可接进 632X 流程。</p>'+
+ '<p class="faint" style="margin-top:6px">提示：清理浏览器数据会删除音频，原文件请保留备份。</p></div>';
+ for(const [gk,gn] of AUGROUPS){
+  const items=S.audioMeta.filter(m=>m.g===gk);
+  html+='<div class="card"><div class="cttl">'+esc(gn)+'（'+items.length+'）</div>';
+  if(!items.length)html+='<div class="faint">还没有音频——点下方按钮导入</div>';
+  for(const m of items){
+   html+='<div class="aurow"><span class="nm">'+(curAudioId===m.id?'🔊 ':'')+esc(m.n)+'</span>'+
+   '<span class="faint" style="flex:none">'+m.p+' 遍</span>'+
+   '<button class="aub" data-act="auPlay" data-arg="'+m.id+'">'+(curAudioId===m.id?'⏸':'▶')+'</button>'+
+   '<button class="aub" data-act="auDone" data-arg="'+m.id+'">听完+1</button>'+
+   '<button class="aub" data-act="auDel" data-arg="'+m.id+'">🗑</button></div>';
+  }
+  html+='<button class="btn ghost" data-act="auImp" data-arg="'+gk+'">📥 导入音频到此组</button></div>';
+ }
+ el.innerHTML=html;
+}
+function stopAudio(){if(curAudio){try{curAudio.pause();}catch(e){}curAudio=null;curAudioId=null;}}
+/* ============ 我的页 ============ */
+function renderMe(){
+ const el=$('pg-me');
+ let html='<div class="card"><div class="cttl">徽章墙</div>';
+ for(const k in BADGES){
+  const on=S.badges[k]?' on':'';
+  html+='<div class="bdg'+on+'"><div class="bi">'+BADGES[k].i+'</div><div class="bn">'+BADGES[k].n+'<br><span style="opacity:.7">'+BADGES[k].d+'</span></div></div>';
+ }
+ html+='</div>';
+ html+='<div class="card"><div class="cttl">容错五条明规则 · 贴在书桌前</div>'+
+ RULES.map((r,i)=>'<div class="rule"><b>'+(i+1)+'.</b> '+r+'</div>').join('')+'</div>';
+ html+='<div class="card"><div class="cttl">家长周报 · 只聊内容不查分数</div>'+
+ '<p class="faint">家长三问："今天课文里哪个故事最有意思？"——周报帮您只看过程。</p>'+
+ '<button class="btn gold" data-act="report">📋 生成本周周报（可复制发家庭群）</button></div>';
+ html+='<div class="card"><div class="cttl">诊断卷回填</div>'+
+ '<p class="faint">第一周做完《地基诊断卷》后，在这里记下结果，解锁"初诊完成"徽章。</p>'+
+ '<div class="row" style="margin-top:8px"><input class="inp" id="diagInp" placeholder="例如：A档26/30 · B档18/30 · 句型断点在定语从句">'+
+ '<button class="aub" data-act="diag" style="flex:none">记下</button></div>'+
+ (S.diag?'<div class="rule" style="margin-top:8px">🧭 '+esc(S.diag)+'</div>':'')+'</div>';
+ html+='<div class="card"><div class="cttl">设置与备份</div>'+
+ '<div class="faint">进度数据只存在这台设备的浏览器里。换设备/清缓存前，请先导出备份。</div>'+
+ '<div class="row" style="margin-top:10px"><button class="aub" data-act="wadj" data-arg="-1">◀ 周次-1</button>'+
+ '<span style="flex:1;text-align:center" class="mut">当前第 '+curWeek()+' 周</span>'+
+ '<button class="aub" data-act="wadj" data-arg="1">周次+1 ▶</button></div>'+
+ '<button class="btn ghost" data-act="export">💾 导出备份（进度 JSON）</button>'+
+ '<button class="btn ghost" data-act="import">📂 导入备份</button>'+
+ '<button class="btn warn" data-act="reset">🗑 清空全部数据（慎用）</button></div>';
+ el.innerHTML=html;
+}
+function weekReport(){
+ const days=[];for(let i=6;i>=0;i--){const d=new Date(Date.now()-i*86400000);
+  days.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));}
+ let ticks=0;const per={listen:0,card:0,read:0,review:0,frag:0};
+ for(const d of days){const r=S.daily[d]||{};for(const k in per)if(r[k]){per[k]++;ticks++;}}
+ const plays=S.audioMeta.reduce((a,m)=>a+m.p,0);
+ return '🌱 Elsa 英语追赶 · 第 '+curWeek()+' 周周报（'+phaseOf(curWeek()).name+'）\n'+
+ '━━━━━━━━━━━━\n'+
+ '🎯 本周打卡 '+ticks+'/35 格（聆听 '+per.listen+' 天 · 卡牌 '+per.card+' 天 · 精读 '+per.read+' 天 · 复盘 '+per.review+' 天 · 碎片泛听 '+per.frag+' 天）\n'+
+ '🃏 词汇：已掌握 '+masteredCount()+'/451 · 洞窟待征服 '+S.caveOrder.length+' 张 · 累计征服错卡 '+S.conquered+' 张\n'+
+ '🎧 听力库：'+S.audioMeta.length+' 段音频 · 累计听完 '+plays+' 遍\n'+
+ '⚔️ 语法八考点进度 '+Object.values(S.gram).reduce((a,b)=>a+b,0)+'/24 · 错题宝藏存量 '+S.sentWrong.length+' 条\n'+
+ '🫘 勇气豆 '+S.beans+' 颗 · 徽章 '+Object.keys(S.badges).length+'/'+Object.keys(BADGES).length+'\n'+
+ '━━━━━━━━━━━━\n'+
+ '家长三问本周版：课文里哪个故事最有意思？这周哪张错卡最"狡猾"？周末要玩哪部剧本杀？';
+}
+/* ============ 事件与启动 ============ */
+const RENDER={today:renderToday,vocab:renderVocab,quest:renderQuest,audio:renderAudio,me:renderMe};
+let TAB='today';
+function go(t){TAB=t;stopAudio();
+ document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+ $('pg-'+t).classList.remove('hidden');
+ document.querySelectorAll('#tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+ RENDER[t]();window.scrollTo(0,0);}
+let resetArm=false;
+document.body.addEventListener('click',function(ev){
+ const el=ev.target.closest('[data-act]');if(!el)return;
+ const act=el.dataset.act,arg=el.dataset.arg;
+ switch(act){
+  case 'setStart':{const d=$('startD');if(!d||!d.value){toast('先选一个起始日期');return;}
+   S.startDate=d.value;save();confetti();toast('🚀 出发！第 1 周：诊断 + 地基');renderToday();break;}
+  case 'day':{const r=dayRec();
+   if(r[arg]){delete r[arg];}else{r[arg]=1;addBean(1);toast('✅ +1 勇气豆');}
+   save();renderToday();break;}
+  case 'b632':{const uk=unit632Target();if(!S.texts[uk])S.texts[uk]={l:0,r:0,rl:0,x:0};
+   const tx=S.texts[uk],tg={l:6,r:3,rl:2}[arg];
+   if(tx[arg]<tg){tx[arg]++;addBean(1);
+    if(tx.l>=6&&tx.r>=3&&tx.rl>=2&&tx.x)award('txt-'+uk,'🎉 课文通关！'+UNITS[uk].name);}
+   save();renderToday();break;}
+  case 'x632':{const uk=unit632Target();if(!S.texts[uk])S.texts[uk]={l:0,r:0,rl:0,x:0};
+   S.texts[uk].x=S.texts[uk].x?0:1;
+   if(S.texts[uk].x){addBean(2);const tx=S.texts[uk];
+    if(tx.l>=6&&tx.r>=3&&tx.rl>=2)award('txt-'+uk,'🎉 课文通关！'+UNITS[uk].name);}
+   save();renderToday();break;}
+  case 'unitNav':{S.curUnit=Math.max(0,Math.min(ORDER.length-1,(S.curUnit||0)+(+arg)));save();renderToday();break;}
+  case 'ear':{if(award('ear','👂 听不懂勋章！坚持听完 6 遍不放弃，这本身就是胜利'))addBean(10);
+   else{addBean(2);toast('👂 又是一次"没懂也不放弃" +2 勇气豆');}renderToday();break;}
+  case 'game':{location.href=arg;break;}
+  case 'pretty':{const inp=$('prettyInp');if(!inp||!inp.value.trim()){toast('先写下这个"有信息量的错误"');return;}
+   S.pretty[today()+' '+new Date().toTimeString().slice(0,5)]={t:inp.value.trim()};
+   award('pretty','🌷 漂亮的错误！这个错误值得表彰');addBean(2);save();renderToday();break;}
+  case 'say':{speak(arg);break;}
+  case 'sesStart':{SES={queue:buildSession(12),idx:0,flip:false,tamed:0,failed:0,lock:false};
+   if(!SES.queue.length){SES=null;toast('词库已全部掌握，去看看洞窟吧');}renderVocab();break;}
+  case 'sesCave':{SES={queue:S.caveOrder.slice(0,12),idx:0,flip:false,tamed:0,failed:0,lock:false};
+   if(!SES.queue.length){SES=null;toast('洞窟是空的，太厉害了');}renderVocab();break;}
+  case 'flip':{if(SES){SES.flip=true;renderSes();}break;}
+  case 'sesOk':{if(!SES||SES.lock)break;SES.lock=true;
+   const id=SES.queue[SES.idx],r=vrec(id);
+   if(S.caveOrder.includes(id)){r.m+=2;r.b=Math.min(5,r.b+1);
+    S.caveOrder=S.caveOrder.filter(x=>x!==id);S.conquered++;addBean(2);
+    toast('⚡ 征服错卡！双倍印记 +2 · +2 勇气豆');
+    if(S.conquered>=10)award('cave','🏅 洞窟修炼者！已征服 10 张错卡');
+   }else{r.b=Math.min(5,r.b+1);r.m+=1;}
+   SES.tamed++;save();
+   setTimeout(()=>{SES.idx++;SES.flip=false;SES.lock=false;renderSes();},450);break;}
+  case 'sesFail':{if(!SES||SES.lock)break;SES.lock=true;
+   const id=SES.queue[SES.idx],r=vrec(id);r.b=1;
+   if(!S.caveOrder.includes(id))S.caveOrder.push(id);
+   const pos=Math.min(SES.idx+3,SES.queue.length);
+   SES.queue.splice(pos,0,id);SES.failed++;save();
+   toast('🌀 已回流——第 3 张之后再见面');
+   setTimeout(()=>{SES.idx++;SES.flip=false;SES.lock=false;renderSes();},450);break;}
+  case 'sesDone':{renderVocab();break;}
+  case 'qStart':{QUIZ={li:+arg,lock:false};renderQuest();renderQuiz();break;}
+  case 'qReview':{QUIZ={review:true,lock:false};renderQuest();renderQuiz();break;}
+  case 'qAns':{answerQuiz(+arg,el);break;}
+  case 'gram':{const p=arg.split(':'),i=+p[0],j=+p[1],st=S.gram[i]||0;
+   S.gram[i]=(st>j)?j:j+1;addBean(1);save();renderQuest();break;}
+  case 'wtpl':{const w='W'+curWeek(),wk=S.write[w]||(S.write[w]={tpl:[]});
+   wk.tpl=wk.tpl||[];const i=+arg;
+   if(wk.tpl.includes(i))wk.tpl=wk.tpl.filter(x=>x!==i);else wk.tpl.push(i);
+   save();renderQuest();break;}
+  case 'wdone':{const w='W'+curWeek(),wk=S.write[w]||(S.write[w]={tpl:[]});
+   if(wk.done){wk.done=0;toast('已取消打卡');}
+   else{wk.done=1;addBean(10);confetti();
+    if(award('pen','✒️ 下笔有神！第一次作文打卡')){}else toast('✅ 本周作文打卡 +10 勇气豆');}
+   S.write[w]=wk;save();renderQuest();break;}
+  case 'auImp':{importGroup=arg;$('audioInp').click();break;}
+  case 'auPlay':{const m=S.audioMeta.find(x=>x.id===arg);if(!m)break;
+   if(curAudioId===arg){stopAudio();renderAudio();break;}
+   stopAudio();
+   IDB.get(arg).then(blob=>{
+    if(!blob){toast('音频文件不在了，请重新导入');return;}
+    curAudio=new Audio(URL.createObjectURL(blob));curAudioId=arg;
+    curAudio.onended=()=>{stopAudio();renderAudio();};
+    curAudio.play().then(()=>renderAudio()).catch(()=>{toast('播放被拦截，再点一次试试');stopAudio();});
+   }).catch(()=>toast('读取音频失败'));break;}
+  case 'auDone':{const m=S.audioMeta.find(x=>x.id===arg);if(m){m.p++;addBean(1);save();renderAudio();toast('🎧 第 '+m.p+' 遍完成');}break;}
+  case 'auDel':{S.audioMeta=S.audioMeta.filter(x=>x!==undefined&&x.id!==arg);
+   IDB.del(arg).catch(()=>{});if(curAudioId===arg)stopAudio();save();renderAudio();toast('已删除');break;}
+  case 'report':{copyTxt(weekReport());break;}
+  case 'diag':{const inp=$('diagInp');if(!inp||!inp.value.trim()){toast('先写下诊断结果');return;}
+   S.diag=inp.value.trim();award('diag','🧭 初诊完成！第一天就用数字证明"你不是零基础"');addBean(10);save();renderMe();break;}
+  case 'wadj':{S.weekAdj=(S.weekAdj||0)+(+arg);save();renderMe();break;}
+  case 'export':{const t=JSON.stringify(S,null,1);
+   try{const b=new Blob([t],{type:'application/json'}),a=document.createElement('a');
+    a.href=URL.createObjectURL(b);a.download='elsa-tracker-backup-'+today()+'.json';a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),3000);toast('已导出备份文件');}
+   catch(e){copyTxt(t);}break;}
+  case 'import':{$('bakInp').click();break;}
+  case 'reset':{if(!resetArm){resetArm=true;toast('⚠️ 再点一次确认清空全部数据');
+   setTimeout(()=>resetArm=false,3000);break;}
+   S=defState();save();toast('已清空，重新开始');go('today');break;}
+ }
+});
+$('tabbar').addEventListener('click',function(ev){
+ const b=ev.target.closest('button[data-tab]');if(b)go(b.dataset.tab);});
+$('audioInp').addEventListener('change',function(){
+ const files=Array.from(this.files||[]);if(!files.length)return;
+ let done=0,ok=0;
+ files.forEach((f,i)=>{
+  const id='a'+Date.now()+'-'+i;
+  IDB.put(id,f).then(()=>{S.audioMeta.push({id:id,n:f.name,g:importGroup,p:0});ok++;})
+   .catch(()=>{}).finally(()=>{done++;
+    if(done===files.length){save();renderAudio();toast('📥 导入完成 '+ok+'/'+files.length+' 段');}});
+ });
+ this.value='';});
+$('bakInp').addEventListener('change',function(){
+ const f=this.files&&this.files[0];if(!f)return;
+ const rd=new FileReader();
+ rd.onload=()=>{try{const o=JSON.parse(rd.result);S=Object.assign(defState(),o);save();
+  toast('✅ 备份已恢复');go('me');}catch(e){toast('备份文件无法识别');}};
+ rd.readAsText(f);this.value='';});
+/* 启动 */
+$('beanTop').textContent=S.beans;
+document.querySelector('#tabbar button[data-tab="today"]').classList.add('on');
+renderToday();
+/* 调试句柄 */
+window.__DBG={state:function(){return {tab:TAB,week:curWeek(),beans:S.beans,badges:Object.keys(S.badges),
+ cave:S.caveOrder.length,conquered:S.conquered,mastered:masteredCount(),audio:S.audioMeta.length,
+ sentWrong:S.sentWrong.length,daily:S.daily[today()]||{},texts:S.texts,quiz:QUIZ?{li:QUIZ.li,qi:QUIZ.qi,review:!!QUIZ.review}:null,
+ ses:SES?{idx:SES.idx,left:SES.queue.length-SES.idx}:null};}};
+})();
+</script>
+</body>
+</html>

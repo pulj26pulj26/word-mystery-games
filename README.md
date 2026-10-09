@@ -6,7 +6,7 @@
 
 ## 在线开玩
 
-👉 **https://pulj26pulj26.github.io/word-mystery-games/**
+👉 **https://<你的GitHub用户名>.github.io/word-mystery-games/**
 
 （把 `<你的GitHub用户名>` 替换成实际用户名；部署方法见文末「上架到自己的 GitHub」）
 
