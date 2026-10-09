@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>美高派对疑云 · 厨房英语剧本杀</title>
+<style>
+:root{
+  --bg:#0b0705;
+  --ink:#faf6f0;
+  --dim:rgba(250,246,240,.62);
+  --faint:rgba(250,246,240,.38);
+  --line:rgba(255,255,255,.13);
+  --panel:rgba(255,255,255,.045);
+  --amber:#ffab5e;
+  --amber-ink:#2a1806;
+  --green:#3ddc97;
+  --red:#ff6b6b;
+  --serif:Georgia,'Times New Roman','Songti SC','SimSun',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{
+  font-family:var(--sans);background:var(--bg);color:var(--ink);
+  min-height:100vh;padding:0 0 60px;touch-action:manipulation;
+  background-image:radial-gradient(1200px 500px at 50% -10%,rgba(180,110,50,.16),transparent 60%);
+}
+#app{max-width:680px;margin:0 auto;padding:14px 14px 0;position:relative;z-index:1}
+
+/* ---------- 顶栏 ---------- */
+.topbar{display:flex;align-items:center;gap:10px;padding:6px 2px 12px}
+.topicon{width:34px;height:26px;flex:none}
+.topicon .steam{fill:none;stroke:var(--amber);stroke-width:1.6;stroke-linecap:round;opacity:.85}
+.topicon .pot{fill:none;stroke:#f5e3c8;stroke-width:1.8}
+.topbar.alert .topicon .steam{stroke:var(--red)}
+.top-title{font-size:.72rem;letter-spacing:.28em;color:var(--faint);text-transform:uppercase;flex:1;white-space:nowrap;overflow:hidden}
+.badge-pill{font-family:var(--serif);font-size:.85rem;color:var(--amber);
+  border:1px solid rgba(255,171,94,.35);border-radius:999px;padding:4px 12px;white-space:nowrap}
+.home-link{color:var(--dim);text-decoration:none;font-size:.75rem;border:1px solid var(--line);
+  border-radius:999px;padding:4px 10px;white-space:nowrap;background:var(--panel);flex:none}
+.home-link:active{transform:scale(.93);color:var(--amber)}
+.snd-btn{border:1px solid var(--line);background:var(--panel);color:var(--dim);
+  border-radius:999px;padding:4px 12px;font-size:.75rem;cursor:pointer;transition:.15s}
+.snd-btn:active{transform:scale(.93)}
+
+/* ---------- 场景 ---------- */
+.scene{position:relative;border-radius:20px;overflow:hidden;background:#120b06;
+  box-shadow:0 18px 50px rgba(0,0,0,.5);margin-bottom:14px}
+.scene svg{display:block;width:100%;height:auto}
+.scene::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(0,0,0,.42) 100%)}
+.act-tag{font-size:.7rem;letter-spacing:.3em;color:var(--faint);text-transform:uppercase;
+  margin:2px 4px 10px;display:flex;align-items:center;gap:8px}
+.act-tag::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* ---------- 对话框 ---------- */
+.dlg{background:var(--panel);border:1px solid var(--line);border-radius:18px;
+  padding:16px 18px 14px;position:relative;cursor:pointer;transition:border-color .2s}
+.dlg:active{border-color:rgba(255,255,255,.25)}
+.who{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;letter-spacing:.22em;
+  color:var(--amber);text-transform:uppercase;margin-bottom:8px}
+.who::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--amber)}
+.who.narr{color:var(--faint)}
+.who.narr::before{background:var(--faint)}
+.en{font-family:var(--serif);font-size:1.28rem;line-height:1.55;letter-spacing:.01em}
+.en .w{color:var(--amber);border-bottom:1px dashed rgba(255,171,94,.55);cursor:pointer;padding:0 1px}
+.cn{font-size:.86rem;color:var(--dim);margin-top:7px;line-height:1.6}
+.dlg-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.spk{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);
+  background:transparent;color:var(--dim);border-radius:999px;padding:5px 12px;font-size:.75rem;cursor:pointer;transition:.15s}
+.spk:active{transform:scale(.93);color:var(--amber);border-color:rgba(255,171,94,.5)}
+.next-hint{font-size:.72rem;color:var(--faint);letter-spacing:.2em;animation:blink 1.6s ease infinite}
+@keyframes blink{0%,100%{opacity:.35}50%{opacity:1}}
+
+/* ---------- 按钮 ---------- */
+.btn{display:block;width:100%;padding:15px;border-radius:14px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.28);background:transparent;color:var(--ink);
+  font-size:.95rem;letter-spacing:.18em;font-family:var(--sans);transition:.18s;margin-top:14px}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--amber);border-color:transparent;color:var(--amber-ink);font-weight:700}
+.btn.ghost{margin-top:10px;border-color:var(--line);color:var(--dim)}
+
+/* ---------- 选项 / chips ---------- */
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;
+  padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--panel);
+  color:var(--ink);font-family:var(--serif);font-size:1.08rem;cursor:pointer;transition:.15s}
+.opt:active{transform:scale(.98)}
+.opt .arrow{color:var(--faint);font-family:var(--sans);font-size:.8rem}
+.opt.ok{border-color:var(--green);background:rgba(61,220,151,.1);color:var(--green)}
+.opt.no{border-color:var(--red);background:rgba(255,107,107,.08);animation:shake .4s}
+.opt.hint-pulse{animation:pulseHint 1s ease infinite}
+.quiz-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.quiz-grid .opt{justify-content:center;text-align:center;padding:18px 10px;font-size:1.02rem}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes pulseHint{0%,100%{box-shadow:0 0 0 0 rgba(255,171,94,0)}50%{box-shadow:0 0 0 5px rgba(255,171,94,.25);border-color:var(--amber)}}
+
+/* ---------- 任务条 ---------- */
+.task{display:flex;align-items:center;gap:10px;background:rgba(255,171,94,.06);
+  border:1px solid rgba(255,171,94,.25);border-radius:14px;padding:12px 14px;margin-bottom:14px}
+.task .lab{font-size:.68rem;letter-spacing:.25em;color:var(--amber);flex:none}
+.task .txt{font-family:var(--serif);font-size:1rem;line-height:1.5}
+.task .txt b{color:var(--amber);font-weight:700;border-bottom:1px dashed rgba(255,171,94,.5)}
+.feedback{margin-top:10px;font-size:.85rem;color:var(--dim);min-height:1.4em;line-height:1.5;padding:0 4px}
+.feedback.bad{color:var(--red)}
+.feedback.good{color:var(--green)}
+
+/* ---------- 图标卡（工具/动作） ---------- */
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.tools.five{grid-template-columns:repeat(5,1fr)}
+.tool{border:1px solid var(--line);background:var(--panel);border-radius:16px;
+  padding:12px 6px 10px;cursor:pointer;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:6px}
+.tool:active{transform:scale(.95)}
+.tool svg{width:44px;height:54px}
+.tool .tname{font-size:.68rem;color:var(--faint);letter-spacing:.06em;opacity:0;transition:.3s;font-family:var(--serif)}
+.tool.reveal .tname{opacity:1}
+.tool.ok{border-color:var(--green);background:rgba(61,220,151,.1)}
+.tool.no{border-color:var(--red);animation:shake .4s}
+.tool.hint-pulse{animation:pulseHint 1s ease infinite}
+@media (max-width:420px){.tools.five{grid-template-columns:repeat(3,1fr)}}
+
+/* ---------- 顺序卡 ---------- */
+.ocards{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.ocard{display:flex;align-items:center;gap:12px;padding:15px 16px;border:1px solid var(--line);
+  border-radius:14px;background:var(--panel);color:var(--ink);font-family:var(--serif);
+  font-size:1.05rem;cursor:pointer;text-align:left;width:100%;transition:.15s}
+.ocard:active{transform:scale(.98)}
+.ocard .onum{flex:none;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--faint);font-family:var(--sans)}
+.ocard.ok{border-color:var(--green);background:rgba(61,220,151,.08)}
+.ocard.ok .onum{background:var(--green);border-color:var(--green);color:#0a1f16;font-weight:700}
+.ocard.no{border-color:var(--red);animation:shake .4s}
+.ocard.hint-pulse{animation:pulseHint 1s ease infinite}
+
+/* ---------- 嫌疑人 ---------- */
+.susp{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.scard{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:16px 8px 12px;
+  cursor:pointer;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:8px}
+.scard:active{transform:scale(.95)}
+.scard svg{width:56px;height:56px}
+.scard .sname{font-family:var(--serif);font-size:1.05rem}
+.scard .srole{font-size:.68rem;color:var(--faint)}
+.scard.ok{border-color:var(--red);background:rgba(255,107,107,.1)}
+.scard.no{border-color:var(--red);animation:shake .4s;opacity:.5}
+
+/* ---------- 徽章 toast / toast ---------- */
+.btoast{position:fixed;top:58px;left:50%;transform:translateX(-50%) translateY(-24px) scale(.9);
+  background:#1c120a;border:1px solid rgba(255,171,94,.45);border-radius:16px;padding:14px 22px;
+  text-align:center;opacity:0;pointer-events:none;transition:.35s cubic-bezier(.2,1.4,.4,1);z-index:99;
+  box-shadow:0 14px 40px rgba(0,0,0,.6)}
+.btoast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+.btoast .bt-lab{font-size:.62rem;letter-spacing:.3em;color:var(--amber);margin-bottom:4px}
+.btoast .bt-word{font-family:var(--serif);font-size:1.3rem;color:var(--ink)}
+.btoast .bt-cn{font-size:.78rem;color:var(--dim);margin-top:2px}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:#ffab5e;color:#2a1806;padding:11px 22px;border-radius:24px;font-size:.88rem;
+  opacity:0;transition:.3s;z-index:99;font-weight:600}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- 幕间 / 标题 ---------- */
+.overlay-title{text-align:center;padding:56px 10px 30px}
+.ov-line{font-size:.7rem;letter-spacing:.4em;color:var(--amber);text-transform:uppercase;margin-bottom:18px}
+.ov-big{font-family:var(--serif);font-size:2.5rem;line-height:1.3;letter-spacing:.04em}
+.ov-big .ch{display:inline-block;opacity:0;animation:chIn .5s cubic-bezier(.2,1.2,.4,1) forwards}
+@keyframes chIn{from{opacity:0;transform:translateY(24px);filter:blur(6px)}to{opacity:1;transform:none;filter:blur(0)}}
+.ov-sub{color:var(--dim);font-size:.92rem;margin-top:14px;line-height:1.8}
+.ov-en{font-family:var(--serif);color:var(--faint);font-size:.95rem;letter-spacing:.12em;margin-top:10px}
+.fade-item{opacity:0;animation:fadeUp .55s ease forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);filter:blur(4px)}to{opacity:1;transform:none;filter:blur(0)}}
+
+/* ---------- 结局 / 复盘 ---------- */
+.cert{text-align:center;padding:26px 18px;border:1px solid rgba(255,171,94,.4);border-radius:20px;
+  background:linear-gradient(180deg,rgba(255,171,94,.08),rgba(255,171,94,.02));margin-top:16px}
+.cert .c-lab{font-size:.68rem;letter-spacing:.4em;color:var(--amber)}
+.cert .c-title{font-family:var(--serif);font-size:1.8rem;margin-top:10px;line-height:1.4}
+.cert .c-en{font-family:var(--serif);color:var(--dim);letter-spacing:.14em;margin-top:6px;font-size:.85rem}
+.cert .c-stats{color:var(--faint);font-size:.8rem;margin-top:14px}
+.badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.bcell{border:1px solid rgba(255,171,94,.3);border-radius:12px;padding:9px 4px;text-align:center;background:rgba(255,171,94,.05)}
+.bcell .bw{font-family:var(--serif);font-size:.8rem;color:var(--amber);line-height:1.3}
+.bcell .bc{font-size:.64rem;color:var(--dim);margin-top:3px}
+.word-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.wcard{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px;cursor:pointer;transition:.15s;position:relative}
+.wcard:active{transform:scale(.96)}
+.wcard .we{font-family:var(--serif);font-size:1.1rem;color:var(--ink);line-height:1.35}
+.wcard .wp{font-size:.72rem;color:var(--faint);margin-top:4px;font-family:var(--serif)}
+.wcard .wc{font-size:.8rem;color:var(--dim);margin-top:4px}
+.wcard.heard{border-color:rgba(61,220,151,.45)}
+.wcard.heard::after{content:'✓';position:absolute;top:8px;right:10px;color:var(--green);font-size:.85rem}
+.wcard .wact{font-size:.62rem;color:var(--faint);letter-spacing:.15em;margin-top:6px}
+@media (max-width:380px){.badge-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar" id="topbar">
+    <a class="home-link" href="../index.html">‹ 大厅</a>
+    <svg class="topicon" viewBox="0 0 34 26">
+      <path class="steam" d="M11 11 C9 8.5 13 6.5 11 4"><animate attributeName="opacity" values=".9;.3;.9" dur="1.8s" repeatCount="indefinite"/></path>
+      <path class="steam" d="M17 11 C15 8.5 19 6.5 17 4"><animate attributeName="opacity" values=".4;1;.4" dur="1.8s" repeatCount="indefinite"/></path>
+      <path class="steam" d="M23 11 C21 8.5 25 6.5 23 4"><animate attributeName="opacity" values=".9;.3;.9" dur="1.8s" begin=".5s" repeatCount="indefinite"/></path>
+      <path class="pot" d="M5 15 H29 M7 15 V21 Q7 24 11 24 H23 Q27 24 27 21 V15 M3 15 H5 M29 15 H31"/>
+    </svg>
+    <div class="top-title">FRIENDSGIVING · 派对疑云</div>
+    <div class="badge-pill" id="badge-pill">徽章 0/17</div>
+    <button class="snd-btn" id="snd-btn">音效·开</button>
+  </div>
+  <div id="stage"></div>
+</div>
+<div class="btoast" id="btoast"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+
+/* ================= 单词库（17 个烹饪动词） ================= */
+var WORDS = {
+  "peel":    {ph:"/piːl/", cn:"削皮", act:"第一幕"},
+  "chop":    {ph:"/tʃɒp/", cn:"切碎", act:"第一幕"},
+  "measure": {ph:"/ˈmeʒə/", cn:"量取", act:"第一幕"},
+  "pour":    {ph:"/pɔː/", cn:"倒入", act:"第一幕"},
+  "grease":  {ph:"/ɡriːs/", cn:"抹油", act:"第一幕"},
+  "whisk":   {ph:"/wɪsk/", cn:"打蛋", act:"第二幕"},
+  "stir":    {ph:"/stɜː/", cn:"搅拌", act:"第二幕"},
+  "dip":     {ph:"/dɪp/", cn:"蘸", act:"第二幕"},
+  "coat":    {ph:"/kəʊt/", cn:"裹粉", act:"第二幕"},
+  "dredge":  {ph:"/dredʒ/", cn:"拍粉", act:"第二幕"},
+  "fry":     {ph:"/fraɪ/", cn:"煎炸", act:"第三幕"},
+  "boil":    {ph:"/bɔɪl/", cn:"煮沸", act:"第三幕"},
+  "steam":   {ph:"/stiːm/", cn:"蒸", act:"第三幕"},
+  "bake":    {ph:"/beɪk/", cn:"烘烤", act:"第三幕"},
+  "brush":   {ph:"/brʌʃ/", cn:"刷酱", act:"第三幕"},
+  "stuff":   {ph:"/stʌf/", cn:"填馅", act:"第三幕"},
+  "wrap":    {ph:"/ræp/", cn:"包裹", act:"第三幕"}
+};
+var WORD_ORDER = ["peel","chop","measure","pour","grease",
+  "whisk","stir","dip","coat","dredge",
+  "fry","boil","steam","bake","brush","stuff","wrap"];
+var WORD_KEYS = WORD_ORDER.slice().sort(function(a,b){return b.length-a.length;});
+var TOTAL = WORD_ORDER.length;
+
+/* ================= 剧本 ================= */
+var ACTS = [
+{ num:"第一幕", title:"备战厨房", en:"PREP TIME", sub:"解锁词汇：基础备菜动作", scene:"counter",
+  steps:[
+   {t:"say", who:"旁白", en:"Saturday, 4 p.m. The Friendsgiving party starts at six.",
+     cn:"周六下午四点，David 家的大厨房。好友感恩节派对六点开始——交换生 Elsa 要做的秘制炸鸡卷和点心，全指望这两个小时了。"},
+   {t:"say", who:"David", en:"Hi Elsa! Ready? Let's prep everything first.", cn:"嗨 Elsa！准备好了吗？我们先把食材都处理好。（听指令，点正确的动作图标）"},
+   {t:"pick", icons:["peel","chop","measure","pour","grease"], rounds:[
+     {en:"We need carrots. Please peel them first.", cn:"需要胡萝卜——先给它们削皮。", ans:"peel"},
+     {en:"Now chop the carrots into small pieces.", cn:"现在把胡萝卜切成小块。", ans:"chop"},
+     {en:"Let's make the batter. Measure 100g of flour.", cn:"来做面糊吧，量取 100 克面粉。", ans:"measure"},
+     {en:"Then pour the milk into the bowl.", cn:"然后把牛奶倒进碗里。", ans:"pour"},
+     {en:"Don't forget to grease the baking pan.", cn:"别忘了给烤盘抹油。", ans:"grease"}
+   ]},
+   {t:"say", who:"David", en:"Perfect prep! You work so fast.", cn:"备菜完美！你动作也太快了。"}
+  ]},
+{ num:"第二幕", title:"炸鸡危机", en:"THE CHICKEN CRISIS", sub:"解锁词汇：裹粉与腌制", scene:"messy",
+  steps:[
+   {t:"say", who:"旁白", en:"Something is wrong. The chicken is a mess — someone touched the recipe!",
+     cn:"不对劲——要炸的虾和鸡肉被弄得乱七八糟，腌制和裹粉的步骤全乱了。有人动过配方！"},
+   {t:"say", who:"David", en:"Look at the eggs... they are full of lumps.", cn:"你看这碗蛋液……全是块状。"},
+   {t:"choice", who:"你（Elsa）", q:"The eggs are lumpy. Elsa should ___ them.", qcn:"蛋液有块状——该怎么处理？",
+     opts:["stir","measure","whisk"], ans:"whisk", badge:"whisk",
+     done:"Elsa whisks the eggs until smooth.",
+     wrong:"不对哦——stir 只是轻轻搅，打匀蛋液要用 whisk（打蛋器快速打）。"},
+   {t:"say", who:"旁白", en:"The chicken is worse: thick wet batter everywhere. But the flour bag is untouched.",
+     cn:"鸡肉更糟——表面糊着厚厚的湿面糊，而干面粉袋根本没被打开过。"},
+   {t:"choice", who:"你（Elsa）", q:"正确的炸鸡步骤是哪一个？", qcn:"修复配方②：选出正确做法",
+     opts:["Coat it with wet batter.","Dip in egg, then dredge in flour.","Fry it right now."],
+     ans:"Dip in egg, then dredge in flour.", badge2:["dip","dredge"],
+     done:"Dip the chicken in egg, then dredge it in flour.",
+     wrong:"湿面糊直接下锅会脱浆——先蘸蛋液，再拍干粉。"},
+   {t:"order", mode:"text", task:"复原菜谱", hint:"三张菜谱卡被撕乱了——按正确顺序点出来",
+     items:["Coat it with flour.","Whisk the eggs.","Dip the chicken in the eggs."],
+     seq:["Whisk the eggs.","Dip the chicken in the eggs.","Coat it with flour."], badge:"coat"},
+   {t:"say", who:"Sarah", en:"Only Mike went into the kitchen this afternoon. I saw him.", cn:"美食社社长 Sarah 走过来说：今天下午只有 Mike 进过厨房，她看见了。"},
+   {t:"suspect"},
+   {t:"say", who:"旁白", en:"Mike admits it. He didn't know the recipe at all.",
+     cn:"Mike 低着头承认了：他完全看不懂英文菜谱，把 dry flour（干粉）当成了 wet batter（湿面糊）……"}
+  ]},
+{ num:"第三幕", title:"多线烹饪", en:"THE COOKING RELAY", sub:"解锁词汇：高阶烹饪动作", scene:"stove",
+  steps:[
+   {t:"say", who:"旁白", en:"Six o'clock is coming. Everyone joins the cooking relay!",
+     cn:"六点快到了！朋友们都加入帮忙——烹饪接力赛开始。听清每道菜的做法，选对动作。"},
+   {t:"pick", icons:["fry","boil","steam","bake"], rounds:[
+     {en:"Main dish: fried chicken and eggs. Fry them golden!", cn:"主菜炸鸡和煎蛋——炸到金黄！", ans:"fry"},
+     {en:"Tomato soup in the pot. Boil it slowly.", cn:"锅里的番茄汤——慢慢煮沸。", ans:"boil"},
+     {en:"Baozi for a Chinese touch. Steam them for 10 minutes.", cn:"中国风的包子——蒸 10 分钟。", ans:"steam"},
+     {en:"Chocolate cookies for dessert. Bake them at 180°C.", cn:"甜点巧克力饼干——180 度烘烤。", ans:"bake"}
+   ]},
+   {t:"choice", who:"David", q:"The soup smells great. Give it a gentle ___.", qcn:"汤很香了，轻轻___一下。",
+     opts:["whisk","stir","grease"], ans:"stir", badge:"stir",
+     done:"Give the soup a gentle stir.",
+     wrong:"汤只需要轻轻搅（stir），whisk 是用来打蛋的。"},
+   {t:"order", mode:"icon", task:"秘制肉卷", hint:"按正确顺序点三步图标，做出 Elsa 的秘制肉卷",
+     items:[{icon:"stuff",word:"stuff",cn:"填馅"},{icon:"wrap",word:"wrap",cn:"包裹"},{icon:"brush",word:"brush",cn:"刷酱"}],
+     seq:["brush","stuff","wrap"]},
+   {t:"choice", who:"Sarah", q:"\"How do you cook the dumplings?\"", qcn:"等待出锅时 Sarah 闲聊：饺子怎么做？用英语回答她。",
+     opts:["I bake them.","I fry them.","I steam them."], ans:"I steam them.",
+     done:"I steam them.",
+     wrong:"Sarah 一脸困惑——dumplings 是蒸的呀！"},
+   {t:"say", who:"寄宿家庭妈妈", en:"Elsa, the kitchen smells amazing!", cn:"寄宿家庭妈妈探头进来：Elsa，厨房香极了！"}
+  ]},
+{ num:"第四幕", title:"真相大白与终极晚宴", en:"THE TRUTH & THE FEAST", sub:"终极指认 + 宴席复盘", scene:"feast",
+  steps:[
+   {t:"say", who:"旁白", en:"All the dishes are on the table. Time to solve the mystery.",
+     cn:"所有菜肴终于上桌，香气四溢。是时候用英语揭开炸鸡被破坏的真相了。"},
+   {t:"choice", who:"你（Elsa）", q:"Mike, you stirred the eggs instead of ___ them!", qcn:"指认①：Mike 把蛋液搅了，而不是……",
+     opts:["pouring","whisking","greasing"], ans:"whisking",
+     done:"Mike, you stirred the eggs instead of whisking them!"},
+   {t:"choice", who:"你（Elsa）", q:"And you didn't ___ the chicken — you used wet batter!", qcn:"指认②：你没有给鸡肉拍干粉，而是用了湿面糊！",
+     opts:["measure","peel","dredge"], ans:"dredge",
+     done:"And you didn't dredge the chicken!"},
+   {t:"say", who:"Mike", en:"Sorry, Elsa... I just wanted to help. Teach me the words, please?",
+     cn:"Mike 挠头道歉：对不起 Elsa……我只是想帮忙。教教我这些单词吧？"},
+   {t:"quiz"},
+   {t:"say", who:"David", en:"To Elsa — the chef who saved Friendsgiving!", cn:"David 举起杯子：敬 Elsa——拯救了好友感恩节的大厨！"},
+   {t:"say", who:"旁白", en:"You saved the dinner — and made real friends.",
+     cn:"你不仅用正确的英文单词挽救了晚宴，还收获了真正的朋友。"}
+  ]}
+];
+
+/* 终考：举杯夸赞（过去分词复习） */
+var QUIZ = [
+  {q:"\"This fried chicken is perfectly ___!\"", opts:["boiled","fried","steamed","peeled"], ans:"fried"},
+  {q:"\"The cookies are freshly ___!\"", opts:["chopped","poured","baked","stirred"], ans:"baked"},
+  {q:"\"The soup was ___ to perfection!\"", opts:["wrapped","measured","dredged","boiled"], ans:"boiled"},
+  {q:"\"The dumplings are gently ___!\"", opts:["fried","greased","coated","steamed"], ans:"steamed"},
+  {q:"\"The chicken was ___ in flour before frying.\"", opts:["brushed","dredged","stuffed","whisked"], ans:"dredged"}
+];
+
+/* 嫌疑人 */
+var SUSPECTS = [
+  {name:"David", role:"同学 · 派对主人", color:"#7fb0ff",
+   alibi:"David 举起双手：\"I was blowing up balloons in the yard!\"（他在院子里吹气球。）"},
+  {name:"Sarah", role:"美食社社长", color:"#3ddc97",
+   alibi:"Sarah 瞪大眼睛：\"I was setting the table in the living room!\"（她在客厅摆餐具。）"},
+  {name:"Mike", role:"捣蛋鬼", color:"#ff8a8a",
+   alibi:""}
+];
+
+
+/* ================= 全局状态 ================= */
+var S = { act:-1, step:0, badges:{}, muted:false, heard:{} };
+var stage = document.getElementById('stage');
+var topbar = document.getElementById('topbar');
+
+/* ================= 语音 & 音效 ================= */
+var VOICE = null;
+function pickVoice(){
+  if(!('speechSynthesis' in window)) return;
+  var vs = speechSynthesis.getVoices();
+  VOICE = null;
+  for(var i=0;i<vs.length;i++){ if(/^en[-_]US/i.test(vs[i].lang)){ VOICE=vs[i]; break; } }
+  if(!VOICE){ for(var j=0;j<vs.length;j++){ if(/^en/i.test(vs[j].lang)){ VOICE=vs[j]; break; } } }
+}
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+
+function speak(text){
+  if(S.muted || !('speechSynthesis' in window) || !text) return;
+  try{
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    if(VOICE) u.voice = VOICE;
+    u.lang = 'en-US'; u.rate = 0.85; u.pitch = 1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+var AC = null;
+function tone(freq, delay, dur, type, vol){
+  if(S.muted) return;
+  try{
+    if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended') AC.resume();
+    var o = AC.createOscillator(), g = AC.createGain();
+    o.type = type||'sine'; o.frequency.value = freq;
+    var t0 = AC.currentTime + (delay||0);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol||0.12, t0+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+    o.connect(g); g.connect(AC.destination);
+    o.start(t0); o.stop(t0+dur+0.05);
+  }catch(e){}
+}
+function sfxDing(){ tone(880,0,.14); tone(1318,.09,.18); }
+function sfxBuzz(){ tone(150,0,.22,'sawtooth',.08); topbar.classList.add('alert'); setTimeout(function(){topbar.classList.remove('alert');},700); }
+function sfxBadge(){ tone(660,0,.12); tone(880,.1,.12); tone(1320,.2,.22); }
+function sfxWin(){ tone(523,0,.16); tone(659,.14,.16); tone(784,.28,.16); tone(1047,.42,.4); }
+
+/* ================= 提示 ================= */
+var toastTimer=null;
+function toast(m){
+  var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove('show');},2200);
+}
+var btoastTimer=null;
+function showBadge(word){
+  var w = WORDS[word]; if(!w) return;
+  var b = document.getElementById('btoast');
+  b.innerHTML = '<div class="bt-lab">获得单词徽章</div><div class="bt-word">'+word+'</div>'+
+    '<div class="bt-cn">'+w.ph+' · '+w.cn+'</div>';
+  b.classList.add('show'); sfxBadge(); speak(word);
+  clearTimeout(btoastTimer);
+  btoastTimer=setTimeout(function(){b.classList.remove('show');},2400);
+}
+function earn(word){
+  if(!word || S.badges[word]) return;
+  S.badges[word]=true;
+  document.getElementById('badge-pill').textContent = '徽章 '+Object.keys(S.badges).length+'/'+TOTAL;
+  showBadge(word);
+}
+function earnAll(list){ (list||[]).forEach(function(w,i){ setTimeout(function(){earn(w);}, i*800); }); }
+
+/* ================= 引擎 ================= */
+function curAct(){ return ACTS[S.act]; }
+function curStep(){ return curAct().steps[S.step]; }
+function go(a,s){ S.act=a; S.step=s; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function next(){
+  var act = curAct();
+  if(S.step+1 < act.steps.length){ go(S.act, S.step+1); }
+  else if(S.act+1 < ACTS.length){ renderActIntro(S.act+1); }
+  else { renderEnding(); }
+}
+function render(){
+  var st = curStep();
+  var html = '<div class="act-tag fade-item">'+curAct().num+' · '+curAct().title+'</div>';
+  html += '<div class="scene fade-item">'+SCENES[st.scene || curAct().scene]()+'</div>';
+  stage.innerHTML = html + '<div id="stepbox"></div>';
+  var box = document.getElementById('stepbox');
+  ({ say:renderSay, choice:renderChoice, pick:renderPick, order:renderOrder,
+     suspect:renderSuspect, quiz:renderQuiz }[st.t])(box, st);
+}
+
+/* 高亮 EN 文本里的目标单词 */
+function hotEN(text){
+  var out = text;
+  WORD_KEYS.forEach(function(w){
+    var re = new RegExp('\\b('+w+')(s|ed|ing)?\\b','i');
+    out = out.replace(re, function(m){ return '<span class="w" data-w="'+w+'">'+m+'</span>'; });
+  });
+  return out;
+}
+function bindHotWords(root){
+  var els = root.querySelectorAll('.w');
+  for(var i=0;i<els.length;i++){
+    (function(el){
+      el.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        speak(el.getAttribute('data-w'));
+      });
+    })(els[i]);
+  }
+}
+function spkBtn(text){
+  return '<button class="spk" data-say="'+text.replace(/"/g,'&quot;')+'">'+
+    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+
+    '<path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>朗读</button>';
+}
+function bindSpk(root){
+  var els = root.querySelectorAll('.spk');
+  for(var i=0;i<els.length;i++){
+    (function(el){
+      el.addEventListener('click', function(ev){
+        ev.stopPropagation(); speak(el.getAttribute('data-say'));
+      });
+    })(els[i]);
+  }
+}
+
+/* ---------- 对白 ---------- */
+function renderSay(box, st){
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var narr = (st.who==='旁白');
+  div.innerHTML =
+    '<div class="dlg">'+
+      '<div class="who'+(narr?' narr':'')+'">'+st.who+'</div>'+
+      (st.en?'<div class="en">'+hotEN(st.en)+'</div>':'')+
+      (st.cn?'<div class="cn">'+st.cn+'</div>':'')+
+      '<div class="dlg-foot">'+(st.en?spkBtn(st.en):'<span></span>')+
+      '<span class="next-hint">点击继续 ▸</span></div>'+
+    '</div>';
+  box.appendChild(div);
+  bindHotWords(div); bindSpk(div);
+  var done=false;
+  div.querySelector('.dlg').addEventListener('click', function(){
+    if(done) return; done=true;
+    if(st.badge) earn(st.badge);
+    setTimeout(next, st.badge?900:150);
+  });
+  if(st.en) setTimeout(function(){ speak(st.en); }, 400);
+}
+
+/* ---------- 选择（说出咒语 / 指认） ---------- */
+function renderChoice(box, st){
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var h = '<div class="task"><span class="lab">'+(st.who.indexOf('指认')>=0?'指认':'咒语')+'</span><span class="txt">'+hotEN(st.q)+'</span></div>';
+  h += '<div class="cn" style="padding:0 4px">'+st.qcn+'</div><div class="opts">';
+  st.opts.forEach(function(o){
+    h += '<button class="opt" data-o="'+o.replace(/"/g,'&quot;')+'"><span>'+o+'</span><span class="arrow">▸</span></button>';
+  });
+  h += '</div><div class="feedback"></div>';
+  div.innerHTML = h;
+  box.appendChild(div);
+  bindHotWords(div);
+  var fb = div.querySelector('.feedback'), fails=0, locked=false;
+  var opts = div.querySelectorAll('.opt');
+  for(var i=0;i<opts.length;i++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        if(locked) return;
+        var o = btn.getAttribute('data-o');
+        speak(o);
+        if(o===st.ans){
+          locked=true; btn.classList.add('ok'); sfxDing();
+          div.querySelector('.task .txt').innerHTML = hotEN(st.done);
+          fb.className='feedback good'; fb.textContent='✓ 正确！';
+          if(st.badge) earn(st.badge);
+          if(st.badge2) earnAll(st.badge2);
+          speak(st.done);
+          setTimeout(next, st.badge2?2400:1600);
+        }else{
+          btn.classList.add('no'); sfxBuzz(); fails++;
+          fb.className='feedback bad';
+          fb.textContent = st.wrong || '再想一想。';
+          setTimeout(function(){btn.classList.remove('no');},450);
+          if(fails>=2){
+            for(var j=0;j<opts.length;j++)
+              if(opts[j].getAttribute('data-o')===st.ans) opts[j].classList.add('hint-pulse');
+          }
+        }
+      });
+    })(opts[i]);
+  }
+}
+
+
+/* ---------- 图标指令接力（第一幕备菜 / 第三幕灶台） ---------- */
+function renderPick(box, st){
+  var ri=0, fails=0, locked=false;
+  var div = document.createElement('div');
+  div.className='fade-item';
+  box.appendChild(div);
+  function draw(){
+    var R = st.rounds[ri];
+    var h = '<div class="task"><span class="lab">指令 '+(ri+1)+'/'+st.rounds.length+'</span>'+
+      '<span class="txt">'+hotEN(R.en)+'</span></div>'+
+      '<div class="cn" style="padding:0 4px">'+R.cn+'</div>';
+    h += '<div class="tools'+(st.icons.length===5?' five':'')+'">';
+    st.icons.forEach(function(ic){
+      h += '<button class="tool" data-t="'+ic+'">'+ICONS[ic]+'<span class="tname">'+ic+'</span></button>';
+    });
+    h += '</div><div class="feedback"></div>';
+    div.innerHTML = h;
+    bindHotWords(div);
+    speak(R.en);
+    locked=false;
+    var fb = div.querySelector('.feedback');
+    var tools = div.querySelectorAll('.tool');
+    for(var i=0;i<tools.length;i++){
+      (function(btn){
+        btn.addEventListener('click', function(){
+          if(locked) return;
+          var t = btn.getAttribute('data-t');
+          if(t===R.ans){
+            locked=true; btn.classList.add('ok','reveal'); sfxDing(); earn(t);
+            fb.className='feedback good'; fb.textContent='✓ '+t+'（'+WORDS[t].cn+'）——动作到位！';
+            ri++; fails=0;
+            if(ri>=st.rounds.length){ setTimeout(next, 1300); }
+            else setTimeout(draw, 1300);
+          }else{
+            btn.classList.add('no'); sfxBuzz(); fails++;
+            fb.className='feedback bad';
+            fb.textContent='David 一脸疑惑："Pardon me? The recipe says '+R.ans+'."';
+            speak("Pardon me? The recipe says "+R.ans+".");
+            setTimeout(function(){btn.classList.remove('no');},450);
+            if(fails>=2){
+              for(var j=0;j<tools.length;j++)
+                if(tools[j].getAttribute('data-t')===R.ans) tools[j].classList.add('hint-pulse');
+            }
+          }
+        });
+      })(tools[i]);
+    }
+  }
+  draw();
+}
+
+/* ---------- 顺序还原（菜谱卡 / 肉卷三步） ---------- */
+function renderOrder(box, st){
+  var idx=0, fails=0;
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var h = '<div class="task"><span class="lab">'+st.task+'</span><span class="txt">'+st.hint+'</span></div>';
+  if(st.mode==='text'){
+    h += '<div class="ocards">';
+    st.items.forEach(function(txt){
+      h += '<button class="ocard" data-v="'+txt.replace(/"/g,'&quot;')+'"><span class="onum">·</span><span>'+hotEN(txt)+'</span></button>';
+    });
+    h += '</div>';
+  }else{
+    h += '<div class="tools">';
+    st.items.forEach(function(it){
+      h += '<button class="tool" data-v="'+it.word+'">'+ICONS[it.icon]+'<span class="tname">'+it.word+' · '+it.cn+'</span></button>';
+    });
+    h += '</div>';
+  }
+  h += '<div class="feedback"></div>';
+  div.innerHTML = h;
+  box.appendChild(div);
+  bindHotWords(div);
+  var fb = div.querySelector('.feedback');
+  var cards = div.querySelectorAll('[data-v]');
+  for(var i=0;i<cards.length;i++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        if(btn.classList.contains('ok')) return;
+        var v = btn.getAttribute('data-v');
+        if(v===st.seq[idx]){
+          btn.classList.add('ok','reveal'); sfxDing();
+          var num = btn.querySelector('.onum');
+          if(num) num.textContent = idx+1;
+          if(st.mode==='icon'){ earn(v); speak(v); }
+          else speak(v);
+          idx++;
+          if(idx>=st.seq.length){
+            if(st.badge) earn(st.badge);
+            fb.className='feedback good';
+            fb.textContent = st.mode==='icon' ? '✓ 秘制肉卷完成！香气扑鼻。' : '✓ 菜谱复原成功！';
+            setTimeout(next, st.badge?1900:1500);
+          }
+        }else{
+          btn.classList.add('no'); sfxBuzz(); fails++;
+          fb.className='feedback bad';
+          fb.textContent = '顺序不对——第 '+(idx+1)+' 步不是这个。';
+          setTimeout(function(){btn.classList.remove('no');},450);
+          if(fails>=2){
+            for(var j=0;j<cards.length;j++)
+              if(cards[j].getAttribute('data-v')===st.seq[idx]) cards[j].classList.add('hint-pulse');
+          }
+        }
+      });
+    })(cards[i]);
+  }
+}
+
+/* ---------- 嫌疑人指认 ---------- */
+function renderSuspect(box, st){
+  var locked=false;
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var h = '<div class="task"><span class="lab">推理</span><span class="txt">线索：湿面糊、没动过的面粉袋、<b>只有一人下午进过厨房</b>——谁动了配方？</span></div>';
+  h += '<div class="susp">';
+  SUSPECTS.forEach(function(sp){
+    h += '<button class="scard" data-s="'+sp.name+'">'+avatarSVG(sp)+
+      '<span class="sname">'+sp.name+'</span><span class="srole">'+sp.role+'</span></button>';
+  });
+  h += '</div><div class="feedback"></div>';
+  div.innerHTML = h;
+  box.appendChild(div);
+  var fb = div.querySelector('.feedback');
+  var cards = div.querySelectorAll('.scard');
+  for(var i=0;i<cards.length;i++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        if(locked) return;
+        var name = btn.getAttribute('data-s');
+        if(name==='Mike'){
+          locked=true; btn.classList.add('ok'); sfxDing();
+          fb.className='feedback good';
+          fb.textContent='✓ Mike 脸红了："OK... it was me." —— 真相在第四幕揭晓！';
+          speak("OK... it was me.");
+          setTimeout(next, 1800);
+        }else{
+          btn.classList.add('no'); sfxBuzz();
+          var sp = SUSPECTS.filter(function(x){return x.name===name;})[0];
+          fb.className='feedback bad'; fb.textContent = sp.alibi;
+          speak(sp.name==="David"?"I was blowing up balloons!":"I was setting the table!");
+          setTimeout(function(){btn.classList.remove('no');},600);
+        }
+      });
+    })(cards[i]);
+  }
+}
+function avatarSVG(sp){
+  return '<svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="26" fill="rgba(255,255,255,.04)" stroke="'+sp.color+'" stroke-width="1.5"/>'+
+  '<circle cx="28" cy="22" r="9" fill="none" stroke="'+sp.color+'" stroke-width="2"/>'+
+  '<path d="M12 46 C12 34 44 34 44 46" fill="none" stroke="'+sp.color+'" stroke-width="2"/>'+
+  '<text x="28" y="53" text-anchor="middle" font-size="9" fill="'+sp.color+'" font-family="Georgia">'+sp.name[0]+'</text></svg>';
+}
+
+/* ---------- 终考 Quiz ---------- */
+function renderQuiz(box, st){
+  var qi=0, fails=0;
+  var div = document.createElement('div');
+  div.className='fade-item';
+  box.appendChild(div);
+  function draw(){
+    var Q = QUIZ[qi];
+    var h = '<div class="task"><span class="lab">举杯 '+(qi+1)+'/5</span><span class="txt">'+hotEN(Q.q)+'</span></div>';
+    h += '<div class="cn" style="padding:0 4px">宴席复盘：为每道菜选一句正确的英文夸赞</div>';
+    h += '<div class="quiz-grid">';
+    Q.opts.forEach(function(o){ h += '<button class="opt" data-o="'+o+'"><span>'+o+'</span></button>'; });
+    h += '</div><div class="feedback"></div>';
+    div.innerHTML = h;
+    bindHotWords(div);
+    var fb = div.querySelector('.feedback');
+    var locked=false;
+    var opts = div.querySelectorAll('.opt');
+    for(var i=0;i<opts.length;i++){
+      (function(btn){
+        btn.addEventListener('click', function(){
+          if(locked) return;
+          var o = btn.getAttribute('data-o');
+          speak(o);
+          if(o===Q.ans){
+            locked=true; btn.classList.add('ok'); sfxDing();
+            qi++; fails=0;
+            if(qi>=QUIZ.length){ setTimeout(next, 900); }
+            else setTimeout(draw, 900);
+          }else{
+            btn.classList.add('no'); sfxBuzz(); fails++;
+            fb.className='feedback bad'; fb.textContent='大家愣住了——这个词用在这里不对哦。';
+            setTimeout(function(){btn.classList.remove('no');},450);
+            if(fails>=2){
+              for(var j=0;j<opts.length;j++)
+                if(opts[j].getAttribute('data-o')===Q.ans) opts[j].classList.add('hint-pulse');
+            }
+          }
+        });
+      })(opts[i]);
+    }
+  }
+  draw();
+}
+
+
+/* ---------- 标题页 ---------- */
+function renderTitle(){
+  S.act=-1;
+  var html =
+    '<div class="scene fade-item">'+SCENES.title()+'</div>'+
+    '<div class="overlay-title">'+
+      '<div class="ov-line fade-item">厨房英语剧本杀 · 单人闯关 · 第 2 弹</div>'+
+      '<div class="ov-big">'+kinetic('美高派对疑云')+'</div>'+
+      '<div class="ov-en fade-item" style="animation-delay:.5s">THE FRIENDSGIVING MYSTERY</div>'+
+      '<div class="ov-sub fade-item" style="animation-delay:.7s">交换生 Elsa 要在好友感恩节派对上大显身手，<br>'+
+      '厨房却被人动了手脚！说出正确的烹饪动词，<br>'+
+      '修复菜品、找出"凶手"。收集 <b style="color:var(--amber)">17 枚动词徽章</b>，挽救晚宴。</div>'+
+    '</div>'+
+    '<button class="btn primary fade-item" id="start-btn" style="animation-delay:.9s">系 上 围 裙 · 开 始</button>'+
+    '<div class="ov-sub fade-item" style="text-align:center;font-size:.75rem;animation-delay:1.05s">玩法：听 · 读 · 选 · 排 —— 在派对剧情中学会 17 个烹饪动词</div>';
+  stage.innerHTML = html;
+  document.getElementById('start-btn').addEventListener('click', function(){
+    sfxWin(); renderActIntro(0);
+  });
+}
+function kinetic(text){
+  var h='';
+  for(var i=0;i<text.length;i++)
+    h += '<span class="ch" style="animation-delay:'+(0.12*i)+'s">'+text[i]+'</span>';
+  return h;
+}
+
+/* ---------- 幕间 ---------- */
+function renderActIntro(a){
+  S.act=a; S.step=0;
+  var act = ACTS[a];
+  var html =
+    '<div class="scene fade-item">'+SCENES[act.scene]()+'</div>'+
+    '<div class="overlay-title">'+
+      '<div class="ov-line fade-item">'+act.num+'</div>'+
+      '<div class="ov-big">'+kinetic(act.title)+'</div>'+
+      '<div class="ov-en fade-item" style="animation-delay:.5s">'+act.en+'</div>'+
+      '<div class="ov-sub fade-item" style="animation-delay:.65s">'+act.sub+'</div>'+
+    '</div>'+
+    '<button class="btn primary fade-item" id="act-btn" style="animation-delay:.8s">进 入 本 幕</button>';
+  stage.innerHTML = html;
+  document.getElementById('act-btn').addEventListener('click', function(){ go(a,0); });
+}
+
+/* ---------- 结局（双称号） ---------- */
+function renderEnding(){
+  sfxWin();
+  var got = Object.keys(S.badges).length;
+  var html =
+    '<div class="scene fade-item">'+SCENES.feast()+'</div>'+
+    '<div class="cert fade-item">'+
+      '<div class="c-lab">晚宴圆满成功 · 通关达成</div>'+
+      '<div class="c-title">美高社交达人 × 厨房英语大师</div>'+
+      '<div class="c-en">PARTY STAR & KITCHEN ENGLISH MASTER</div>'+
+      '<div class="c-stats">收集徽章 '+got+'/'+TOTAL+' 枚 · 用 17 个烹饪动词拯救了好友感恩节</div>'+
+    '</div>'+
+    '<div class="badge-grid fade-item" style="animation-delay:.2s">';
+  WORD_ORDER.forEach(function(w){
+    var has = S.badges[w];
+    html += '<div class="bcell" style="'+(has?'':'opacity:.25')+'"><div class="bw">'+w+'</div><div class="bc">'+WORDS[w].cn+'</div></div>';
+  });
+  html += '</div>'+
+    '<button class="btn primary fade-item" id="review-btn" style="animation-delay:.35s">📖 复盘单词 · 跟读一遍</button>'+
+    '<button class="btn ghost fade-item" id="again-btn" style="animation-delay:.45s">🔁 再玩一次</button>';
+  stage.innerHTML = html;
+  document.getElementById('review-btn').addEventListener('click', renderReview);
+  document.getElementById('again-btn').addEventListener('click', function(){
+    S.badges={}; S.heard={};
+    document.getElementById('badge-pill').textContent='徽章 0/'+TOTAL;
+    renderTitle();
+  });
+}
+
+/* ---------- 复盘 ---------- */
+function renderReview(){
+  var html =
+    '<div class="act-tag">复盘 · 跟读挑战</div>'+
+    '<div class="task"><span class="lab">彩蛋</span><span class="txt">点卡片听发音并跟读——盲盒抽词：抽到哪个就试试用它说一道菜的做法。<b id="heard-n">0</b>/'+TOTAL+'</span></div>'+
+    '<div class="word-grid">';
+  WORD_ORDER.forEach(function(w){
+    var d = WORDS[w];
+    html += '<div class="wcard'+(S.heard[w]?' heard':'')+'" data-w="'+w+'">'+
+      '<div class="we">'+w+'</div><div class="wp">'+d.ph+'</div><div class="wc">'+d.cn+'</div>'+
+      '<div class="wact">'+d.act+'</div></div>';
+  });
+  html += '</div><button class="btn ghost" id="back-end">返回结局</button>';
+  stage.innerHTML = html;
+  updateHeard();
+  var cards = stage.querySelectorAll('.wcard');
+  for(var i=0;i<cards.length;i++){
+    (function(c){
+      c.addEventListener('click', function(){
+        var w = c.getAttribute('data-w');
+        speak(w);
+        if(!S.heard[w]){ S.heard[w]=true; c.classList.add('heard'); sfxDing(); updateHeard(); }
+      });
+    })(cards[i]);
+  }
+  document.getElementById('back-end').addEventListener('click', renderEnding);
+}
+function updateHeard(){
+  var n = Object.keys(S.heard).length;
+  var el = document.getElementById('heard-n');
+  if(el) el.textContent = n;
+  if(n>=TOTAL) toast('🎉 跟读完成！你是真正的厨房英语大师！');
+}
+
+/* ---------- 音效开关 ---------- */
+document.getElementById('snd-btn').addEventListener('click', function(){
+  S.muted = !S.muted;
+  this.textContent = S.muted ? '音效·关' : '音效·开';
+  if(S.muted && 'speechSynthesis' in window) speechSynthesis.cancel();
+  else sfxDing();
+});
+
+
+/* ================= 场景绘制（全代码手绘 SVG） ================= */
+var SCENES = {};
+
+/* 标题：派对厨房黄昏 */
+SCENES.title = function(){
+  var bulbs = "";
+  var cols = ["#ffab5e","#ff6b6b","#3ddc97","#7fb0ff"];
+  for(var i=0;i<11;i++){
+    var x = 22+i*36, y = 26+Math.sin(i/10*Math.PI)*16;
+    bulbs += '<circle cx="'+x+'" cy="'+(y+7)+'" r="3.2" fill="'+cols[i%4]+'"><animate attributeName="opacity" values="1;.35;1" dur="'+(1.4+i%3*.4)+'s" repeatCount="indefinite"/></circle>';
+  }
+  var flags = "";
+  for(var f=0;f<9;f++){
+    var fx = 30+f*42, fy = 74+Math.sin(f/8*Math.PI)*10;
+    flags += '<polygon points="'+fx+','+fy+' '+(fx+20)+','+fy+' '+(fx+10)+','+(fy+16)+'" fill="'+cols[f%4]+'" opacity=".85"/>';
+  }
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs>'+
+    '<linearGradient id="dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1230"/><stop offset=".6" stop-color="#8a3b2e"/><stop offset="1" stop-color="#ff9d5c"/></linearGradient>'+
+    '<radialGradient id="klamp"><stop offset="0" stop-color="#ffcf9e" stop-opacity=".4"/><stop offset="1" stop-color="#ffcf9e" stop-opacity="0"/></radialGradient>'+
+  '</defs>'+
+  '<rect width="400" height="250" fill="#1a0f08"/>'+
+  '<path d="M0 30 Q 200 66 400 30" fill="none" stroke="#3a2412" stroke-width="1.5"/>'+bulbs+
+  '<path d="M0 76 Q 200 104 400 76" fill="none" stroke="#3a2412" stroke-width="1.5"/>'+flags+
+  '<rect x="238" y="66" width="132" height="112" fill="url(#dusk)" stroke="#3a2412" stroke-width="4"/>'+
+  '<line x1="304" y1="66" x2="304" y2="178" stroke="#3a2412" stroke-width="4"/><line x1="238" y1="122" x2="370" y2="122" stroke="#3a2412" stroke-width="4"/>'+
+  '<path d="M250 178 Q 262 140 258 122 M262 178 Q 280 150 296 146" stroke="#241018" stroke-width="4" fill="none"/>'+
+  '<circle cx="100" cy="70" r="70" fill="url(#klamp)"/>'+
+  '<rect x="136" y="60" width="128" height="30" rx="5" fill="#3a2412" stroke="#5a3a1c" stroke-width="1.5"/>'+
+  '<text x="200" y="79" text-anchor="middle" font-size="13" fill="#f5e3c8" font-family="Georgia" letter-spacing="2">Friendsgiving</text>'+
+  '<rect y="192" width="400" height="58" fill="#241407"/><rect y="192" width="400" height="4" fill="#4a2e16"/>'+
+  '<rect x="36" y="164" width="34" height="30" rx="3" fill="#e8dcc8"/><rect x="40" y="156" width="26" height="10" rx="2" fill="#d8cbb2"/>'+
+  '<text x="53" y="184" text-anchor="middle" font-size="7" fill="#8a7a5c" font-family="Georgia">FLOUR</text>'+
+  '<path d="M96 162 L108 162 L108 194 L96 194 Z M96 162 L102 152 L108 162" fill="#f5f0e4" stroke="#c8b89a" stroke-width="1.5"/>'+
+  '<path d="M140 186 Q 138 172 152 166 Q 164 160 166 166 Q 168 172 158 180 Q 146 190 140 186 Z" fill="#ff8a3d"/>'+
+  '<path d="M164 164 L170 156 M166 167 L173 161" stroke="#3ddc97" stroke-width="2.5"/>'+
+  '<path d="M196 192 Q 196 176 224 176 Q 252 176 252 192 Z" fill="#c8b89a"/><ellipse cx="224" cy="192" rx="28" ry="5" fill="#a89878"/>'+
+  '<rect x="292" y="184" width="52" height="10" rx="3" fill="#1c1c22" stroke="#3a3a46" stroke-width="1.5"/>'+
+  '</svg>';
+};
+
+/* 第一幕：备菜台面 */
+SCENES.counter = function(){
+  var tiles = "";
+  for(var r=0;r<4;r++) for(var c=0;c<8;c++)
+    tiles += '<rect x="'+(c*50+2)+'" y="'+(r*38+2)+'" width="46" height="34" fill="none" stroke="#2a1a0e" stroke-width="1"/>';
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs><radialGradient id="glow1"><stop offset="0" stop-color="#ffcf9e" stop-opacity=".5"/><stop offset="1" stop-color="#ffcf9e" stop-opacity="0"/></radialGradient></defs>'+
+  '<rect width="400" height="250" fill="#1c110a"/>'+tiles+
+  '<rect x="60" y="18" width="280" height="6" fill="#3a2412"/>'+
+  '<rect x="90" y="0" width="18" height="18" rx="3" fill="#5a3a1c"/><rect x="140" y="2" width="22" height="16" rx="3" fill="#6b4423"/><rect x="240" y="0" width="18" height="18" rx="3" fill="#5a3a1c"/><rect x="290" y="2" width="20" height="16" rx="3" fill="#6b4423"/>'+
+  '<ellipse cx="200" cy="120" rx="180" ry="90" fill="url(#glow1)"/>'+
+  '<rect y="168" width="400" height="82" fill="#241407"/><rect y="168" width="400" height="5" fill="#4a2e16"/>'+
+  '<rect x="30" y="150" width="110" height="52" rx="6" fill="#6b4423" stroke="#4a2e16" stroke-width="2"/>'+
+  '<path d="M50 168 Q 48 158 60 153 Q 70 149 71 154 Q 72 159 64 165 Q 54 172 50 168 Z" fill="#ff8a3d"/>'+
+  '<path d="M69 152 L75 145 M71 155 L77 149" stroke="#3ddc97" stroke-width="2.2"/>'+
+  '<path d="M82 176 Q 80 166 92 161 Q 102 157 103 162 Q 104 167 96 173 Q 86 180 82 176 Z" fill="#ff8a3d"/>'+
+  '<path d="M101 160 L107 153 M103 163 L109 157" stroke="#3ddc97" stroke-width="2.2"/>'+
+  '<rect x="106" y="146" width="24" height="16" rx="2" fill="#c8d4e4" stroke="#8a9ab4" stroke-width="1.5"/><rect x="130" y="140" width="10" height="8" rx="2" fill="#8a9ab4"/>'+
+  '<circle cx="60" cy="192" r="9" fill="#d8a86b"/><circle cx="82" cy="194" r="8" fill="#c89858"/>'+
+  '<path d="M170 196 Q 170 176 200 176 Q 230 176 230 196 Z" fill="#c8b89a"/><ellipse cx="200" cy="196" rx="30" ry="5" fill="#a89878"/>'+
+  '<rect x="250" y="150" width="34" height="46" rx="3" fill="#e8dcc8"/><rect x="254" y="142" width="26" height="10" rx="2" fill="#d8cbb2"/>'+
+  '<text x="267" y="176" text-anchor="middle" font-size="7" fill="#8a7a5c" font-family="Georgia">FLOUR</text>'+
+  '<path d="M300 156 L314 156 L314 196 L300 196 Z M300 156 L307 144 L314 156" fill="#f5f0e4" stroke="#c8b89a" stroke-width="1.5"/>'+
+  '<path d="M336 160 h22 l-3 34 h-16 Z" fill="none" stroke="#c8b89a" stroke-width="2"/><path d="M358 166 q10 5 0 14" fill="none" stroke="#c8b89a" stroke-width="2"/>'+
+  '<line x1="341" y1="170" x2="349" y2="170" stroke="#c8b89a" stroke-width="1.5"/><line x1="341" y1="178" x2="350" y2="178" stroke="#c8b89a" stroke-width="1.5"/>'+
+  '</svg>';
+};
+
+/* 第二幕：被搞乱的台面 */
+SCENES.messy = function(){
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs><radialGradient id="glow2"><stop offset="0" stop-color="#cfe0ff" stop-opacity=".22"/><stop offset="1" stop-color="#cfe0ff" stop-opacity="0"/></radialGradient></defs>'+
+  '<rect width="400" height="250" fill="#170f0a"/>'+
+  '<rect y="168" width="400" height="82" fill="#201308"/><rect y="168" width="400" height="5" fill="#3a2412"/>'+
+  '<ellipse cx="200" cy="120" rx="180" ry="90" fill="url(#glow2)"/>'+
+  '<path d="M40 190 Q 70 160 130 176 Q 170 186 150 200 Q 100 214 60 204 Q 36 198 40 190 Z" fill="#e8e2d4" opacity=".9"/>'+
+  '<circle cx="170" cy="182" r="4" fill="#e8e2d4"/><circle cx="182" cy="190" r="3" fill="#e8e2d4"/><circle cx="56" cy="176" r="3" fill="#e8e2d4"/>'+
+  '<path d="M230 170 Q 250 160 262 176 Q 268 190 250 196 Q 232 200 226 186 Q 222 176 230 170 Z" fill="#c8b89a"/>'+
+  '<path d="M232 168 Q 244 172 258 172" stroke="#8a7a5c" stroke-width="2" fill="none"/>'+
+  '<path d="M288 180 Q 296 168 306 178 Q 312 188 300 192 Q 288 194 288 180 Z" fill="#f5e3c8"/>'+
+  '<path d="M290 178 L 296 184 L 304 176" stroke="#c8a85c" stroke-width="1.5" fill="none"/>'+
+  '<path d="M318 172 Q 326 162 334 172 Q 338 182 328 186 Q 318 188 318 172 Z" fill="#f5e3c8"/>'+
+  '<ellipse cx="312" cy="196" rx="16" ry="5" fill="#f5c85c" opacity=".85"/>'+
+  '<g transform="rotate(-8 130 130)"><rect x="96" y="106" width="72" height="48" rx="2" fill="#f3efe4"/>'+
+  '<text x="132" y="122" text-anchor="middle" font-size="6.5" fill="#8a8378" font-family="Georgia" letter-spacing="1">RECIPE</text>'+
+  '<line x1="104" y1="130" x2="160" y2="130" stroke="#b9b2a2" stroke-width="2"/><line x1="104" y1="138" x2="150" y2="138" stroke="#b9b2a2" stroke-width="2"/><line x1="104" y1="146" x2="142" y2="146" stroke="#b9b2a2" stroke-width="2"/></g>'+
+  '<g transform="rotate(14 220 120)"><rect x="196" y="100" width="52" height="38" rx="2" fill="#f3efe4"/>'+
+  '<line x1="202" y1="112" x2="240" y2="112" stroke="#b9b2a2" stroke-width="2"/><line x1="202" y1="120" x2="234" y2="120" stroke="#b9b2a2" stroke-width="2"/></g>'+
+  '<path d="M340 150 Q 346 176 338 196 Q 330 206 322 196 Q 318 182 326 168 Q 332 156 340 150 Z" fill="#d8b86b" opacity=".8"/>'+
+  '<path d="M70 120 q6 10 0 18 M84 116 q6 10 0 18" stroke="#e8e2d4" stroke-width="2.5" fill="none" opacity=".5"/>'+
+  '<circle cx="356" cy="60" r="26" fill="none" stroke="#ff6b6b" stroke-width="2.5" opacity=".8"/>'+
+  '<path d="M346 60 h20 M356 50 v20" stroke="#ff6b6b" stroke-width="2.5" opacity=".8"/>'+
+  '<text x="356" y="96" text-anchor="middle" font-size="8" fill="#ff6b6b" font-family="Georgia">WHO DID IT?</text>'+
+  '</svg>';
+};
+
+/* 第三幕：灶台四工位 */
+SCENES.stove = function(){
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs><radialGradient id="glow3"><stop offset="0" stop-color="#ffcf9e" stop-opacity=".4"/><stop offset="1" stop-color="#ffcf9e" stop-opacity="0"/></radialGradient></defs>'+
+  '<rect width="400" height="250" fill="#1c110a"/>'+
+  '<rect y="180" width="400" height="70" fill="#141018"/><rect y="180" width="400" height="6" fill="#2a2a36"/>'+
+  '<ellipse cx="200" cy="90" rx="190" ry="80" fill="url(#glow3)"/>'+
+  '<circle cx="70" cy="196" r="17" fill="none" stroke="#3a3a46" stroke-width="2"/>'+
+  '<circle cx="70" cy="196" r="12" fill="#ff6b3d" opacity=".35"><animate attributeName="opacity" values=".4;.15;.4" dur="1s" repeatCount="indefinite"/></circle>'+
+  '<ellipse cx="70" cy="178" rx="30" ry="8" fill="#1c1c22" stroke="#3a3a46" stroke-width="2"/>'+
+  '<line x1="98" y1="174" x2="126" y2="168" stroke="#3a3a46" stroke-width="4"/>'+
+  '<circle cx="62" cy="174" r="2.5" fill="#f5c85c"><animate attributeName="cy" values="174;170;174" dur=".8s" repeatCount="indefinite"/></circle>'+
+  '<circle cx="76" cy="176" r="2" fill="#f5c85c"><animate attributeName="cy" values="176;171;176" dur=".7s" repeatCount="indefinite"/></circle>'+
+  '<circle cx="170" cy="196" r="17" fill="none" stroke="#3a3a46" stroke-width="2"/>'+
+  '<rect x="146" y="158" width="48" height="30" rx="4" fill="#23232e" stroke="#3a3a46" stroke-width="2"/>'+
+  '<path d="M146 158 Q 170 144 194 158" fill="#2e2e3c" stroke="#3a3a46" stroke-width="2"/>'+
+  '<circle cx="160" cy="172" r="3" fill="#7fb0ff"><animate attributeName="cy" values="176;164;176" dur="1.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.6s" repeatCount="indefinite"/></circle>'+
+  '<circle cx="172" cy="174" r="2.4" fill="#7fb0ff"><animate attributeName="cy" values="178;166;178" dur="1.3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.3s" repeatCount="indefinite"/></circle>'+
+  '<circle cx="182" cy="173" r="2" fill="#7fb0ff"><animate attributeName="cy" values="177;165;177" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite"/></circle>'+
+  '<rect x="226" y="158" width="52" height="12" rx="3" fill="#8a6a3c" stroke="#5a4423" stroke-width="1.5"/>'+
+  '<rect x="226" y="171" width="52" height="12" rx="3" fill="#9a7a4c" stroke="#5a4423" stroke-width="1.5"/>'+
+  '<circle cx="238" cy="164" r="1.6" fill="#3a2c12"/><circle cx="252" cy="164" r="1.6" fill="#3a2c12"/><circle cx="266" cy="164" r="1.6" fill="#3a2c12"/>'+
+  '<circle cx="238" cy="177" r="1.6" fill="#3a2c12"/><circle cx="252" cy="177" r="1.6" fill="#3a2c12"/><circle cx="266" cy="177" r="1.6" fill="#3a2c12"/>'+
+  '<path d="M238 150 C 234 142 242 138 238 130" fill="none" stroke="#f5e3c8" stroke-width="2" opacity=".6"><animate attributeName="opacity" values=".7;.2;.7" dur="1.6s" repeatCount="indefinite"/></path>'+
+  '<path d="M252 150 C 248 142 256 138 252 130" fill="none" stroke="#f5e3c8" stroke-width="2" opacity=".6"><animate attributeName="opacity" values=".3;.8;.3" dur="1.6s" repeatCount="indefinite"/></path>'+
+  '<path d="M266 150 C 262 142 270 138 266 130" fill="none" stroke="#f5e3c8" stroke-width="2" opacity=".6"><animate attributeName="opacity" values=".7;.2;.7" dur="1.6s" begin=".5s" repeatCount="indefinite"/></path>'+
+  '<rect x="308" y="130" width="72" height="62" rx="5" fill="#1c1c24" stroke="#3a3a46" stroke-width="2"/>'+
+  '<rect x="316" y="140" width="56" height="34" rx="3" fill="#0e0e14" stroke="#3a3a46" stroke-width="1.5"/>'+
+  '<rect x="316" y="140" width="56" height="34" rx="3" fill="#ff9d5c" opacity=".12"><animate attributeName="opacity" values=".18;.06;.18" dur="2s" repeatCount="indefinite"/></rect>'+
+  '<circle cx="334" cy="158" r="6" fill="#d8a86b"/><circle cx="354" cy="158" r="6" fill="#d8a86b"/>'+
+  '<circle cx="332" cy="156" r="1" fill="#5a3a1c"/><circle cx="336" cy="160" r="1" fill="#5a3a1c"/><circle cx="352" cy="157" r="1" fill="#5a3a1c"/><circle cx="356" cy="160" r="1" fill="#5a3a1c"/>'+
+  '<circle cx="320" cy="136" r="2" fill="#5a5a6a"/><circle cx="330" cy="136" r="2" fill="#5a5a6a"/><circle cx="340" cy="136" r="2" fill="#5a5a6a"/>'+
+  '<text x="70" y="230" text-anchor="middle" font-size="9" fill="#8a7a5c" font-family="Georgia">FRY</text>'+
+  '<text x="170" y="230" text-anchor="middle" font-size="9" fill="#8a7a5c" font-family="Georgia">BOIL</text>'+
+  '<text x="252" y="230" text-anchor="middle" font-size="9" fill="#8a7a5c" font-family="Georgia">STEAM</text>'+
+  '<text x="344" y="230" text-anchor="middle" font-size="9" fill="#8a7a5c" font-family="Georgia">BAKE</text>'+
+  '</svg>';
+};
+
+/* 第四幕/结局：晚宴桌 */
+SCENES.feast = function(){
+  var bulbs = "";
+  var cols = ["#ffab5e","#ff6b6b","#3ddc97","#7fb0ff"];
+  for(var i=0;i<9;i++){
+    var x = 30+i*42, y = 22+Math.sin(i/8*Math.PI)*14;
+    bulbs += '<circle cx="'+x+'" cy="'+(y+6)+'" r="3" fill="'+cols[i%4]+'"><animate attributeName="opacity" values="1;.4;1" dur="'+(1.5+i%3*.3)+'s" repeatCount="indefinite"/></circle>';
+  }
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs><radialGradient id="glow4"><stop offset="0" stop-color="#ffcf9e" stop-opacity=".5"/><stop offset="1" stop-color="#ffcf9e" stop-opacity="0"/></radialGradient></defs>'+
+  '<rect width="400" height="250" fill="#160d07"/>'+
+  '<path d="M0 26 Q 200 56 400 26" fill="none" stroke="#3a2412" stroke-width="1.5"/>'+bulbs+
+  '<ellipse cx="200" cy="130" rx="180" ry="90" fill="url(#glow4)"/>'+
+  '<ellipse cx="200" cy="200" rx="190" ry="52" fill="#3a2412"/>'+
+  '<ellipse cx="200" cy="192" rx="190" ry="52" fill="#4a2e16"/>'+
+  '<ellipse cx="200" cy="186" rx="46" ry="16" fill="#f5f0e4"/>'+
+  '<ellipse cx="200" cy="182" rx="34" ry="12" fill="#c8814a"/>'+
+  '<path d="M176 178 Q 190 164 214 170 Q 230 174 224 182 Q 200 192 176 178 Z" fill="#b06a35"/>'+
+  '<path d="M222 176 q10 -6 14 2 q-8 6 -14 -2" fill="#f5e3c8"/>'+
+  '<ellipse cx="110" cy="196" rx="30" ry="11" fill="#f5f0e4"/>'+
+  '<path d="M96 192 q4 -8 10 0 q4 -8 10 0 q4 -8 10 0" fill="none" stroke="#d8cbb2" stroke-width="4"/>'+
+  '<path d="M106 184 C 102 178 110 174 106 168" fill="none" stroke="#f5e3c8" stroke-width="2" opacity=".6"><animate attributeName="opacity" values=".7;.2;.7" dur="1.6s" repeatCount="indefinite"/></path>'+
+  '<ellipse cx="290" cy="196" rx="30" ry="11" fill="#f5f0e4"/>'+
+  '<circle cx="280" cy="192" r="6" fill="#d8a86b"/><circle cx="294" cy="194" r="6" fill="#d8a86b"/><circle cx="287" cy="188" r="6" fill="#d8a86b"/>'+
+  '<ellipse cx="152" cy="214" rx="24" ry="9" fill="#f5f0e4"/><ellipse cx="152" cy="212" rx="18" ry="6" fill="#c8503c"/>'+
+  '<ellipse cx="250" cy="214" rx="24" ry="9" fill="#f5f0e4"/><ellipse cx="250" cy="212" rx="18" ry="6" fill="#c8503c"/>'+
+  '<rect x="60" y="150" width="6" height="30" fill="#f5e3c8"/><rect x="334" y="150" width="6" height="30" fill="#f5e3c8"/>'+
+  '<path d="M63 146 C 59 140 67 136 63 130 C 69 136 67 142 63 146 Z" fill="#ffcf6b"><animate attributeName="opacity" values="1;.6;1" dur=".9s" repeatCount="indefinite"/></path>'+
+  '<path d="M337 146 C 333 140 341 136 337 130 C 343 136 341 142 337 146 Z" fill="#ffcf6b"><animate attributeName="opacity" values=".6;1;.6" dur=".9s" repeatCount="indefinite"/></path>'+
+  '<path d="M120 140 l6 16 h-12 Z M280 140 l6 16 h-12 Z" fill="#c8503c" opacity=".7"/>'+
+  '</svg>';
+};
+
+/* ================= 17 个烹饪动作图标 ================= */
+function ic(inner){
+  return '<svg viewBox="0 0 44 54" fill="none" stroke="#f5e3c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>';
+}
+var ICONS = {
+  peel: ic('<path d="M14 40 Q11 30 23 21 Q33 14 35 19 Q37 25 27 34 Q17 44 14 40 Z" fill="#ff8a3d" stroke="none"/>'+
+    '<path d="M33 16 L39 9 M35 19 L42 13" stroke="#3ddc97" stroke-width="2.5"/>'+
+    '<path d="M8 12 h12 M14 8 v8" stroke="#c8d4e4"/>'+
+    '<path d="M28 40 q7 3 9 -4" stroke="#ffab5e" stroke-dasharray="2 3"/>'),
+  chop: ic('<rect x="8" y="38" width="30" height="7" rx="2" fill="#4a2e16" stroke="none"/>'+
+    '<rect x="16" y="14" width="16" height="13" rx="2" fill="#c8d4e4" stroke="none"/><rect x="30" y="10" width="9" height="6" rx="2" fill="#8a9ab4" stroke="none"/>'+
+    '<rect x="13" y="31" width="5" height="5" fill="#ff8a3d" stroke="none"/><rect x="21" y="32" width="5" height="5" fill="#ff8a3d" stroke="none"/><rect x="29" y="31" width="5" height="5" fill="#ff8a3d" stroke="none"/>'),
+  measure: ic('<path d="M13 14 H29 L27 44 H15 Z"/>'+
+    '<path d="M29 20 q9 4 0 14"/>'+
+    '<line x1="17" y1="22" x2="23" y2="22"/><line x1="17" y1="30" x2="24" y2="30"/><line x1="17" y1="38" x2="23" y2="38"/>'+
+    '<rect x="16" y="32" width="10" height="9" fill="#f5f0e4" opacity=".3" stroke="none"/>'),
+  pour: ic('<g transform="rotate(28 24 18)"><rect x="16" y="8" width="13" height="18" rx="1" fill="#f5f0e4" stroke="none"/><path d="M16 8 L22.5 2 L29 8"/></g>'+
+    '<path d="M19 30 q-2 6 1 10" stroke-dasharray="2 3"/>'+
+    '<path d="M10 42 q11 9 22 0"/>'),
+  grease: ic('<ellipse cx="22" cy="38" rx="15" ry="5.5"/>'+
+    '<line x1="37" y1="36" x2="45" y2="32"/>'+
+    '<path d="M13 36 q6 -3 18 0" stroke="#ffab5e"/>'+
+    '<rect x="18" y="8" width="5" height="13" rx="2"/><path d="M17 21 h7 l-2 7 h-3 Z" fill="#ffab5e" stroke="none"/>'+
+    '<circle cx="26" cy="28" r="1.5" fill="#ffab5e" stroke="none"/>'),
+  whisk: ic('<rect x="19" y="4" width="6" height="11" rx="2.5"/>'+
+    '<path d="M22 15 C 10 22 12 38 22 43 C 32 38 34 22 22 15 Z"/>'+
+    '<path d="M22 15 C 15 22 16 38 22 43 M22 15 C 29 22 28 38 22 43"/>'),
+  stir: ic('<rect x="9" y="26" width="26" height="17" rx="3"/>'+
+    '<line x1="31" y1="6" x2="23" y2="28" stroke-width="3"/><ellipse cx="22" cy="31" rx="3" ry="5" transform="rotate(-18 22 31)"/>'+
+    '<path d="M14 34 q8 6 16 0" stroke="#ffab5e"/>'),
+  dip: ic('<circle cx="21" cy="18" r="8" fill="#d8a86b" stroke="none"/>'+
+    '<line x1="27" y1="24" x2="33" y2="31" stroke-width="3.5"/><circle cx="35" cy="33" r="2.6"/>'+
+    '<path d="M7 40 q15 11 30 0"/>'+
+    '<circle cx="17" cy="32" r="1.6" fill="#f5c85c" stroke="none"/><circle cx="24" cy="35" r="1.6" fill="#f5c85c" stroke="none"/>'),
+  coat: ic('<circle cx="22" cy="22" r="10" fill="#d8a86b" stroke="none"/>'+
+    '<circle cx="22" cy="22" r="10"/>'+
+    '<line x1="29" y1="29" x2="35" y2="36" stroke-width="3.5"/><circle cx="37" cy="38" r="2.6"/>'+
+    '<circle cx="10" cy="12" r="1.4" fill="#f5f0e4" stroke="none"/><circle cx="34" cy="10" r="1.4" fill="#f5f0e4" stroke="none"/><circle cx="38" cy="20" r="1.4" fill="#f5f0e4" stroke="none"/><circle cx="8" cy="30" r="1.4" fill="#f5f0e4" stroke="none"/>'),
+  dredge: ic('<circle cx="22" cy="20" r="8"/>'+
+    '<line x1="28" y1="26" x2="34" y2="33" stroke-width="3.5"/><circle cx="36" cy="35" r="2.4"/>'+
+    '<circle cx="12" cy="10" r="4" fill="#f5f0e4" opacity=".25" stroke="none"/><circle cx="20" cy="7" r="5" fill="#f5f0e4" opacity=".2" stroke="none"/><circle cx="30" cy="9" r="4" fill="#f5f0e4" opacity=".25" stroke="none"/>'+
+    '<path d="M10 44 h24" stroke-dasharray="3 3"/><circle cx="16" cy="40" r="1.3" fill="#f5f0e4" stroke="none"/><circle cx="26" cy="41" r="1.3" fill="#f5f0e4" stroke="none"/>'),
+  fry: ic('<path d="M7 32 q15 9 30 0"/><line x1="37" y1="30" x2="44" y2="26"/>'+
+    '<circle cx="16" cy="29" r="1.8" fill="#f5c85c" stroke="none"/><circle cx="24" cy="30" r="1.8" fill="#f5c85c" stroke="none"/><circle cx="31" cy="28" r="1.5" fill="#f5c85c" stroke="none"/>'+
+    '<path d="M14 40 q3 5 0 8 M24 41 q3 5 0 8 M33 40 q3 5 0 8" stroke="#ff6b3d"/>'+
+    '<path d="M18 20 C 15 15 21 13 18 8 M28 20 C 25 15 31 13 28 8" opacity=".7"/>'),
+  boil: ic('<rect x="11" y="22" width="24" height="21" rx="3"/>'+
+    '<path d="M11 22 Q 23 12 35 22"/>'+
+    '<circle cx="18" cy="34" r="2" fill="#7fb0ff" stroke="none"><animate attributeName="cy" values="38;26;38" dur="1.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.4s" repeatCount="indefinite"/></circle>'+
+    '<circle cx="26" cy="36" r="1.6" fill="#7fb0ff" stroke="none"><animate attributeName="cy" values="40;28;40" dur="1.1s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.1s" repeatCount="indefinite"/></circle>'+
+    '<path d="M18 14 C 15 10 21 8 18 4 M28 14 C 25 10 31 8 28 4" opacity=".7"/>'),
+  steam: ic('<rect x="8" y="24" width="28" height="9" rx="2"/><rect x="8" y="34" width="28" height="9" rx="2"/>'+
+    '<circle cx="15" cy="28.5" r="1.2" fill="#0b0705" stroke="none"/><circle cx="22" cy="28.5" r="1.2" fill="#0b0705" stroke="none"/><circle cx="29" cy="28.5" r="1.2" fill="#0b0705" stroke="none"/>'+
+    '<circle cx="15" cy="38.5" r="1.2" fill="#0b0705" stroke="none"/><circle cx="22" cy="38.5" r="1.2" fill="#0b0705" stroke="none"/><circle cx="29" cy="38.5" r="1.2" fill="#0b0705" stroke="none"/>'+
+    '<path d="M14 18 C 11 13 17 11 14 6 M22 18 C 19 13 25 11 22 6 M30 18 C 27 13 33 11 30 6"/>'),
+  bake: ic('<rect x="8" y="10" width="30" height="34" rx="3"/>'+
+    '<rect x="13" y="18" width="20" height="15" rx="2"/>'+
+    '<circle cx="19" cy="25" r="3.4" fill="#d8a86b" stroke="none"/><circle cx="27" cy="26" r="3.4" fill="#d8a86b" stroke="none"/>'+
+    '<circle cx="14" y="14" r="1.4"/><circle cx="20" cy="14" r="1.4"/><circle cx="26" cy="14" r="1.4"/>'+
+    '<path d="M14 6 q2 -3 4 0 M24 6 q2 -3 4 0" stroke="#ffab5e"/>'),
+  brush: ic('<line x1="28" y1="6" x2="20" y2="20" stroke-width="3.5"/>'+
+    '<rect x="15" y="18" width="9" height="6" rx="1.5" transform="rotate(38 19 21)"/>'+
+    '<path d="M13 24 l7 7 h-9 Z" fill="#ffab5e" stroke="none"/>'+
+    '<path d="M8 36 q8 -4 16 0 q8 4 14 0" stroke="#c8503c" stroke-width="3"/>'+
+    '<circle cx="12" cy="44" r="1.6" fill="#c8503c" stroke="none"/><circle cx="26" cy="45" r="1.6" fill="#c8503c" stroke="none"/>'),
+  stuff: ic('<ellipse cx="22" cy="38" rx="16" ry="7"/>'+
+    '<path d="M15 36 Q 22 28 29 36 Z" fill="#c8814a" stroke="none"/>'+
+    '<line x1="30" y1="8" x2="25" y2="24" stroke-width="3"/><ellipse cx="24" cy="27" rx="3" ry="4.6" transform="rotate(-14 24 27)"/>'+
+    '<path d="M12 44 q10 4 20 0" opacity=".6"/>'),
+  wrap: ic('<rect x="8" y="22" width="22" height="15" rx="7.5"/>'+
+    '<circle cx="32" cy="29.5" r="6.5"/>'+
+    '<path d="M32 25.5 a4 4 0 0 1 0 8 a2.5 2.5 0 0 1 0 -5" stroke-width="1.6"/>'+
+    '<path d="M11 25 q4 3 8 0 q4 -3 8 0" stroke="#c8503c" stroke-width="2"/>'+
+    '<path d="M10 42 q11 6 22 0" opacity=".5" stroke-dasharray="2 3"/>')
+};
+
+/* ---------- 启动 ---------- */
+renderTitle();
+
+window.__WM = { state:function(){ return { act:S.act, step:S.step, badges:Object.keys(S.badges).length, heard:Object.keys(S.heard).length }; } };
+})();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

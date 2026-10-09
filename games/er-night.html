@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>急诊室之夜 · 英语单词剧本杀</title>
+<style>
+:root{
+  --bg:#05070a;
+  --ink:#f4f6f9;
+  --dim:rgba(244,246,249,.62);
+  --faint:rgba(244,246,249,.38);
+  --line:rgba(255,255,255,.13);
+  --panel:rgba(255,255,255,.045);
+  --amber:#ffc069;
+  --amber-ink:#241a08;
+  --green:#3ddc97;
+  --red:#ff6b6b;
+  --serif:Georgia,'Times New Roman','Songti SC','SimSun',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{
+  font-family:var(--sans);background:var(--bg);color:var(--ink);
+  min-height:100vh;padding:0 0 60px;touch-action:manipulation;
+  background-image:radial-gradient(1200px 500px at 50% -10%,rgba(60,90,140,.14),transparent 60%);
+}
+#app{max-width:680px;margin:0 auto;padding:14px 14px 0;position:relative;z-index:1}
+
+/* ---------- 顶栏 ---------- */
+.topbar{display:flex;align-items:center;gap:10px;padding:6px 2px 12px}
+.ecg{width:74px;height:26px;flex:none}
+.ecg path{fill:none;stroke:var(--green);stroke-width:1.6;stroke-linecap:round;
+  stroke-dasharray:46 160;animation:ecgmove 2.6s linear infinite}
+.topbar.alert .ecg path{stroke:var(--red)}
+@keyframes ecgmove{from{stroke-dashoffset:206}to{stroke-dashoffset:0}}
+.top-title{font-size:.72rem;letter-spacing:.28em;color:var(--faint);text-transform:uppercase;flex:1;white-space:nowrap;overflow:hidden}
+.badge-pill{font-family:var(--serif);font-size:.85rem;color:var(--amber);
+  border:1px solid rgba(255,192,105,.35);border-radius:999px;padding:4px 12px;white-space:nowrap}
+.home-link{color:var(--dim);text-decoration:none;font-size:.75rem;border:1px solid var(--line);
+  border-radius:999px;padding:4px 10px;white-space:nowrap;background:var(--panel);flex:none}
+.home-link:active{transform:scale(.93);color:var(--amber)}
+.snd-btn{border:1px solid var(--line);background:var(--panel);color:var(--dim);
+  border-radius:999px;padding:4px 12px;font-size:.75rem;cursor:pointer;transition:.15s}
+.snd-btn:active{transform:scale(.93)}
+
+/* ---------- 场景 ---------- */
+.scene{position:relative;border-radius:20px;overflow:hidden;background:#080d15;
+  box-shadow:0 18px 50px rgba(0,0,0,.5);margin-bottom:14px}
+.scene svg{display:block;width:100%;height:auto}
+.scene::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(0,0,0,.45) 100%)}
+.act-tag{font-size:.7rem;letter-spacing:.3em;color:var(--faint);text-transform:uppercase;
+  margin:2px 4px 10px;display:flex;align-items:center;gap:8px}
+.act-tag::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* ---------- 对话框 ---------- */
+.dlg{background:var(--panel);border:1px solid var(--line);border-radius:18px;
+  padding:16px 18px 14px;position:relative;cursor:pointer;transition:border-color .2s}
+.dlg:active{border-color:rgba(255,255,255,.25)}
+.who{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;letter-spacing:.22em;
+  color:var(--amber);text-transform:uppercase;margin-bottom:8px}
+.who::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--amber)}
+.who.narr{color:var(--faint)}
+.who.narr::before{background:var(--faint)}
+.en{font-family:var(--serif);font-size:1.28rem;line-height:1.55;letter-spacing:.01em}
+.en .w{color:var(--amber);border-bottom:1px dashed rgba(255,192,105,.55);cursor:pointer;padding:0 1px}
+.cn{font-size:.86rem;color:var(--dim);margin-top:7px;line-height:1.6}
+.dlg-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.spk{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);
+  background:transparent;color:var(--dim);border-radius:999px;padding:5px 12px;font-size:.75rem;cursor:pointer;transition:.15s}
+.spk:active{transform:scale(.93);color:var(--amber);border-color:rgba(255,192,105,.5)}
+.next-hint{font-size:.72rem;color:var(--faint);letter-spacing:.2em;animation:blink 1.6s ease infinite}
+@keyframes blink{0%,100%{opacity:.35}50%{opacity:1}}
+
+/* ---------- 按钮 ---------- */
+.btn{display:block;width:100%;padding:15px;border-radius:14px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.28);background:transparent;color:var(--ink);
+  font-size:.95rem;letter-spacing:.18em;font-family:var(--sans);transition:.18s;margin-top:14px}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--amber);border-color:transparent;color:var(--amber-ink);font-weight:700}
+.btn.ghost{margin-top:10px;border-color:var(--line);color:var(--dim)}
+
+/* ---------- 选项 / chips ---------- */
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;
+  padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--panel);
+  color:var(--ink);font-family:var(--serif);font-size:1.08rem;cursor:pointer;transition:.15s}
+.opt:active{transform:scale(.98)}
+.opt .arrow{color:var(--faint);font-family:var(--sans);font-size:.8rem}
+.opt.ok{border-color:var(--green);background:rgba(61,220,151,.1);color:var(--green)}
+.opt.no{border-color:var(--red);background:rgba(255,107,107,.08);animation:shake .4s}
+.opt.hint-pulse{animation:pulseHint 1s ease infinite}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes pulseHint{0%,100%{box-shadow:0 0 0 0 rgba(255,192,105,0)}50%{box-shadow:0 0 0 5px rgba(255,192,105,.25);border-color:var(--amber)}}
+.quiz-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.quiz-grid .opt{justify-content:center;text-align:center;padding:18px 10px;font-size:1.02rem}
+
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px;justify-content:center}
+.chip{padding:10px 16px;border:1px solid var(--line);border-radius:999px;background:var(--panel);
+  color:var(--ink);font-family:var(--serif);font-size:1.02rem;cursor:pointer;transition:.15s}
+.chip:active{transform:scale(.93)}
+.chip.used{opacity:.22;pointer-events:none}
+.chip.no{border-color:var(--red);animation:shake .4s}
+.chip.hint-pulse{animation:pulseHint 1s ease infinite}
+
+/* ---------- 任务条 ---------- */
+.task{display:flex;align-items:center;gap:10px;background:rgba(255,192,105,.06);
+  border:1px solid rgba(255,192,105,.25);border-radius:14px;padding:12px 14px;margin-bottom:14px}
+.task .lab{font-size:.68rem;letter-spacing:.25em;color:var(--amber);flex:none}
+.task .txt{font-family:var(--serif);font-size:1rem;line-height:1.5}
+.task .txt b{color:var(--amber);font-weight:700;border-bottom:1px dashed rgba(255,192,105,.5)}
+.feedback{margin-top:10px;font-size:.85rem;color:var(--dim);min-height:1.4em;line-height:1.5;padding:0 4px}
+.feedback.bad{color:var(--red)}
+.feedback.good{color:var(--green)}
+
+/* ---------- 工具卡 / 地图 ---------- */
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.tool{border:1px solid var(--line);background:var(--panel);border-radius:16px;
+  padding:14px 8px 12px;cursor:pointer;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:8px}
+.tool:active{transform:scale(.95)}
+.tool svg{width:52px;height:64px}
+.tool .tname{font-size:.68rem;color:var(--faint);letter-spacing:.1em;opacity:0;transition:.3s}
+.tool.reveal .tname{opacity:1}
+.tool.ok{border-color:var(--green);background:rgba(61,220,151,.1)}
+.tool.no{border-color:var(--red);animation:shake .4s}
+.tool.hint-pulse{animation:pulseHint 1s ease infinite}
+.map-wrap{margin-top:12px;border-radius:16px;overflow:hidden;background:#0a101a;border:1px solid var(--line)}
+.map-wrap svg{display:block;width:100%;height:auto}
+.spot{cursor:pointer}
+.spot rect.hit{fill:transparent}
+.spot.found .micon{stroke:var(--green);fill:rgba(61,220,151,.12)}
+.spot.hint-pulse .micon{animation:pulseHint 1s ease infinite}
+.map-label{font-size:11px;fill:rgba(244,246,249,.55);font-family:var(--sans)}
+#player-dot{transition:cx .5s ease,cy .5s ease}
+.door{cursor:pointer}
+.door .dplate{fill:#131c30;stroke:#3a5380}
+.door .dsym{stroke:#a8c0e4;fill:none}
+.door.found .dsym{stroke:var(--green)}
+.door.found .dplate{stroke:rgba(61,220,151,.5)}
+.door.hint-pulse .dplate{animation:pulseHint 1s ease infinite}
+.door text{font-family:var(--serif)}
+#door-dot{transition:cx .5s ease,cy .5s ease}
+
+/* ---------- 填空 ---------- */
+.paper{background:#f3efe4;color:#2a2620;border-radius:6px;padding:20px 18px;margin-top:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);transform:rotate(-.6deg)}
+.paper h4{font-family:var(--serif);letter-spacing:.25em;font-size:.72rem;color:#8a8378;text-transform:uppercase;
+  border-bottom:1px solid #d8d2c4;padding-bottom:8px;margin-bottom:12px;text-align:center}
+.paper .line{font-family:var(--serif);font-size:1.05rem;line-height:2.1}
+.paper .blank{display:inline-block;min-width:120px;border-bottom:2px solid #8a8378;text-align:center;
+  color:#b3541e;font-weight:700;padding:0 6px;transition:.2s}
+.paper .blank.active{background:rgba(179,84,30,.08)}
+.paper .blank.done{color:#2e7d4f;border-bottom-color:#2e7d4f}
+
+/* ---------- 拼写 ---------- */
+.slots{display:flex;gap:6px;justify-content:center;margin:18px 0 6px;flex-wrap:wrap}
+.slot{width:36px;height:46px;border:1px solid var(--line);border-radius:8px;display:flex;
+  align-items:center;justify-content:center;font-family:var(--serif);font-size:1.4rem;color:var(--amber);
+  background:var(--panel)}
+.slot.on{border-color:var(--amber);background:rgba(255,192,105,.1)}
+
+/* ---------- 徽章 toast ---------- */
+.btoast{position:fixed;top:58px;left:50%;transform:translateX(-50%) translateY(-24px) scale(.9);
+  background:#12181f;border:1px solid rgba(255,192,105,.45);border-radius:16px;padding:14px 22px;
+  text-align:center;opacity:0;pointer-events:none;transition:.35s cubic-bezier(.2,1.4,.4,1);z-index:99;
+  box-shadow:0 14px 40px rgba(0,0,0,.6)}
+.btoast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+.btoast .bt-lab{font-size:.62rem;letter-spacing:.3em;color:var(--amber);margin-bottom:4px}
+.btoast .bt-word{font-family:var(--serif);font-size:1.3rem;color:var(--ink)}
+.btoast .bt-cn{font-size:.78rem;color:var(--dim);margin-top:2px}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:#ffc069;color:#241a08;padding:11px 22px;border-radius:24px;font-size:.88rem;
+  opacity:0;transition:.3s;z-index:99;font-weight:600;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- 幕间 / 标题 ---------- */
+.overlay-title{text-align:center;padding:56px 10px 30px}
+.ov-line{font-size:.7rem;letter-spacing:.4em;color:var(--amber);text-transform:uppercase;margin-bottom:18px}
+.ov-big{font-family:var(--serif);font-size:2.6rem;line-height:1.25;letter-spacing:.04em}
+.ov-big .ch{display:inline-block;opacity:0;animation:chIn .5s cubic-bezier(.2,1.2,.4,1) forwards}
+@keyframes chIn{from{opacity:0;transform:translateY(24px);filter:blur(6px)}to{opacity:1;transform:none;filter:blur(0)}}
+.ov-sub{color:var(--dim);font-size:.92rem;margin-top:14px;line-height:1.8}
+.ov-en{font-family:var(--serif);color:var(--faint);font-size:.95rem;letter-spacing:.12em;margin-top:10px}
+
+.fade-item{opacity:0;animation:fadeUp .55s ease forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);filter:blur(4px)}to{opacity:1;transform:none;filter:blur(0)}}
+
+/* ---------- 结局 / 复盘 ---------- */
+.cert{text-align:center;padding:26px 18px;border:1px solid rgba(255,192,105,.4);border-radius:20px;
+  background:linear-gradient(180deg,rgba(255,192,105,.08),rgba(255,192,105,.02));margin-top:16px}
+.cert .c-lab{font-size:.68rem;letter-spacing:.4em;color:var(--amber)}
+.cert .c-title{font-family:var(--serif);font-size:2rem;margin-top:10px}
+.cert .c-en{font-family:var(--serif);color:var(--dim);letter-spacing:.14em;margin-top:6px;font-size:.9rem}
+.cert .c-stats{color:var(--faint);font-size:.8rem;margin-top:14px}
+.badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.bcell{border:1px solid rgba(255,192,105,.3);border-radius:12px;padding:9px 4px;text-align:center;background:rgba(255,192,105,.05)}
+.bcell .bw{font-family:var(--serif);font-size:.78rem;color:var(--amber);line-height:1.3;word-break:break-word}
+.bcell .bc{font-size:.64rem;color:var(--dim);margin-top:3px}
+.word-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.wcard{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px;cursor:pointer;transition:.15s;position:relative}
+.wcard:active{transform:scale(.96)}
+.wcard .we{font-family:var(--serif);font-size:1.05rem;color:var(--ink);line-height:1.35}
+.wcard .wp{font-size:.72rem;color:var(--faint);margin-top:4px;font-family:var(--serif)}
+.wcard .wc{font-size:.8rem;color:var(--dim);margin-top:4px}
+.wcard.heard{border-color:rgba(61,220,151,.45)}
+.wcard.heard::after{content:'✓';position:absolute;top:8px;right:10px;color:var(--green);font-size:.85rem}
+.wcard .wact{font-size:.62rem;color:var(--faint);letter-spacing:.15em;margin-top:6px}
+@media (max-width:380px){.badge-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar" id="topbar">
+    <a class="home-link" href="../index.html">‹ 大厅</a>
+    <svg class="ecg" viewBox="0 0 74 26"><path d="M0 14 H18 L24 14 L28 4 L33 22 L37 9 L40 14 H56 L60 11 L64 14 H74"/></svg>
+    <div class="top-title">ER NIGHT · 急诊室之夜</div>
+    <div class="badge-pill" id="badge-pill">徽章 0/16</div>
+    <button class="snd-btn" id="snd-btn">音效·开</button>
+  </div>
+  <div id="stage"></div>
+</div>
+<div class="btoast" id="btoast"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* 整个游戏封装在独立作用域内运行，与宿主页面完全隔离，防止全局变量冲突 */
+(function(){
+/* ================= 单词库 ================= */
+var WORDS = {
+  "corridor":       {ph:"/ˈkɔːrɪdɔːr/", cn:"走廊", act:"第一幕"},
+  "waiting chair":  {ph:"/ˈweɪtɪŋ tʃeə/", cn:"候诊椅", act:"第一幕"},
+  "consulting room":{ph:"/kənˈsʌltɪŋ ruːm/", cn:"诊室", act:"第一幕"},
+  "doctor":         {ph:"/ˈdɒktə/", cn:"医生", act:"第一幕"},
+  "patient":        {ph:"/ˈpeɪʃnt/", cn:"患者", act:"第一幕"},
+  "family member":  {ph:"/ˈfæməli ˈmembə/", cn:"家属", act:"第一幕"},
+  "thermometer":    {ph:"/θəˈmɒmɪtə/", cn:"体温计", act:"第二幕"},
+  "stethoscope":    {ph:"/ˈsteθəskəʊp/", cn:"听诊器", act:"第二幕"},
+  "syringe":        {ph:"/sɪˈrɪndʒ/", cn:"注射器", act:"第二幕"},
+  "medical report": {ph:"/ˈmedɪkl rɪˈpɔːt/", cn:"检查报告单", act:"第三幕"},
+  "medical record": {ph:"/ˈmedɪkl ˈrekɔːd/", cn:"病历", act:"第三幕"},
+  "medicine":       {ph:"/ˈmedɪsn/", cn:"药", act:"第三幕"},
+  "Registration":   {ph:"/ˌredʒɪˈstreɪʃn/", cn:"挂号处", act:"第三幕"},
+  "Pharmacy":       {ph:"/ˈfɑːməsi/", cn:"药房", act:"第三幕"},
+  "Cardiology":     {ph:"/ˌkɑːdiˈɒlədʒi/", cn:"心内科", act:"第三幕"},
+  "Radiology":      {ph:"/ˌreɪdiˈɒlədʒi/", cn:"放射科", act:"第三幕"}
+};
+var WORD_ORDER = ["corridor","waiting chair","consulting room","doctor","patient","family member",
+  "thermometer","stethoscope","syringe",
+  "medical report","medical record","medicine","Registration","Pharmacy","Cardiology","Radiology"];
+var WORD_KEYS = WORD_ORDER.slice().sort(function(a,b){return b.length-a.length;});
+var TOTAL = WORD_ORDER.length;
+
+/* ================= 剧本 ================= */
+var ACTS = [
+{ num:"第一幕", title:"迷失走廊", en:"LOST IN THE CORRIDOR", sub:"解锁词汇：地点与人物", scene:"corridor",
+  steps:[
+   {t:"say", who:"分诊护士", en:"Who are you? What's wrong?", cn:"（深夜的急诊大厅，护士拦住了你）你是谁？怎么了？"},
+   {t:"choice", who:"你", q:"I am a ______.", qcn:"护士问你是谁——选出正确的回答",
+     opts:["doctor","patient","family member"], ans:"family member", badge:"family member",
+     done:"I am a family member."},
+   {t:"choice", who:"你", q:"My grandmother is a ______.", qcn:"告诉护士：外婆是患者",
+     opts:["doctor","corridor","patient"], ans:"patient", badge:"patient",
+     done:"My grandmother is a patient."},
+   {t:"say", who:"分诊护士", en:"OK. Go down the corridor, turn left, sit on the waiting chair, and wait for the doctor in the consulting room.",
+     cn:"好的。沿着走廊往前走，左转，坐在候诊椅上，在诊室门口等医生。"},
+   {t:"map"},
+   {t:"say", who:"旁白", en:"You found the consulting room. The doctor is coming.",
+     cn:"你穿过走廊找到了诊室。门开了，一位医生快步走了出来。", badge:"doctor"},
+   {t:"say", who:"医生", en:"Don't worry. I will take care of your grandmother.", cn:"别担心，我会照顾你的外婆。"}
+  ]},
+{ num:"第二幕", title:"问诊危机", en:"THE EXAMINATION", sub:"解锁词汇：医疗工具", scene:"room",
+  steps:[
+   {t:"say", who:"医生", en:"The patient has a fever. I need a thermometer.", cn:"病人发烧了，我需要体温计。（点选正确的工具递给医生）"},
+   {t:"tool", ans:"thermometer"},
+   {t:"say", who:"医生", en:"Good. Now I need to listen to her heart. Pass me the stethoscope.", cn:"好。现在我要听她的心跳，把听诊器递给我。"},
+   {t:"tool", ans:"stethoscope"},
+   {t:"say", who:"医生", en:"We need a blood test. Bring me a syringe.", cn:"我们需要验血，拿注射器来。"},
+   {t:"tool", ans:"syringe"},
+   {t:"say", who:"旁白", en:"Grandma looks scared of the needle.", cn:"看到针头，外婆紧张地抓住了你的手……用英语安慰她："},
+   {t:"comfort"},
+   {t:"say", who:"外婆", en:"Thank you, dear. I feel better now.", cn:"谢谢你，孩子。我好多了。"},
+   {t:"say", who:"医生", en:"Well done, young man. The examination is finished.", cn:"干得好，年轻人。检查做完了。"}
+  ]},
+{ num:"第三幕", title:"真相追踪", en:"THE MISSING REPORT", sub:"解锁词汇：文件、药品与科室", scene:"room",
+  steps:[
+   {t:"say", who:"医生", en:"Oh no. The medical report is missing! Without it, I can't give her medicine.",
+     cn:"糟了，外婆的检查报告单不见了！没有报告，就不能开药。"},
+   {t:"say", who:"旁白", en:"You must find the medical report and the medical record.",
+     cn:"你必须跑遍医院的科室，找回检查报告单和病历。先冲到了挂号处……"},
+   {t:"doors", scene:"doors"},
+   {t:"fill"},
+   {t:"say", who:"医生", en:"Good news — it's just a bad cold with high blood pressure. She needs some medicine and rest.",
+     cn:"好消息——只是重感冒引发的高血压，吃点药、好好休息就行。"},
+   {t:"say", who:"旁白", en:"It was a false alarm! Take the report and run to the Pharmacy.",
+     cn:"虚惊一场！拿上修好的报告单，冲向药房。"}
+  ]},
+{ num:"第四幕", title:"药房大决战", en:"THE FINAL BATTLE", sub:"终极考验：混合复习", scene:"pharmacy",
+  steps:[
+   {t:"say", who:"旁白", en:"The Pharmacy light is still on.", cn:"深夜的药房还亮着灯，药剂师推了推眼镜。", badge:"Pharmacy"},
+   {t:"say", who:"药剂师", en:"Tell me what you need — and spell the word to get it.", cn:"告诉我你要什么——拼出这个单词，才能拿到它。"},
+   {t:"spell"},
+   {t:"say", who:"药剂师", en:"Perfect spelling! But first, answer my questions — prove you know these words.",
+     cn:"拼得漂亮！不过先回答我几个问题，证明你真的掌握了这些单词。"},
+   {t:"quiz"},
+   {t:"say", who:"药剂师", en:"Here is the medicine. Go, quickly!", cn:"拿好药。快去吧！"},
+   {t:"say", who:"旁白", en:"Grandma takes the medicine and slowly opens her eyes.", cn:"外婆服下药物，缓缓睁开了眼睛。窗外，天快亮了。"},
+   {t:"say", who:"外婆", en:"Thank you, my dear family member.", cn:"谢谢你，我亲爱的孩子。"}
+  ]}
+];
+
+/* ================= 全局状态 ================= */
+var S = { act:-1, step:0, badges:{}, err:0, muted:false, heard:{} };
+var stage = document.getElementById('stage');
+var topbar = document.getElementById('topbar');
+
+/* ================= 语音 & 音效 ================= */
+var VOICE = null;
+function pickVoice(){
+  if(!('speechSynthesis' in window)) return;
+  var vs = speechSynthesis.getVoices();
+  VOICE = null;
+  for(var i=0;i<vs.length;i++){ if(/^en[-_]US/i.test(vs[i].lang)){ VOICE=vs[i]; break; } }
+  if(!VOICE){ for(var j=0;j<vs.length;j++){ if(/^en/i.test(vs[j].lang)){ VOICE=vs[j]; break; } } }
+}
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+
+function speak(text){
+  if(S.muted || !('speechSynthesis' in window) || !text) return;
+  try{
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    if(VOICE) u.voice = VOICE;
+    u.lang = 'en-US'; u.rate = 0.85; u.pitch = 1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+var AC = null;
+function tone(freq, delay, dur, type, vol){
+  if(S.muted) return;
+  try{
+    if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended') AC.resume();
+    var o = AC.createOscillator(), g = AC.createGain();
+    o.type = type||'sine'; o.frequency.value = freq;
+    var t0 = AC.currentTime + (delay||0);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol||0.12, t0+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+    o.connect(g); g.connect(AC.destination);
+    o.start(t0); o.stop(t0+dur+0.05);
+  }catch(e){}
+}
+function sfxDing(){ tone(880,0,.14); tone(1318,.09,.18); }
+function sfxBuzz(){ tone(150,0,.22,'sawtooth',.08); topbar.classList.add('alert'); setTimeout(function(){topbar.classList.remove('alert');},700); }
+function sfxBadge(){ tone(660,0,.12); tone(880,.1,.12); tone(1320,.2,.22); }
+function sfxWin(){ tone(523,0,.16); tone(659,.14,.16); tone(784,.28,.16); tone(1047,.42,.4); }
+
+/* ================= 提示 ================= */
+var toastTimer=null;
+function toast(m){
+  var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove('show');},2200);
+}
+var btoastTimer=null;
+function showBadge(word){
+  var w = WORDS[word]; if(!w) return;
+  var b = document.getElementById('btoast');
+  b.innerHTML = '<div class="bt-lab">获得单词徽章</div><div class="bt-word">'+word+'</div>'+
+    '<div class="bt-cn">'+w.ph+' · '+w.cn+'</div>';
+  b.classList.add('show'); sfxBadge(); speak(word);
+  clearTimeout(btoastTimer);
+  btoastTimer=setTimeout(function(){b.classList.remove('show');},2400);
+}
+function earn(word){
+  if(S.badges[word]) return;
+  S.badges[word]=true;
+  document.getElementById('badge-pill').textContent = '徽章 '+Object.keys(S.badges).length+'/'+TOTAL;
+  showBadge(word);
+}
+
+/* ================= 引擎 ================= */
+function curAct(){ return ACTS[S.act]; }
+function curStep(){ return curAct().steps[S.step]; }
+function go(a,s){ S.act=a; S.step=s; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function next(){
+  var act = curAct();
+  if(S.step+1 < act.steps.length){ go(S.act, S.step+1); }
+  else if(S.act+1 < ACTS.length){ renderActIntro(S.act+1); }
+  else { renderEnding(); }
+}
+function render(){
+  var st = curStep();
+  var html = '<div class="act-tag fade-item">'+curAct().num+' · '+curAct().title+'</div>';
+  var sceneName = st.scene || curAct().scene;
+  if(st.t==='map') html += '<div class="scene fade-item">'+svgMap()+'</div>';
+  else html += '<div class="scene fade-item">'+SCENES[sceneName]()+'</div>';
+  stage.innerHTML = html + '<div id="stepbox"></div>';
+  var box = document.getElementById('stepbox');
+  ({ say:renderSay, choice:renderChoice, map:renderMap, tool:renderTool,
+     comfort:renderComfort, doors:renderDoors, fill:renderFill,
+     spell:renderSpell, quiz:renderQuiz }[st.t])(box, st);
+}
+
+/* 高亮 EN 文本里的目标单词 */
+function hotEN(text){
+  var out = text;
+  WORD_KEYS.forEach(function(w){
+    var re = new RegExp('\\b('+w.replace(/ /g,'\\s+')+')\\b','i');
+    out = out.replace(re, function(m){ return '<span class="w" data-w="'+w+'">'+m+'</span>'; });
+  });
+  return out;
+}
+function bindHotWords(root){
+  var els = root.querySelectorAll('.w');
+  for(var i=0;i<els.length;i++){
+    (function(el){
+      el.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        speak(el.getAttribute('data-w'));
+      });
+    })(els[i]);
+  }
+}
+function spkBtn(text){
+  return '<button class="spk" data-say="'+text.replace(/"/g,'&quot;')+'">'+
+    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+
+    '<path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>朗读</button>';
+}
+function bindSpk(root){
+  var els = root.querySelectorAll('.spk');
+  for(var i=0;i<els.length;i++){
+    (function(el){
+      el.addEventListener('click', function(ev){
+        ev.stopPropagation(); speak(el.getAttribute('data-say'));
+      });
+    })(els[i]);
+  }
+}
+
+/* ---------- 对白 ---------- */
+function renderSay(box, st){
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var narr = (st.who==='旁白');
+  div.innerHTML =
+    '<div class="dlg">'+
+      '<div class="who'+(narr?' narr':'')+'">'+st.who+'</div>'+
+      (st.en?'<div class="en">'+hotEN(st.en)+'</div>':'')+
+      (st.cn?'<div class="cn">'+st.cn+'</div>':'')+
+      '<div class="dlg-foot">'+(st.en?spkBtn(st.en):'<span></span>')+
+      '<span class="next-hint">点击继续 ▸</span></div>'+
+    '</div>';
+  box.appendChild(div);
+  bindHotWords(div); bindSpk(div);
+  var done=false;
+  div.querySelector('.dlg').addEventListener('click', function(){
+    if(done) return; done=true;
+    if(st.badge) earn(st.badge);
+    setTimeout(next, st.badge?900:150);
+  });
+  if(st.en) setTimeout(function(){ speak(st.en); }, 400);
+}
+
+/* ---------- 句子选择（说出咒语） ---------- */
+function renderChoice(box, st){
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var h = '<div class="task"><span class="lab">咒语</span><span class="txt">'+hotEN(st.q)+'</span></div>';
+  h += '<div class="cn" style="padding:0 4px">'+st.qcn+'</div><div class="opts">';
+  st.opts.forEach(function(o){
+    h += '<button class="opt" data-o="'+o+'"><span>'+o+'</span><span class="arrow">▸</span></button>';
+  });
+  h += '</div><div class="feedback"></div>';
+  div.innerHTML = h;
+  box.appendChild(div);
+  bindHotWords(div);
+  var fb = div.querySelector('.feedback'), fails=0, locked=false;
+  var opts = div.querySelectorAll('.opt');
+  for(var i=0;i<opts.length;i++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        if(locked) return;
+        var o = btn.getAttribute('data-o');
+        speak(o);
+        if(o===st.ans){
+          locked=true; btn.classList.add('ok'); sfxDing();
+          div.querySelector('.task .txt').innerHTML = hotEN(st.done);
+          fb.className='feedback good'; fb.textContent='✓ 护士听懂了！';
+          earn(st.badge);
+          speak(st.done);
+          setTimeout(next, 1600);
+        }else{
+          btn.classList.add('no'); sfxBuzz(); fails++;
+          fb.className='feedback bad';
+          fb.textContent = '护士一脸茫然："Sorry?" —— 再试一次。';
+          setTimeout(function(){btn.classList.remove('no');},450);
+          if(fails>=2){
+            for(var j=0;j<opts.length;j++)
+              if(opts[j].getAttribute('data-o')===st.ans) opts[j].classList.add('hint-pulse');
+          }
+        }
+      });
+    })(opts[i]);
+  }
+}
+
+/* ---------- 第一幕：地图寻路 ---------- */
+var MAP_SEQ = ["corridor","waiting chair","consulting room"];
+var MAP_CN = { "corridor":"走廊", "waiting chair":"候诊椅", "consulting room":"诊室" };
+function renderMap(box, st){
+  var idx = 0, fails = 0;
+  var div = document.createElement('div');
+  div.className='fade-item';
+  div.innerHTML =
+    '<div class="task"><span class="lab">寻路</span><span class="txt">按护士说的路线，在地图上依次找到：<b>corridor</b> → <b>waiting chair</b> → <b>consulting room</b></span></div>'+
+    '<div class="feedback"></div>';
+  box.appendChild(div);
+  var fb = div.querySelector('.feedback');
+  speak("Go down the corridor, turn left, sit on the waiting chair, and wait in the consulting room.");
+  var spots = document.querySelectorAll('.spot');
+  for(var i=0;i<spots.length;i++){
+    (function(sp){
+      sp.addEventListener('click', function(){
+        var name = sp.getAttribute('data-spot');
+        var target = MAP_SEQ[idx];
+        if(sp.classList.contains('found')){ fb.className='feedback'; fb.textContent='这里已经找到了。'; return; }
+        if(name===target){
+          sp.classList.add('found'); sfxDing(); earn(name);
+          movePlayer(name);
+          fb.className='feedback good'; fb.textContent='✓ 找到了 '+name+'（'+MAP_CN[name]+'）！';
+          idx++; fails=0;
+          if(idx>=MAP_SEQ.length){
+            fb.textContent='✓ 路线完成！你坐到了诊室门口。';
+            setTimeout(next, 1500);
+          }
+        }else{
+          sfxBuzz(); fails++;
+          fb.className='feedback bad';
+          fb.textContent = '这里是「'+sp.getAttribute('data-cn')+'」，不是 '+target+'（'+MAP_CN[target]+'）。再想想！';
+          if(fails>=2){
+            for(var j=0;j<spots.length;j++)
+              if(spots[j].getAttribute('data-spot')===target) spots[j].classList.add('hint-pulse');
+          }
+        }
+      });
+    })(spots[i]);
+  }
+}
+function movePlayer(name){
+  var pos = { "corridor":[200,128], "waiting chair":[86,62], "consulting room":[322,62] };
+  var d = document.getElementById('player-dot');
+  if(d && pos[name]){ d.setAttribute('cx', pos[name][0]); d.setAttribute('cy', pos[name][1]); }
+}
+
+/* ---------- 第二幕：递工具 ---------- */
+function renderTool(box, st){
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var h = '<div class="task"><span class="lab">递工具</span><span class="txt">医生需要 <b>'+st.ans+'</b>（'+WORDS[st.ans].cn+'）—— 点选正确的工具递过去</span></div>';
+  h += '<div class="tools">';
+  ["thermometer","stethoscope","syringe"].forEach(function(t){
+    h += '<button class="tool" data-t="'+t+'">'+TOOL_SVGS[t]+'<span class="tname">'+t+'</span></button>';
+  });
+  h += '</div><div class="feedback"></div>';
+  div.innerHTML = h;
+  box.appendChild(div);
+  var fb = div.querySelector('.feedback'), fails=0, locked=false;
+  var tools = div.querySelectorAll('.tool');
+  for(var i=0;i<tools.length;i++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        if(locked) return;
+        var t = btn.getAttribute('data-t');
+        if(t===st.ans){
+          locked=true; btn.classList.add('ok','reveal'); sfxDing(); earn(t);
+          fb.className='feedback good';
+          fb.textContent='✓ 医生接过 '+t+'："Yes! Thank you."';
+          speak("Yes, the "+t+". Thank you.");
+          setTimeout(next, 1700);
+        }else{
+          btn.classList.add('no'); sfxBuzz(); fails++;
+          fb.className='feedback bad';
+          fb.textContent='医生摇头："No, I need a '+st.ans+', not a '+t+'."';
+          speak("No, I need a "+st.ans+", not a "+t+".");
+          setTimeout(function(){btn.classList.remove('no');},450);
+          if(fails>=2){
+            for(var j=0;j<tools.length;j++)
+              if(tools[j].getAttribute('data-t')===st.ans) tools[j].classList.add('hint-pulse');
+          }
+        }
+      });
+    })(tools[i]);
+  }
+}
+
+/* ---------- 第二幕：安慰外婆（拼句子） ---------- */
+function renderComfort(box, st){
+  var TARGET = ["Don't","worry,","it's","just","a","small","syringe."];
+  var shuffled = ["it's","syringe.","Don't","a","just","worry,","small"];
+  var idx=0, fails=0;
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var h = '<div class="task"><span class="lab">安慰</span><span class="txt">按顺序点单词，拼出这句话安慰外婆</span></div>';
+  h += '<div class="paper" style="transform:none"><h4>对外婆说</h4><div class="line" id="build-line">';
+  TARGET.forEach(function(){ h += '<span class="blank" style="min-width:52px">&nbsp;</span> '; });
+  h += '</div></div><div class="chips">';
+  shuffled.forEach(function(w){ h += '<button class="chip" data-w="'+w+'">'+w+'</button>'; });
+  h += '</div><div class="feedback"></div>';
+  div.innerHTML = h;
+  box.appendChild(div);
+  var fb = div.querySelector('.feedback');
+  var blanks = div.querySelectorAll('.blank');
+  var chips = div.querySelectorAll('.chip');
+  for(var i=0;i<chips.length;i++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        var w = btn.getAttribute('data-w');
+        if(w===TARGET[idx]){
+          btn.classList.add('used'); sfxDing();
+          blanks[idx].textContent = w; blanks[idx].classList.add('done');
+          speak(w.replace(/\.$/,''));
+          idx++;
+          if(idx>=TARGET.length){
+            fb.className='feedback good';
+            fb.textContent='✓ 外婆松开了紧抓的手，笑了。';
+            speak("Don't worry, it's just a small syringe.");
+            setTimeout(next, 1900);
+          }
+        }else{
+          btn.classList.add('no'); sfxBuzz(); fails++;
+          fb.className='feedback bad'; fb.textContent='语序不对，再想想——下一个词是 "'+TARGET[idx]+'"';
+          setTimeout(function(){btn.classList.remove('no');},450);
+          if(fails>=2){
+            for(var j=0;j<chips.length;j++)
+              if(chips[j].getAttribute('data-w')===TARGET[idx] && !chips[j].classList.contains('used'))
+                chips[j].classList.add('hint-pulse');
+          }
+        }
+      });
+    })(chips[i]);
+  }
+}
+
+/* ---------- 第三幕：科室寻踪 ---------- */
+var DOOR_SEQ = ["Registration","Radiology","Cardiology"];
+var DOOR_LINES = {
+  "Registration": { who:"挂号处职员", en:"The medical record is not here. Maybe it's in Radiology.",
+     cn:"病历不在这里……也许被送到放射科了。（读懂线索，点正确的科室门）" },
+  "Radiology": { who:"放射科医生", en:"Here is her medical record. But a nurse took the medical report to Cardiology.",
+     cn:"病历在我这儿！但检查报告单被护士拿去心内科了。" },
+  "Cardiology": { who:"心内科医生", en:"I found the medical report! But it is torn. Can you fix it?",
+     cn:"报告单找到了！但被撕破了——你能修好它吗？" }
+};
+var DOOR_BADGES = { "Registration":["Registration"], "Radiology":["Radiology","medical record"], "Cardiology":["Cardiology","medical report"] };
+function renderDoors(box, st){
+  var phase=0, fails=0;
+  var div = document.createElement('div');
+  div.className='fade-item';
+  box.appendChild(div);
+  var fbEl=null;
+  function draw(){
+    var cur = DOOR_SEQ[phase];
+    var h = '<div class="task"><span class="lab">线索</span><span class="txt">'+hotEN(DOOR_LINES[cur].en)+'</span></div>'+
+      '<div class="cn" style="padding:0 4px">'+DOOR_LINES[cur].cn+'</div>';
+    div.innerHTML = h + '<div class="feedback"></div>';
+    bindHotWords(div);
+    speak(DOOR_LINES[cur].en);
+    fbEl = div.querySelector('.feedback');
+  }
+  draw();
+  var doors = document.querySelectorAll('.door');
+  for(var i=0;i<doors.length;i++){
+    (function(d){
+      d.addEventListener('click', function(){
+        var name = d.getAttribute('data-door');
+        var cur = DOOR_SEQ[phase];
+        if(d.classList.contains('found')){ fbEl.className='feedback'; fbEl.textContent='「'+name+'」已经找过了。'; return; }
+        if(name===cur){
+          d.classList.add('found'); sfxDing();
+          DOOR_BADGES[name].forEach(earn);
+          moveDoorDot(name);
+          phase++; fails=0;
+          if(phase>=DOOR_SEQ.length){
+            fbEl.className='feedback good';
+            fbEl.textContent='✓ 报告单找到了！开始修复……';
+            setTimeout(next, 1600);
+          }else draw();
+        }else if(name==='Pharmacy'){
+          sfxBuzz(); fbEl.className='feedback bad';
+          fbEl.textContent='药剂师探出头："No report, no medicine!" —— 先找到报告再来。';
+          speak("No report, no medicine!");
+        }else{
+          sfxBuzz(); fails++; fbEl.className='feedback bad';
+          fbEl.textContent='这里没有线索。再读一遍提示：'+DOOR_LINES[phase].en;
+          if(fails>=2){
+            for(var j=0;j<doors.length;j++)
+              if(doors[j].getAttribute('data-door')===DOOR_SEQ[phase]) doors[j].classList.add('hint-pulse');
+          }
+        }
+      });
+    })(doors[i]);
+  }
+}
+function moveDoorDot(name){
+  var pos = { "Registration":[56,232], "Radiology":[151,232], "Cardiology":[246,232], "Pharmacy":[341,232] };
+  var d = document.getElementById('door-dot');
+  if(d && pos[name]){ d.setAttribute('cx', pos[name][0]); d.setAttribute('cy', pos[name][1]); }
+}
+
+/* ---------- 第三幕：修复报告单（填空） ---------- */
+var FILL_LINES = [
+  {pre:"This", post:"is torn. Let's fix it.", ans:"medical report"},
+  {pre:"Her", post:"shows she is usually healthy.", ans:"medical record"},
+  {pre:"The patient has a fever. She needs some", post:".", ans:"medicine"}
+];
+function renderFill(box, st){
+  var bank = ["medicine","medical report","medical record"];
+  var idx=0, fails=0;
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var h = '<div class="task"><span class="lab">修复</span><span class="txt">报告单被撕破了——用词库把 <b>medical report</b> 补完整</span></div>';
+  h += '<div class="paper"><h4>Medical Report · 检查报告单</h4>';
+  FILL_LINES.forEach(function(L,i){
+    h += '<div class="line">'+L.pre+' <span class="blank'+(i===0?' active':'')+'" data-i="'+i+'">&nbsp;</span> '+L.post+'</div>';
+  });
+  h += '</div><div class="chips">';
+  bank.forEach(function(w){ h += '<button class="chip" data-w="'+w+'">'+w+'</button>'; });
+  h += '</div><div class="feedback"></div>';
+  div.innerHTML = h;
+  box.appendChild(div);
+  var fb = div.querySelector('.feedback');
+  var blanks = div.querySelectorAll('.blank');
+  var chips = div.querySelectorAll('.chip');
+  for(var i=0;i<chips.length;i++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        var w = btn.getAttribute('data-w');
+        var L = FILL_LINES[idx];
+        if(w===L.ans){
+          btn.classList.add('used'); sfxDing();
+          blanks[idx].textContent = w; blanks[idx].classList.add('done'); blanks[idx].classList.remove('active');
+          speak(L.pre+" "+w+" "+L.post);
+          idx++;
+          if(idx>=FILL_LINES.length){
+            earn("medicine");
+            fb.className='feedback good'; fb.textContent='✓ 报告单修复完成！真相大白：只是普通感冒。';
+            setTimeout(next, 1800);
+          }else blanks[idx].classList.add('active');
+        }else{
+          btn.classList.add('no'); sfxBuzz(); fails++;
+          fb.className='feedback bad';
+          fb.textContent = w==='medical report'||w==='medical record' ?
+            '仔细辨析：medical report 是"检查报告单"，medical record 是"病历"。' : '这个词放这里不通，再想想。';
+          setTimeout(function(){btn.classList.remove('no');},450);
+          if(fails>=2){
+            for(var j=0;j<chips.length;j++)
+              if(chips[j].getAttribute('data-w')===L.ans) chips[j].classList.add('hint-pulse');
+          }
+        }
+      });
+    })(chips[i]);
+  }
+}
+
+/* ---------- 第四幕：拼写 Boss 战 ---------- */
+function renderSpell(box, st){
+  var WORD = "MEDICINE";
+  var tiles = ["E","M","I","D","E","C","N","I","T","A","R"];
+  var idx=0, fails=0;
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var h = '<div class="task"><span class="lab">BOSS</span><span class="txt">拼出 <b>medicine</b>（药）—— 按顺序点字母，小心混入的干扰字母！</span></div>';
+  h += '<div class="slots">';
+  for(var k=0;k<WORD.length;k++) h += '<div class="slot"></div>';
+  h += '</div><div class="chips">';
+  tiles.forEach(function(L,i){ h += '<button class="chip" data-l="'+L+'" style="min-width:48px">'+L+'</button>'; });
+  h += '</div><div class="feedback"></div>';
+  div.innerHTML = h;
+  box.appendChild(div);
+  var fb = div.querySelector('.feedback');
+  var slots = div.querySelectorAll('.slot');
+  var chips = div.querySelectorAll('.chip');
+  for(var i=0;i<chips.length;i++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        var L = btn.getAttribute('data-l');
+        if(L===WORD[idx]){
+          btn.classList.add('used'); sfxDing();
+          slots[idx].textContent = L; slots[idx].classList.add('on');
+          idx++;
+          if(idx>=WORD.length){
+            fb.className='feedback good'; fb.textContent='✓ M-E-D-I-C-I-N-E！药剂师递出了药。';
+            speak("medicine");
+            setTimeout(next, 1600);
+          }
+        }else{
+          btn.classList.add('no'); sfxBuzz(); fails++;
+          fb.className='feedback bad'; fb.textContent='不对——下一个字母是 "'+WORD[idx]+'"。';
+          setTimeout(function(){btn.classList.remove('no');},450);
+          if(fails>=2){
+            for(var j=0;j<chips.length;j++)
+              if(chips[j].getAttribute('data-l')===WORD[idx] && !chips[j].classList.contains('used'))
+                chips[j].classList.add('hint-pulse');
+          }
+        }
+      });
+    })(chips[i]);
+  }
+}
+
+/* ---------- 第四幕：终考 Quiz ---------- */
+var QUIZ = [
+  {q:"外婆发烧了，医生需要哪一个？", opts:["syringe","thermometer","corridor","stethoscope"], ans:"thermometer"},
+  {q:"\"Where can you get the medicine?\"（在哪里取药？）", opts:["Radiology","Cardiology","Pharmacy","Registration"], ans:"Pharmacy"},
+  {q:"候诊时，你坐在 ______ 上。", opts:["waiting chair","consulting room","corridor","syringe"], ans:"waiting chair"},
+  {q:"\"The doctor uses a ______ to listen to her heart.\"", opts:["medicine","thermometer","syringe","stethoscope"], ans:"stethoscope"}
+];
+function renderQuiz(box, st){
+  var qi=0, fails=0;
+  var div = document.createElement('div');
+  div.className='fade-item';
+  box.appendChild(div);
+  function draw(){
+    var Q = QUIZ[qi];
+    var h = '<div class="task"><span class="lab">考验 '+(qi+1)+'/4</span><span class="txt">'+hotEN(Q.q)+'</span></div>';
+    h += '<div class="quiz-grid">';
+    Q.opts.forEach(function(o){ h += '<button class="opt" data-o="'+o+'"><span>'+o+'</span></button>'; });
+    h += '</div><div class="feedback"></div>';
+    div.innerHTML = h;
+    bindHotWords(div);
+    var fb = div.querySelector('.feedback');
+    var locked=false;
+    var opts = div.querySelectorAll('.opt');
+    for(var i=0;i<opts.length;i++){
+      (function(btn){
+        btn.addEventListener('click', function(){
+          if(locked) return;
+          var o = btn.getAttribute('data-o');
+          speak(o);
+          if(o===Q.ans){
+            locked=true; btn.classList.add('ok'); sfxDing();
+            qi++; fails=0;
+            if(qi>=QUIZ.length){ setTimeout(next, 900); }
+            else setTimeout(draw, 900);
+          }else{
+            btn.classList.add('no'); sfxBuzz(); fails++;
+            fb.className='feedback bad'; fb.textContent='药剂师摇摇头："Think again."';
+            setTimeout(function(){btn.classList.remove('no');},450);
+            if(fails>=2){
+              for(var j=0;j<opts.length;j++)
+                if(opts[j].getAttribute('data-o')===Q.ans) opts[j].classList.add('hint-pulse');
+            }
+          }
+        });
+      })(opts[i]);
+    }
+  }
+  draw();
+}
+
+/* ---------- 标题页 ---------- */
+function renderTitle(){
+  S.act=-1;
+  var html =
+    '<div class="scene fade-item">'+SCENES.night()+'</div>'+
+    '<div class="overlay-title">'+
+      '<div class="ov-line fade-item">英语单词剧本杀 · 单人闯关</div>'+
+      '<div class="ov-big">'+kinetic('急诊室之夜')+'</div>'+
+      '<div class="ov-en fade-item" style="animation-delay:.5s">ER NIGHT · Finding Grandma\'s Medicine</div>'+
+      '<div class="ov-sub fade-item" style="animation-delay:.7s">深夜，外婆晕倒被送进美国医院。爸妈还在路上——<br>'+
+      '挂号、问诊、拿药，全靠你说出正确的英文单词。<br>'+
+      '收集 <b style="color:var(--amber)">16 枚单词徽章</b>，让外婆转危为安。</div>'+
+    '</div>'+
+    '<button class="btn primary fade-item" id="start-btn" style="animation-delay:.9s">推 开 急 诊 室 大 门</button>'+
+    '<div class="ov-sub fade-item" style="text-align:center;font-size:.75rem;animation-delay:1.05s">玩法：听 · 读 · 选 · 拼 —— 剧情中用英语单词闯关</div>';
+  stage.innerHTML = html;
+  document.getElementById('start-btn').addEventListener('click', function(){
+    sfxWin(); renderActIntro(0);
+  });
+}
+function kinetic(text){
+  var h='';
+  for(var i=0;i<text.length;i++)
+    h += '<span class="ch" style="animation-delay:'+(0.12*i)+'s">'+text[i]+'</span>';
+  return h;
+}
+
+/* ---------- 幕间 ---------- */
+function renderActIntro(a){
+  S.act=a; S.step=0;
+  var act = ACTS[a];
+  var html =
+    '<div class="scene fade-item">'+SCENES[act.scene]()+'</div>'+
+    '<div class="overlay-title">'+
+      '<div class="ov-line fade-item">'+act.num+'</div>'+
+      '<div class="ov-big">'+kinetic(act.title)+'</div>'+
+      '<div class="ov-en fade-item" style="animation-delay:.5s">'+act.en+'</div>'+
+      '<div class="ov-sub fade-item" style="animation-delay:.65s">'+act.sub+'</div>'+
+    '</div>'+
+    '<button class="btn primary fade-item" id="act-btn" style="animation-delay:.8s">进 入 本 幕</button>';
+  stage.innerHTML = html;
+  document.getElementById('act-btn').addEventListener('click', function(){ go(a,0); });
+}
+
+/* ---------- 结局 ---------- */
+function renderEnding(){
+  sfxWin();
+  var got = Object.keys(S.badges).length;
+  var html =
+    '<div class="scene fade-item">'+SCENES.dawn()+'</div>'+
+    '<div class="cert fade-item">'+
+      '<div class="c-lab">外婆康复出院 · 通关达成</div>'+
+      '<div class="c-title">医院词汇大师</div>'+
+      '<div class="c-en">HOSPITAL VOCABULARY MASTER</div>'+
+      '<div class="c-stats">收集徽章 '+got+'/'+TOTAL+' 枚 · 全程用时一场惊心动魄的急诊室之夜</div>'+
+    '</div>'+
+    '<div class="badge-grid fade-item" style="animation-delay:.2s">';
+  WORD_ORDER.forEach(function(w){
+    var has = S.badges[w];
+    html += '<div class="bcell" style="'+(has?'':'opacity:.25')+'"><div class="bw">'+w+'</div><div class="bc">'+WORDS[w].cn+'</div></div>';
+  });
+  html += '</div>'+
+    '<button class="btn primary fade-item" id="review-btn" style="animation-delay:.35s">📖 复盘单词 · 跟读一遍</button>'+
+    '<button class="btn ghost fade-item" id="again-btn" style="animation-delay:.45s">🔁 再玩一次</button>';
+  stage.innerHTML = html;
+  document.getElementById('review-btn').addEventListener('click', renderReview);
+  document.getElementById('again-btn').addEventListener('click', function(){
+    S.badges={}; S.err=0; S.heard={};
+    document.getElementById('badge-pill').textContent='徽章 0/'+TOTAL;
+    renderTitle();
+  });
+}
+
+/* ---------- 复盘 ---------- */
+function renderReview(){
+  var html =
+    '<div class="act-tag">复盘 · 跟读挑战</div>'+
+    '<div class="task"><span class="lab">彩蛋</span><span class="txt">点卡片听发音并跟读——现在这些单词都是你的惊心回忆了。<b id="heard-n">0</b>/'+TOTAL+'</span></div>'+
+    '<div class="word-grid">';
+  WORD_ORDER.forEach(function(w){
+    var d = WORDS[w];
+    html += '<div class="wcard'+(S.heard[w]?' heard':'')+'" data-w="'+w+'">'+
+      '<div class="we">'+w+'</div><div class="wp">'+d.ph+'</div><div class="wc">'+d.cn+'</div>'+
+      '<div class="wact">'+d.act+'</div></div>';
+  });
+  html += '</div><button class="btn ghost" id="back-end">返回结局</button>';
+  stage.innerHTML = html;
+  updateHeard();
+  var cards = stage.querySelectorAll('.wcard');
+  for(var i=0;i<cards.length;i++){
+    (function(c){
+      c.addEventListener('click', function(){
+        var w = c.getAttribute('data-w');
+        speak(w);
+        if(!S.heard[w]){ S.heard[w]=true; c.classList.add('heard'); sfxDing(); updateHeard(); }
+      });
+    })(cards[i]);
+  }
+  document.getElementById('back-end').addEventListener('click', renderEnding);
+}
+function updateHeard(){
+  var n = Object.keys(S.heard).length;
+  var el = document.getElementById('heard-n');
+  if(el) el.textContent = n;
+  if(n>=TOTAL) toast('🎉 跟读完成！你是真正的医院词汇大师！');
+}
+
+/* ---------- 音效开关 ---------- */
+document.getElementById('snd-btn').addEventListener('click', function(){
+  S.muted = !S.muted;
+  this.textContent = S.muted ? '音效·关' : '音效·开';
+  if(S.muted && 'speechSynthesis' in window) speechSynthesis.cancel();
+  else sfxDing();
+});
+
+/* ================= 场景绘制（全代码手绘 SVG） ================= */
+var SCENES = {};
+
+/* 标题：深夜医院 */
+SCENES.night = function(){
+  var stars = "";
+  [[30,28,1.2],[88,16,1],[160,38,1.4],[250,22,1],[308,58,1.2],[362,18,1],[52,66,.9],[206,12,1.1],[282,36,.8]].forEach(function(s){
+    stars += '<circle cx="'+s[0]+'" cy="'+s[1]+'" r="'+s[2]+'" fill="#dfe8f5" opacity=".8"/>';
+  });
+  var wins = "";
+  var lit = {"1-0":1,"3-1":1,"0-2":1,"4-2":1,"2-3":1,"1-4":1,"4-0":1};
+  for(var r=0;r<5;r++) for(var c=0;c<5;c++){
+    var x=112+c*36, y=112+r*24;
+    wins += '<rect x="'+x+'" y="'+y+'" width="22" height="13" fill="'+(lit[c+'-'+r]?'#ffc069':'#16233a')+'" opacity="'+(lit[c+'-'+r]?'.85':'.9')+'"/>';
+  }
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs>'+
+    '<linearGradient id="nsk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#03050a"/><stop offset="1" stop-color="#12203a"/></linearGradient>'+
+    '<radialGradient id="nglow"><stop offset="0" stop-color="#ff5a5a" stop-opacity=".55"/><stop offset="1" stop-color="#ff5a5a" stop-opacity="0"/></radialGradient>'+
+    '<radialGradient id="mglow"><stop offset="0" stop-color="#dfe8f5" stop-opacity=".5"/><stop offset="1" stop-color="#dfe8f5" stop-opacity="0"/></radialGradient>'+
+  '</defs>'+
+  '<rect width="400" height="250" fill="url(#nsk)"/>'+stars+
+  '<circle cx="332" cy="44" r="30" fill="url(#mglow)"/><circle cx="332" cy="44" r="16" fill="#dfe8f5" opacity=".92"/>'+
+  '<rect x="95" y="95" width="210" height="155" fill="#0a1220"/>'+
+  '<rect x="95" y="95" width="210" height="4" fill="#182a46"/>'+wins+
+  '<circle cx="200" cy="84" r="34" fill="url(#nglow)"/>'+
+  '<rect x="176" y="70" width="48" height="30" rx="5" fill="#eef2f8"/>'+
+  '<rect x="196" y="74" width="8" height="22" fill="#e5484d"/><rect x="189" y="81" width="22" height="8" fill="#e5484d"/>'+
+  '<rect x="180" y="208" width="40" height="42" fill="#1b2a44"/><rect x="199" y="208" width="2" height="42" fill="#0a1220"/>'+
+  '<ellipse cx="200" cy="249" rx="46" ry="6" fill="#ffc069" opacity=".12"/>'+
+  '<circle cx="150" cy="246" r="7" fill="#ff5a5a"><animate attributeName="opacity" values="1;.15;1" dur="1.2s" repeatCount="indefinite"/></circle>'+
+  '<circle cx="250" cy="246" r="7" fill="#5a8cff"><animate attributeName="opacity" values=".15;1;.15" dur="1.2s" repeatCount="indefinite"/></circle>'+
+  '<path d="M20 232 H60 L66 232 L70 224 L74 238 L77 229 L80 232 H120" fill="none" stroke="#3ddc97" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="36 160">'+
+  '<animate attributeName="stroke-dashoffset" from="196" to="0" dur="2.6s" repeatCount="indefinite"/></path>'+
+  '</svg>';
+};
+
+/* 第一幕：透视走廊 */
+SCENES.corridor = function(){
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs>'+
+    '<linearGradient id="cfl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b2a44"/><stop offset="1" stop-color="#0e1826"/></linearGradient>'+
+    '<radialGradient id="lamp"><stop offset="0" stop-color="#ffe9c4" stop-opacity=".5"/><stop offset="1" stop-color="#ffe9c4" stop-opacity="0"/></radialGradient>'+
+    '<radialGradient id="cglow"><stop offset="0" stop-color="#ff5a5a" stop-opacity=".5"/><stop offset="1" stop-color="#ff5a5a" stop-opacity="0"/></radialGradient>'+
+  '</defs>'+
+  '<rect width="400" height="250" fill="#060a11"/>'+
+  '<polygon points="0,0 400,0 290,82 110,82" fill="#080e17"/>'+
+  '<polygon points="0,0 110,82 110,168 0,250" fill="#0c1421"/>'+
+  '<polygon points="400,0 290,82 290,168 400,250" fill="#0c1421"/>'+
+  '<polygon points="0,250 110,168 290,168 400,250" fill="url(#cfl)"/>'+
+  '<rect x="110" y="82" width="180" height="86" fill="#0a111d"/>'+
+  '<rect x="178" y="104" width="44" height="64" fill="#12203a"/>'+
+  '<rect x="184" y="92" width="32" height="9" rx="2" fill="#0f3d2e"/><text x="200" y="99" text-anchor="middle" font-size="6.5" fill="#3ddc97" font-family="Georgia">EXIT</text>'+
+  '<ellipse cx="200" cy="30" rx="70" ry="26" fill="url(#lamp)"/>'+
+  '<rect x="155" y="14" width="90" height="8" rx="4" fill="#f5e3bd" opacity=".9"/>'+
+  '<ellipse cx="200" cy="66" rx="42" ry="16" fill="url(#lamp)"/>'+
+  '<rect x="170" y="40" width="60" height="6" rx="3" fill="#f5e3bd" opacity=".75"/>'+
+  '<rect x="182" y="62" width="36" height="5" rx="2.5" fill="#f5e3bd" opacity=".55"/>'+
+  '<polygon points="14,120 58,108 58,196 14,224" fill="#111d31" stroke="#223250" stroke-width="1"/>'+
+  '<polygon points="68,100 96,93 96,158 68,170" fill="#101a2c" stroke="#1e2c46" stroke-width="1"/>'+
+  '<polygon points="386,120 342,108 342,196 386,224" fill="#111d31" stroke="#223250" stroke-width="1"/>'+
+  '<polygon points="332,100 304,93 304,158 332,170" fill="#101a2c" stroke="#1e2c46" stroke-width="1"/>'+
+  '<g fill="#16263f"><rect x="318" y="188" width="16" height="12" rx="2"/><rect x="318" y="176" width="4" height="14" rx="2"/>'+
+  '<rect x="340" y="188" width="16" height="12" rx="2"/><rect x="340" y="176" width="4" height="14" rx="2"/>'+
+  '<rect x="362" y="188" width="16" height="12" rx="2"/><rect x="362" y="176" width="4" height="14" rx="2"/></g>'+
+  '<circle cx="37" cy="74" r="24" fill="url(#cglow)"/>'+
+  '<rect x="20" y="60" width="34" height="26" rx="3" fill="#eef2f8"/>'+
+  '<rect x="34" y="64" width="6" height="18" fill="#e5484d"/><rect x="28" y="70" width="18" height="6" fill="#e5484d"/>'+
+  '<g stroke="#ffffff" opacity=".05"><line x1="200" y1="125" x2="60" y2="250"/><line x1="200" y1="125" x2="340" y2="250"/><line x1="200" y1="125" x2="200" y2="250"/></g>'+
+  '<polygon points="196,210 204,210 200,204" fill="#ffc069" opacity=".5"/>'+
+  '<polygon points="196,226 204,226 200,220" fill="#ffc069" opacity=".35"/>'+
+  '</svg>';
+};
+
+/* 第二幕：诊室 */
+SCENES.room = function(){
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs>'+
+    '<linearGradient id="blk" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#31517a"/><stop offset="1" stop-color="#1d3355"/></linearGradient>'+
+    '<radialGradient id="warm"><stop offset="0" stop-color="#ffc069" stop-opacity=".22"/><stop offset="1" stop-color="#ffc069" stop-opacity="0"/></radialGradient>'+
+  '</defs>'+
+  '<rect width="400" height="250" fill="#0b1220"/>'+
+  '<rect y="200" width="400" height="50" fill="#0e1726"/>'+
+  '<rect x="28" y="36" width="92" height="84" fill="#0d1a2e" stroke="#22334f" stroke-width="2"/>'+
+  '<line x1="74" y1="36" x2="74" y2="120" stroke="#22334f" stroke-width="2"/><line x1="28" y1="78" x2="120" y2="78" stroke="#22334f" stroke-width="2"/>'+
+  '<circle cx="98" cy="56" r="9" fill="#dfe8f5" opacity=".85"/>'+
+  '<rect x="20" y="30" width="8" height="96" fill="#131f33"/><rect x="120" y="30" width="8" height="96" fill="#131f33"/>'+
+  '<circle cx="330" cy="40" r="60" fill="url(#warm)"/>'+
+  '<rect x="148" y="150" width="204" height="16" rx="4" fill="#2a3b58"/>'+
+  '<rect x="148" y="130" width="204" height="22" rx="6" fill="#d8dee9"/>'+
+  '<rect x="158" y="114" width="40" height="18" rx="7" fill="#eef2f8"/>'+
+  '<path d="M196 130 Q 226 104 256 124 Q 300 110 352 126 L 352 150 L 196 150 Z" fill="url(#blk)"/>'+
+  '<line x1="158" y1="166" x2="158" y2="196" stroke="#2a3b58" stroke-width="5"/>'+
+  '<line x1="342" y1="166" x2="342" y2="196" stroke="#2a3b58" stroke-width="5"/>'+
+  '<rect x="306" y="60" width="66" height="48" rx="5" fill="#05090f" stroke="#22304a" stroke-width="2"/>'+
+  '<path d="M312 82 H326 L330 82 L333 72 L337 90 L340 78 L342 82 H366" fill="none" stroke="#3ddc97" stroke-width="1.5" stroke-dasharray="24 90">'+
+  '<animate attributeName="stroke-dashoffset" from="114" to="0" dur="2.2s" repeatCount="indefinite"/></path>'+
+  '<text x="314" y="102" font-size="9" fill="#3ddc97" font-family="Georgia">72 bpm</text>'+
+  '<line x1="339" y1="108" x2="339" y2="200" stroke="#22304a" stroke-width="3"/>'+
+  '<line x1="112" y1="86" x2="112" y2="200" stroke="#3a4c6e" stroke-width="3"/>'+
+  '<line x1="96" y1="90" x2="128" y2="90" stroke="#3a4c6e" stroke-width="3"/>'+
+  '<rect x="100" y="92" width="24" height="32" rx="7" fill="#cfe3ff" opacity=".28"/>'+
+  '<path d="M112 124 C 112 150 130 150 145 138" fill="none" stroke="#cfe3ff" stroke-width="1.5" opacity=".4"/>'+
+  '</svg>';
+};
+
+/* 第三幕：四个科室的门（可点击） */
+SCENES.doors = function(){
+  function door(x, name, sym){
+    return '<g class="door" data-door="'+name+'">'+
+      '<rect class="hit" x="'+(x-8)+'" y="38" width="88" height="186" fill="transparent"/>'+
+      '<rect class="dplate" x="'+(x-4)+'" y="46" width="80" height="18" rx="3"/>'+
+      '<text x="'+(x+36)+'" y="58.5" text-anchor="middle" font-size="8.5" fill="#dceaff" letter-spacing=".5">'+name+'</text>'+
+      '<polygon points="'+(x+6)+',208 '+(x+66)+',208 '+(x+78)+',226 '+(x-6)+',226" fill="#ffe9c4" opacity=".07"/>'+
+      '<rect x="'+x+'" y="70" width="72" height="138" fill="#1a2740" stroke="#3a5380" stroke-width="2"/>'+
+      '<rect x="'+(x+5)+'" y="75" width="62" height="128" fill="#22355a"/>'+ sym +
+      '<circle cx="'+(x+62)+'" cy="146" r="3.5" fill="#8ba3c4"/>'+
+    '</g>';
+  }
+  function symReg(cx){
+    return '<rect class="dsym" x="'+(cx-13)+'" y="104" width="26" height="34" rx="3" stroke-width="2"/>'+
+      '<rect class="dsym" x="'+(cx-6)+'" y="98" width="12" height="9" rx="2" stroke-width="2"/>'+
+      '<line class="dsym" x1="'+(cx-8)+'" y1="116" x2="'+(cx+8)+'" y2="116" stroke-width="2"/>'+
+      '<line class="dsym" x1="'+(cx-8)+'" y1="124" x2="'+(cx+8)+'" y2="124" stroke-width="2"/>'+
+      '<line class="dsym" x1="'+(cx-8)+'" y1="132" x2="'+(cx+2)+'" y2="132" stroke-width="2"/>';
+  }
+  function symPha(cx){
+    return '<rect class="dsym" x="'+(cx-16)+'" y="112" width="32" height="15" rx="7.5" stroke-width="2" transform="rotate(-28 '+cx+' 119)"/>'+
+      '<line class="dsym" x1="'+cx+'" y1="112" x2="'+cx+'" y2="127" stroke-width="2" transform="rotate(-28 '+cx+' 119)"/>';
+  }
+  function symCar(cx){
+    return '<path class="dsym" stroke-width="2" stroke="#ff8a8a" d="M'+cx+' 118 C '+(cx-8)+' 106 '+(cx-24)+' 110 '+(cx-24)+' 122 C '+(cx-24)+' 134 '+(cx-8)+' 142 '+cx+' 150 C '+(cx+8)+' 142 '+(cx+24)+' 134 '+(cx+24)+' 122 C '+(cx+24)+' 110 '+(cx+8)+' 106 '+cx+' 118 Z"/>'+
+      '<path class="dsym" stroke-width="1.6" d="M'+(cx-20)+' 126 H'+(cx-8)+' L'+(cx-4)+' 118 L'+cx+' 132 L'+(cx+4)+' 122 L'+(cx+6)+' 126 H'+(cx+20)+'"/>';
+  }
+  function symRad(cx){
+    return '<rect class="dsym" x="'+(cx-16)+'" y="100" width="32" height="44" rx="3" stroke-width="2"/>'+
+      '<circle class="dsym" cx="'+cx+'" cy="111" r="5" stroke-width="1.6"/>'+
+      '<path class="dsym" stroke-width="1.6" d="M'+(cx-6)+' 122 Q'+cx+' 118 '+(cx+6)+' 122 M'+(cx-8)+' 130 Q'+cx+' 125 '+(cx+8)+' 130 M'+(cx-9)+' 138 Q'+cx+' 132 '+(cx+9)+' 138"/>';
+  }
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs><radialGradient id="dlamp"><stop offset="0" stop-color="#ffe9c4" stop-opacity=".55"/><stop offset="1" stop-color="#ffe9c4" stop-opacity="0"/></radialGradient>'+
+  '<linearGradient id="dwall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#18223a"/><stop offset="1" stop-color="#101828"/></linearGradient></defs>'+
+  '<rect width="400" height="250" fill="url(#dwall)"/>'+
+  '<rect y="208" width="400" height="42" fill="#182234"/>'+
+  '<ellipse cx="200" cy="24" rx="150" ry="30" fill="url(#dlamp)"/>'+
+  '<rect x="130" y="12" width="140" height="10" rx="5" fill="#f5e3bd"/>'+
+  '<rect y="204" width="400" height="4" fill="#2a3d63"/>'+
+  door(20,"Registration",symReg(56))+
+  door(115,"Radiology",symRad(151))+
+  door(210,"Cardiology",symCar(246))+
+  door(305,"Pharmacy",symPha(341))+
+  '<circle id="door-dot" cx="200" cy="234" r="7" fill="#ffc069"/><circle cx="200" cy="234" r="12" fill="#ffc069" opacity=".2"><animate attributeName="r" values="10;15;10" dur="2s" repeatCount="indefinite"/></circle>'+
+  '</svg>';
+};
+
+/* 第四幕：药房 */
+SCENES.pharmacy = function(){
+  function shelf(y){
+    var b = '<rect x="36" y="'+y+'" width="328" height="6" fill="#24334e"/>';
+    var cols = ["#ffc069","#3ddc97","#7fb0ff","#ff8a8a"];
+    for(var i=0;i<9;i++){
+      var h = 16+((i*7+y)%14), x = 48+i*35, c = cols[(i+y)%4];
+      b += '<rect x="'+x+'" y="'+(y-h)+'" width="16" height="'+h+'" rx="3" fill="'+c+'" opacity=".55"/>'+
+           '<rect x="'+(x+4)+'" y="'+(y-h-4)+'" width="8" height="4" rx="1" fill="'+c+'" opacity=".8"/>';
+    }
+    return b;
+  }
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs>'+
+    '<linearGradient id="ctr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16233c"/><stop offset="1" stop-color="#0e1729"/></linearGradient>'+
+    '<radialGradient id="pglow"><stop offset="0" stop-color="#3ddc97" stop-opacity=".4"/><stop offset="1" stop-color="#3ddc97" stop-opacity="0"/></radialGradient>'+
+  '</defs>'+
+  '<rect width="400" height="250" fill="#0c1320"/>'+
+  shelf(84)+shelf(126)+shelf(168)+
+  '<circle cx="200" cy="30" r="34" fill="url(#pglow)"/>'+
+  '<rect x="176" y="14" width="48" height="30" rx="5" fill="#0a1f16" stroke="#1f5c40"/>'+
+  '<rect x="196" y="19" width="8" height="20" fill="#3ddc97"/><rect x="189" y="25" width="22" height="8" fill="#3ddc97"/>'+
+  '<text x="200" y="58" text-anchor="middle" font-size="9" letter-spacing="4" fill="#bfe9d4" font-family="Georgia">PHARMACY</text>'+
+  '<rect y="192" width="400" height="58" fill="url(#ctr)"/>'+
+  '<rect y="192" width="400" height="4" fill="#24334e"/>'+
+  '<g transform="rotate(-4 250 184)"><rect x="226" y="172" width="52" height="24" rx="2" fill="#f3efe4"/><line x1="232" y1="180" x2="272" y2="180" stroke="#b9b2a2" stroke-width="2"/><line x1="232" y1="186" x2="264" y2="186" stroke="#b9b2a2" stroke-width="2"/></g>'+
+  '<rect x="300" y="168" width="20" height="28" rx="4" fill="#ffc069" opacity=".85"/><rect x="303" y="162" width="14" height="6" rx="2" fill="#eef2f8"/>'+
+  '<circle cx="332" cy="190" r="4" fill="#ff8a8a"/><circle cx="342" cy="192" r="4" fill="#7fb0ff"/><circle cx="337" cy="184" r="4" fill="#3ddc97"/>'+
+  '</svg>';
+};
+
+/* 结局：黎明 */
+SCENES.dawn = function(){
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs>'+
+    '<linearGradient id="dsk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#241018"/><stop offset=".55" stop-color="#8a3b3b"/><stop offset="1" stop-color="#ff9d5c"/></linearGradient>'+
+    '<radialGradient id="sun"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".9"/><stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/></radialGradient>'+
+  '</defs>'+
+  '<rect width="400" height="250" fill="#0a0810"/>'+
+  '<rect x="52" y="16" width="296" height="180" fill="url(#dsk)"/>'+
+  '<circle cx="200" cy="168" r="90" fill="url(#sun)"/>'+
+  '<circle cx="200" cy="168" r="30" fill="#ffd9a0"/>'+
+  '<path d="M120 60 Q 128 52 136 60 M 132 66 Q 140 58 148 66" stroke="#3a1f1f" stroke-width="2" fill="none"/>'+
+  '<path d="M264 44 Q 272 36 280 44" stroke="#3a1f1f" stroke-width="2" fill="none"/>'+
+  '<rect x="52" y="16" width="296" height="180" fill="none" stroke="#0a0810" stroke-width="10"/>'+
+  '<line x1="200" y1="16" x2="200" y2="196" stroke="#0a0810" stroke-width="8"/>'+
+  '<line x1="52" y1="106" x2="348" y2="106" stroke="#0a0810" stroke-width="8"/>'+
+  '<polygon points="200,168 90,250 310,250" fill="#ffd9a0" opacity=".07"/>'+
+  '<rect y="196" width="400" height="54" fill="#0a0810"/>'+
+  '<rect x="60" y="176" width="180" height="20" rx="6" fill="#141021"/>'+
+  '<rect x="60" y="160" width="60" height="18" rx="8" fill="#1d1730"/>'+
+  '<path d="M120 176 Q 150 152 186 170 L 240 172 L 240 196 L 60 196 Z" fill="#141021"/>'+
+  '<rect x="292" y="128" width="58" height="42" rx="4" fill="#05090f" stroke="#22304a" stroke-width="2"/>'+
+  '<path d="M298 148 H312 L316 148 L319 140 L323 154 L326 145 L328 148 H344" fill="none" stroke="#3ddc97" stroke-width="1.5" stroke-dasharray="22 80">'+
+  '<animate attributeName="stroke-dashoffset" from="102" to="0" dur="2.8s" repeatCount="indefinite"/></path>'+
+  '<text x="298" y="164" font-size="8" fill="#3ddc97" font-family="Georgia">steady</text>'+
+  '</svg>';
+};
+
+/* ---------- 第一幕地图（俯视平面图） ---------- */
+function svgMap(){
+  function spot(name, cn, x, y, w, h, label){
+    return '<g class="spot" data-spot="'+name+'" data-cn="'+cn+'">'+
+      '<rect class="hit" x="'+(x-6)+'" y="'+(y-6)+'" width="'+(w+12)+'" height="'+(h+26)+'" fill="transparent"/>'+
+      '<rect class="micon" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="6" stroke="#4a6a9e" stroke-width="2" fill="rgba(74,106,158,.14)"/>'+
+      '<text class="map-label" x="'+(x+w/2)+'" y="'+(y+h+16)+'" text-anchor="middle">'+label+'</text></g>';
+  }
+  return '<svg viewBox="0 0 400 260">'+
+  '<rect width="400" height="260" fill="#0a101a"/>'+
+  '<rect x="12" y="12" width="376" height="236" fill="none" stroke="#2a3c5e" stroke-width="3"/>'+
+  '<rect x="176" y="246" width="48" height="4" fill="#0a101a"/>'+
+  '<text class="map-label" x="200" y="242" text-anchor="middle" fill="#ffc069">入口 Entrance</text>'+
+  '<rect x="20" y="106" width="360" height="44" fill="#101d33" stroke="#24395c" stroke-width="1.5"/>'+
+  '<line x1="30" y1="128" x2="370" y2="128" stroke="#2e4470" stroke-width="1.5" stroke-dasharray="8 8"/>'+
+  '<rect x="270" y="20" width="110" height="76" fill="#0e1828" stroke="#24395c" stroke-width="1.5"/>'+
+  '<g class="spot" data-spot="reg" data-cn="挂号处"><rect x="20" y="168" width="104" height="70" fill="#0e1828" stroke="#24395c" stroke-width="1.5"/>'+
+  '<text class="map-label" x="72" y="206" text-anchor="middle">挂号处</text></g>'+
+  '<g class="spot" data-spot="lift" data-cn="电梯"><rect x="140" y="176" width="66" height="52" fill="#0e1828" stroke="#24395c" stroke-width="1.5"/>'+
+  '<text class="map-label" x="173" y="206" text-anchor="middle">电梯</text></g>'+
+  '<g class="spot" data-spot="wc" data-cn="洗手间"><rect x="222" y="176" width="72" height="52" fill="#0e1828" stroke="#24395c" stroke-width="1.5"/>'+
+  '<text class="map-label" x="258" y="206" text-anchor="middle">洗手间</text></g>'+
+  '<g class="spot" data-spot="cash" data-cn="缴费处"><rect x="150" y="20" width="104" height="60" fill="#0e1828" stroke="#24395c" stroke-width="1.5"/>'+
+  '<text class="map-label" x="202" y="54" text-anchor="middle">缴费处</text></g>'+
+  spot("corridor","走廊",172,112,56,30,"走廊")+
+  spot("waiting chair","候诊椅",46,34,80,34,"候诊椅")+
+  spot("consulting room","诊室",290,32,80,50,"诊室")+
+  '<g fill="#22365c"><rect x="52" y="40" width="12" height="10" rx="2"/><rect x="70" y="40" width="12" height="10" rx="2"/><rect x="88" y="40" width="12" height="10" rx="2"/><rect x="106" y="40" width="12" height="10" rx="2"/></g>'+
+  '<rect x="316" y="42" width="10" height="16" fill="#e5484d"/><rect x="313" y="45" width="16" height="10" fill="#e5484d"/>'+
+  '<circle id="player-dot" cx="200" cy="232" r="7" fill="#ffc069"/>'+
+  '<circle cx="200" cy="232" r="12" fill="#ffc069" opacity=".2"><animate attributeName="r" values="9;14;9" dur="2s" repeatCount="indefinite"/></circle>'+
+  '</svg>';
+}
+
+/* ---------- 工具图标 ---------- */
+var TOOL_SVGS = {
+  thermometer: '<svg viewBox="0 0 52 64"><rect x="21" y="5" width="10" height="42" rx="5" fill="none" stroke="#cfe0ff" stroke-width="2"/>'+
+    '<circle cx="26" cy="53" r="8" fill="none" stroke="#cfe0ff" stroke-width="2"/>'+
+    '<line x1="26" y1="22" x2="26" y2="49" stroke="#ff6b6b" stroke-width="3.5" stroke-linecap="round"/>'+
+    '<circle cx="26" cy="53" r="4.5" fill="#ff6b6b"/>'+
+    '<line x1="33" y1="12" x2="38" y2="12" stroke="#8ba3c4" stroke-width="1.6"/><line x1="33" y1="20" x2="38" y2="20" stroke="#8ba3c4" stroke-width="1.6"/><line x1="33" y1="28" x2="38" y2="28" stroke="#8ba3c4" stroke-width="1.6"/></svg>',
+  stethoscope: '<svg viewBox="0 0 52 64"><path d="M14 6 C14 28 19 37 26 37 C33 37 38 28 38 6" fill="none" stroke="#cfe0ff" stroke-width="2.5" stroke-linecap="round"/>'+
+    '<circle cx="14" cy="6" r="2.6" fill="#cfe0ff"/><circle cx="38" cy="6" r="2.6" fill="#cfe0ff"/>'+
+    '<path d="M26 37 C26 48 30 51 35 51" fill="none" stroke="#cfe0ff" stroke-width="2.5"/>'+
+    '<circle cx="41" cy="51" r="7" fill="rgba(255,192,105,.2)" stroke="#ffc069" stroke-width="2"/>'+
+    '<circle cx="41" cy="51" r="2.4" fill="#ffc069"/></svg>',
+  syringe: '<svg viewBox="0 0 52 64"><rect x="19" y="14" width="14" height="28" rx="2" fill="none" stroke="#cfe0ff" stroke-width="2"/>'+
+    '<line x1="26" y1="4" x2="26" y2="14" stroke="#cfe0ff" stroke-width="2.5"/>'+
+    '<rect x="16" y="2" width="20" height="4" rx="2" fill="#cfe0ff"/>'+
+    '<rect x="22" y="42" width="8" height="5" fill="#cfe0ff"/>'+
+    '<line x1="26" y1="47" x2="26" y2="61" stroke="#cfe0ff" stroke-width="1.8"/>'+
+    '<line x1="33" y1="20" x2="38" y2="20" stroke="#8ba3c4" stroke-width="1.5"/><line x1="33" y1="26" x2="38" y2="26" stroke="#8ba3c4" stroke-width="1.5"/><line x1="33" y1="32" x2="38" y2="32" stroke="#8ba3c4" stroke-width="1.5"/>'+
+    '<rect x="21" y="30" width="10" height="10" fill="rgba(127,176,255,.35)"/></svg>'
+};
+
+/* ---------- 调试钩子（供自动化测试读取，不影响游戏） ---------- */
+window.__WM = { state:function(){ return { act:S.act, step:S.step, badges:Object.keys(S.badges).length, heard:Object.keys(S.heard).length }; } };
+
+/* ---------- 启动 ---------- */
+renderTitle();
+})();
+</script>
+</body>
+</html>

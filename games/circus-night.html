@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>马戏团之夜：谁藏起了红鼻子</title>
+<style>
+:root{--acc:#ffb020;--acc2:#ffd66e;--bg:#12080b;--ink:#f6f4f8;--dim:rgba(246,244,248,.62);--faint:rgba(246,244,248,.38);--line:rgba(255,255,255,.13);--panel:rgba(255,255,255,.05);
+--serif:Georgia,'Times New Roman','Songti SC','SimSun',serif;--sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;touch-action:manipulation}
+.wrap{max-width:680px;margin:0 auto;padding:14px 14px 60px}
+.screen{display:none;animation:fadeUp .45s ease}
+.screen.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.statusbar{position:sticky;top:0;z-index:9;display:flex;align-items:center;gap:8px;padding:8px 4px;background:linear-gradient(180deg,var(--bg) 78%,transparent);}
+.pill{font-size:.72rem;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--dim);white-space:nowrap}
+.pill b{color:var(--acc);font-family:var(--serif)}
+#timer.warn b{color:#ff6b6b}
+.iconbtn{margin-left:auto;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:5px 10px;font-size:.8rem}
+.iconbtn:active{transform:scale(.94)}
+.scenebox{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel);margin:10px 0 14px}
+.scenebox svg{display:block;width:100%;height:auto}
+h1.gtitle{font-family:var(--serif);font-size:2rem;letter-spacing:.06em;text-align:center;line-height:1.35;margin:14px 0 4px}
+.gen{text-align:center;font-family:var(--serif);color:var(--faint);font-size:.85rem;letter-spacing:.18em;margin-bottom:8px}
+.gtag{text-align:center;color:var(--dim);font-size:.88rem;line-height:1.8;margin:8px 0 18px}
+.btn{display:block;width:100%;border:none;border-radius:14px;background:var(--acc);color:#1c1208;font-weight:800;font-size:1.02rem;letter-spacing:.14em;padding:15px;margin:10px 0;cursor:pointer}
+.btn:active{transform:scale(.97);filter:brightness(1.12)}
+.btn.ghost{background:transparent;color:var(--dim);border:1px solid var(--line);font-weight:600;letter-spacing:.06em}
+.btn.small{width:auto;display:inline-block;padding:9px 18px;font-size:.88rem;margin:6px 6px 0 0}
+.actkick{text-align:center;color:var(--acc);font-size:.72rem;letter-spacing:.34em;margin-bottom:8px}
+.acttitle{font-family:var(--serif);font-size:1.5rem;text-align:center;margin-bottom:6px}
+.actsub{text-align:center;color:var(--dim);font-size:.86rem;line-height:1.7;margin-bottom:14px}
+.panel{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:14px;margin-bottom:12px}
+.dialog{display:flex;gap:10px;align-items:flex-start}
+.avatar{width:44px;height:44px;flex:none;border-radius:12px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:rgba(255,255,255,.06)}
+.bubble{flex:1;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:10px 12px;font-size:.92rem;line-height:1.7}
+.bubble .who{color:var(--acc);font-size:.72rem;letter-spacing:.12em;margin-bottom:4px}
+.bubble b.kw{color:var(--acc2);font-family:var(--serif);font-size:1.05em}
+.ttsbtn{flex:none;border:1px solid var(--line);background:transparent;color:var(--dim);border-radius:10px;padding:8px;font-size:.85rem}
+.ttsbtn:active{transform:scale(.92);color:var(--acc)}
+.opts{display:grid;gap:9px;margin-top:10px}
+.opt{border:1px solid var(--line);background:rgba(255,255,255,.045);color:var(--ink);border-radius:12px;padding:12px 14px;font-size:.95rem;text-align:left;cursor:pointer;font-family:var(--sans)}
+.opt:active{transform:scale(.98)}
+.opt.right{border-color:#58c98f;background:rgba(88,201,143,.14)}
+.opt.wrong{border-color:#ff6b6b;background:rgba(255,107,107,.12)}
+.opt .en{font-family:var(--serif);font-size:1.06rem}
+.opt .cn{color:var(--faint);font-size:.78rem;margin-top:2px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.suspect{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.045);padding:10px 6px;text-align:center;cursor:pointer}
+.suspect:active{transform:scale(.96)}
+.suspect.sel{border-color:var(--acc);background:rgba(255,255,255,.1)}
+.suspect .em{font-size:1.5rem}
+.suspect .nm{font-size:.8rem;margin-top:4px;color:var(--dim)}
+.wordcards{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.wcard{border:1px solid var(--acc2);color:var(--ink);border-radius:999px;padding:7px 13px;font-family:var(--serif);font-size:.95rem;cursor:pointer;background:rgba(255,255,255,.04)}
+.wcard:active{transform:scale(.95)}
+.wcard.sel{background:var(--acc2);color:#191106;font-weight:700}
+.wcard.done{opacity:.32;border-color:var(--line);text-decoration:line-through}
+.clue{border-left:3px solid var(--acc);background:rgba(255,255,255,.045);border-radius:0 12px 12px 0;padding:10px 12px;margin:8px 0;font-size:.9rem;line-height:1.7}
+.clue .ck{color:var(--acc);font-size:.72rem;letter-spacing:.14em}
+.stmt{border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin:8px 0;font-size:.9rem;cursor:pointer;background:rgba(255,255,255,.04)}
+.stmt:active{transform:scale(.99)}
+.stmt.sel{border-color:var(--acc2);background:rgba(255,255,255,.1)}
+.stmt.contra{border-color:#ffb020;background:rgba(255,176,32,.12)}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
+.tile{width:42px;height:48px;border:1px solid var(--acc2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.3rem;cursor:pointer;background:rgba(255,255,255,.05)}
+.tile:active{transform:scale(.92)}
+.tile.used{opacity:.25;pointer-events:none}
+.spellout{min-height:52px;border:1px dashed var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:5px;font-family:var(--serif);font-size:1.5rem;letter-spacing:.14em;padding:6px;margin-top:8px;color:var(--acc2)}
+.badgewall{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0}
+.badge{border:1px solid var(--line);border-radius:12px;padding:9px 4px;text-align:center;font-size:.68rem;color:var(--dim);background:rgba(255,255,255,.04)}
+.badge .be{font-size:1.3rem;display:block;margin-bottom:3px}
+.badge.got{border-color:var(--acc);color:var(--ink)}
+.badge.cave{border-color:#ffb020;border-style:dashed}
+.reviewgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:12px 0}
+.rcard{border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:rgba(255,255,255,.04);cursor:pointer}
+.rcard:active{transform:scale(.97)}
+.rcard .rw{font-family:var(--serif);font-size:1.1rem;color:var(--acc2)}
+.rcard .rc{font-size:.78rem;color:var(--dim);margin-top:2px}
+.rcard .rt{font-size:.68rem;color:#ffb020;margin-top:4px}
+.cert{border:2px solid var(--acc);border-radius:20px;padding:22px 16px;text-align:center;background:radial-gradient(600px 200px at 50% 0%,rgba(255,255,255,.08),transparent)}
+.cert .ct{font-family:var(--serif);font-size:1.5rem;margin:8px 0}
+.cert .cn{color:var(--dim);font-size:.85rem;line-height:1.9}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#222;color:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 16px;font-size:.85rem;opacity:0;transition:.25s;pointer-events:none;z-index:99;max-width:86vw;text-align:center}
+.toast.on{opacity:1}
+.confetti{position:fixed;top:-10px;font-size:1.2rem;animation:fall 2.6s linear forwards;pointer-events:none;z-index:98}
+@keyframes fall{to{transform:translateY(105vh) rotate(300deg);opacity:.2}}
+.home{display:inline-block;color:var(--faint);font-size:.8rem;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px;margin-top:8px}
+.home:active{transform:scale(.95);color:var(--acc)}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="statusbar">
+  <div class="pill">徽章 <b id="bdg">0/28</b></div>
+  <div class="pill" id="timer">⏳ <b id="clk">8:00</b></div>
+  <button class="iconbtn" id="sfxbtn">🔊 音效</button>
+ </div>
+ <div id="app"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+window.__CFG__ = {"file": "circus-night.html", "title": "马戏团之夜：谁藏起了红鼻子", "en": "THE CIRCUS NIGHT · A WORD MYSTERY", "tagline": "开演前一小时，明星小丑的幸运红鼻子不翼而飞。<br>你是志愿者 Elsa——用英语问出真相，让笑声准时响起。", "intro": "今晚是 \"Doctor Larry\" 马戏义演之夜。可他的红鼻子——每场演出的灵魂道具——消失了。嫌疑人有三位，证词里藏着矛盾。<b style=\"color:var(--ink)\">每一个英文单词都是一把钥匙：读对、选对、拼对，剧情才会前进。</b>全局倒计时 8 分钟，指认错误会扣时；错得漂亮也没关系——每个错误都是一颗进化石。", "svg": "<svg viewBox=\"0 0 680 220\" xmlns=\"http://www.w3.org/2000/svg\">\n<rect width=\"680\" height=\"220\" fill=\"#18090d\"/>\n<circle cx=\"580\" cy=\"42\" r=\"26\" fill=\"#f5d78e\" opacity=\".9\"/><circle cx=\"572\" cy=\"38\" r=\"24\" fill=\"#18090d\" opacity=\".25\"/>\n<polygon points=\"340,18 180,180 500,180\" fill=\"#c0392b\"/>\n<polygon points=\"340,18 255,180 425,180\" fill=\"#e8dcc4\"/>\n<polygon points=\"340,18 320,180 360,180\" fill=\"#c0392b\"/>\n<rect x=\"180\" y=\"180\" width=\"320\" height=\"14\" fill=\"#7a1f1f\"/>\n<rect x=\"336\" y=\"2\" width=\"8\" height=\"20\" fill=\"#f5d78e\"/><polygon points=\"344,2 372,9 344,16\" fill=\"#f5d78e\"/>\n<text x=\"340\" y=\"212\" text-anchor=\"middle\" font-size=\"15\" fill=\"#f5d78e\" font-family=\"Georgia\">THE CIRCUS COMES TO TOWN</text>\n<circle cx=\"90\" cy=\"70\" r=\"4\" fill=\"#f5d78e\" opacity=\".8\"/><circle cx=\"130\" cy=\"45\" r=\"3\" fill=\"#f5d78e\" opacity=\".6\"/>\n<circle cx=\"60\" cy=\"110\" r=\"3\" fill=\"#f5d78e\" opacity=\".5\"/><circle cx=\"620\" cy=\"120\" r=\"4\" fill=\"#f5d78e\" opacity=\".7\"/>\n<circle cx=\"540\" cy=\"90\" r=\"2.5\" fill=\"#f5d78e\" opacity=\".5\"/><circle cx=\"160\" cy=\"90\" r=\"2.5\" fill=\"#f5d78e\" opacity=\".6\"/>\n</svg>", "acc": "#ffb020", "acc2": "#ffd66e", "bg": "#12080b", "suspects": [{"id": "rex", "name": "团长 Rex", "role": "ringmaster · 团长", "emoji": "🎪", "guilty": false}, {"id": "marco", "name": "魔术师 Marco", "role": "magician · 魔术师", "emoji": "🎩", "guilty": false}, {"id": "coco", "name": "学徒 Coco", "role": "clown apprentice · 小丑学徒", "emoji": "🤡", "guilty": true}], "acts": [{"type": "spell-door", "title": "后台惊魂", "intro": "团长 Rex 在后台拦住你：证明你能听懂马戏团的英语，才能参与调查。", "playSub": "Rex 说出一句英文，根据中文提示选出正确的咒语单词。", "words": [{"word": "circus", "cn": "马戏团", "emoji": "🎪", "prompt": "Welcome to the circus! The tent opens at six.", "say": "circus"}, {"word": "amusement", "cn": "娱乐，消遣", "emoji": "🎡", "prompt": "This show is pure amusement for sick children.", "say": "amusement"}, {"word": "mood", "cn": "心情", "emoji": "🎭", "prompt": "Larry is in a dark mood — his nose is gone!", "say": "mood"}, {"word": "entertain", "cn": "使快乐", "emoji": "🎤", "prompt": "Clowns entertain the audience with silly jokes.", "say": "entertain"}, {"word": "spot", "cn": "发现，注意到", "emoji": "👀", "prompt": "Did you spot anyone near the dressing room?", "say": "spot"}, {"word": "tale", "cn": "故事", "emoji": "📖", "prompt": "Every clown has a tale to tell. Listen carefully.", "say": "tale"}]}, {"type": "interrogate", "title": "自由审问", "intro": "三位嫌疑人就在帐篷里。用单词卡提问——TA 们会用这个词回答你。", "playSub": "先点单词卡，再点嫌疑人；听懂回答后选出词义。全部问完解锁线索板。", "words": [{"word": "composer", "cn": "作曲家", "qa": "Our composer is still writing tonight's finale song.", "decoys": ["奉承，讨好", "雇主"]}, {"word": "shave", "cn": "刮脸，刮胡子", "qa": "I went to shave before the show — the barber saw me!", "decoys": ["残忍的", "雇主"]}, {"word": "fellow", "cn": "男人；家伙", "qa": "Larry is a kind fellow. I would never hurt him.", "decoys": ["温和的", "奉承，讨好"]}, {"word": "gentle", "cn": "温和的", "qa": "Be gentle with the clowns — they are artists, not machines.", "decoys": ["残忍的", "奉承，讨好"]}, {"word": "cruel", "cn": "残忍的", "qa": "Whoever hid the nose played a cruel joke tonight.", "decoys": ["刮脸，刮胡子", "男人；家伙"]}, {"word": "literary", "cn": "文学的", "qa": "Larry loves literary jokes; he reads essays between shows.", "decoys": ["奉承，讨好", "雇主"]}, {"word": "flatter", "cn": "奉承，讨好", "qa": "People flatter Larry all day, but nobody asks how he feels.", "decoys": ["温和的", "文学的"]}, {"word": "employer", "cn": "雇主", "qa": "As his employer, I must keep this show running.", "decoys": ["刮脸，刮胡子", "温和的"]}]}, {"type": "clues", "title": "线索板 · 矛盾指认", "intro": "售票处、医务室、海报墙……线索一条条浮现。", "playSub": "答对单词题解锁线索；集齐后从证词中挑出互相矛盾的两句。", "contraIntro": "四条信息摆在侦探板上。其中两句不可能同时为真——挑出它们。", "contraReveal": "Marco 说 7:30 在后台看到 Larry，但图书馆目击者说 Larry 7:30 在读 essay——Marco 撒谎了。可他为什么要撒谎？他在替谁打掩护？<b>谁最希望 Larry 今晚无法上台？</b>", "words": [{"word": "ankle", "cn": "脚踝", "clueQ": "Larry hurt his ___ during rehearsal.", "clue": "Larry 排练时扭伤了 ankle（脚踝），医生嘱咐他今晚不要登台。"}, {"word": "advertisement", "cn": "广告", "clueQ": "The ___ says the show starts at seven.", "clue": "海报 advertisement（广告）印着：七点开演，十点谢幕。"}, {"word": "impress", "cn": "使钦佩，使留下深刻印象", "clueQ": "Coco always wanted to ___ the audience.", "clue": "学徒 Coco 一直想 impress（打动）观众，却从未获准登台。"}, {"word": "essay", "cn": "短文，论说文", "clueQ": "Larry was reading an ___ at 7:30.", "clue": "7:30，图书馆目击者看到 Larry 在读 essay（短文）——他不在后台。"}, {"word": "optimism", "cn": "乐观；乐观主义", "clueQ": "His ___ never fades, even when injured.", "clue": "Larry 以 optimism（乐观）著称：受伤也笑着说 \"The show must go on.\""}, {"word": "interaction", "cn": "交流，互动", "clueQ": "The nose was last seen during an ___ with fans.", "clue": "红鼻子最后一次出现，是 Larry 与粉丝的 interaction（互动）环节。"}, {"word": "examine", "cn": "检查（身体）", "clueQ": "A doctor came to ___ his ankle at 8:00.", "clue": "8:00 医生来 examine（检查）脚踝；医生离开时，红鼻子已不见。"}], "stmts": [{"t": "🎩 Marco：「7:30 我亲眼看到 Larry 在后台化妆。」", "contra": true}, {"t": "📖 线索 4：7:30 有人在图书馆看到 Larry 在读 essay。", "contra": true}, {"t": "🎪 Rex：「海报写着七点开场，一切按原计划。」", "contra": false}, {"t": "🤡 Coco：「Larry 是我最敬重的人，我只想他好好休息。」", "contra": false}]}, {"type": "boss", "title": "真相与演出", "intro": "拼出最后的咒语单词，当面指认藏起红鼻子的人。", "playSub": "按正确顺序点字母，拼出咒语单词。", "accuseIntro": "红鼻子就藏在 TA 的道具箱里。指出真正的「藏鼻人」——选错会扣 60 秒。", "words": [{"word": "amusing", "cn": "逗人发笑的", "bossQ": "这场误会其实有点 ___（逗人发笑的）。"}, {"word": "deserve", "cn": "应得，应受到", "bossQ": "Coco says: \"I just wanted one chance — don't I ___ it?\""}, {"word": "essential", "cn": "极其重要的", "bossQ": "The red nose is ___ to Larry's act — without it, no show."}, {"word": "conclude", "cn": "作出结论", "bossQ": "From the clues, we can ___ who took the nose."}, {"word": "enthusiasm", "cn": "热情", "bossQ": "Her ___ for the stage is real — she just chose the wrong way."}, {"word": "consistently", "cn": "一贯地", "bossQ": "Larry has ___ helped young performers — including Coco."}, {"word": "complicated", "cn": "复杂的", "bossQ": "Feelings are ___: love for the stage, fear of never performing."}]}], "endingTrue": {"title": "真结局 · 笑声重启", "name": "金牌救场侦探", "emoji": "🎪", "desc": "你在谢幕前找回红鼻子。Coco 含泪归还道具：她只想让受伤的 Larry 休息一晚，也想有一次登台机会。Larry 拄着拐杖宣布——今晚由 Coco 代演！全场大笑。<br><i>Laughter is the best medicine.</i>"}, "endingNormal": {"title": "普通结局 · 迟到的真相", "name": "实习侦探", "emoji": "🕵️", "desc": "真相大白，红鼻子完璧归赵，但开场铃已响过三轮。Larry 笑着说：「下次早点抓到她。」<br>去复盘页看看哪些词进了修炼洞窟，再破一次案，冲击真结局！"}, "total": 28, "allWords": [{"word": "circus", "cn": "马戏团", "ipa": "/ˈsɜːkəs/"}, {"word": "amusement", "cn": "娱乐，消遣", "ipa": "/əˈmjuːzmənt/"}, {"word": "mood", "cn": "心情", "ipa": "/muːd/"}, {"word": "entertain", "cn": "使快乐", "ipa": "/ˌentəˈteɪn/"}, {"word": "spot", "cn": "发现，注意到", "ipa": "/spɔt/"}, {"word": "tale", "cn": "故事", "ipa": "/teɪl/"}, {"word": "composer", "cn": "作曲家", "ipa": "/kəmˈpəʊzə/"}, {"word": "shave", "cn": "刮脸，刮胡子", "ipa": "/ʃeɪv/"}, {"word": "fellow", "cn": "男人；家伙", "ipa": "/ˈfeləʊ/"}, {"word": "gentle", "cn": "温和的", "ipa": "/ˈdʒentl/"}, {"word": "cruel", "cn": "残忍的", "ipa": "/ˈkruːəl/"}, {"word": "literary", "cn": "文学的", "ipa": "/ˈlɪt(ə)rəri/"}, {"word": "flatter", "cn": "奉承，讨好", "ipa": "/ˈflætə/"}, {"word": "employer", "cn": "雇主", "ipa": "/ɪmˈplɔɪə/"}, {"word": "ankle", "cn": "脚踝", "ipa": "/ˈæŋk(ə)l/"}, {"word": "advertisement", "cn": "广告", "ipa": "/ədˈvɜːtɪsmənt/"}, {"word": "impress", "cn": "使钦佩，使留下深刻印象", "ipa": "/ɪmˈpres/"}, {"word": "essay", "cn": "短文，论说文", "ipa": "/ˈeseɪ/"}, {"word": "optimism", "cn": "乐观；乐观主义", "ipa": "/ˈɒptɪmɪz(ə)m/"}, {"word": "interaction", "cn": "交流，互动", "ipa": "/ˌɪntərˈækʃ(ə)n/"}, {"word": "examine", "cn": "检查（身体）", "ipa": "/ɪɡˈzæmɪn/"}, {"word": "amusing", "cn": "逗人发笑的", "ipa": "/əˈmjuːzɪŋ/"}, {"word": "deserve", "cn": "应得，应受到", "ipa": "/dɪˈzɜːv/"}, {"word": "essential", "cn": "极其重要的", "ipa": "/ɪˈsenʃ(ə)l/"}, {"word": "conclude", "cn": "作出结论", "ipa": "/kənˈkluːd/"}, {"word": "enthusiasm", "cn": "热情", "ipa": "/ɪnˈθjuːziæz(ə)m/"}, {"word": "consistently", "cn": "一贯地", "ipa": "/kənˈsɪst(ə)ntli/"}, {"word": "complicated", "cn": "复杂的", "ipa": "/ˈkɒmplɪkeɪtɪd/"}]};
+
+(function(){
+'use strict';
+var CFG = window.__CFG__;
+var app = document.getElementById('app');
+var toastEl = document.getElementById('toast');
+var S;
+function freshState(){
+  return {screen:'title', act:0, badges:[], wrong:{}, timeLeft:480, timeUp:false,
+          accuseWrong:0, actDone:{}, selWord:null, selSuspect:null, selStmts:[],
+          spellQueue:[], spellCur:null, spellPicked:'', cluesGot:[], contraDone:false};
+}
+S = freshState();
+
+/* ---------- 工具 ---------- */
+function E(tag, cls, h){ var d=document.createElement(tag); if(cls)d.className=cls; if(h!=null)d.innerHTML=h; return d; }
+function toast(m){ toastEl.textContent=m; toastEl.classList.add('on'); clearTimeout(toastEl._t); toastEl._t=setTimeout(function(){toastEl.classList.remove('on')},2200); }
+function tts(text){
+  try{
+    var u = new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.92;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  }catch(e){}
+}
+var AC=null, sfxOn=true;
+function sfx(kind){
+  if(!sfxOn) return;
+  try{
+    AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended') AC.resume();
+    var o=AC.createOscillator(), g=AC.createGain();
+    o.connect(g); g.connect(AC.destination);
+    var f = kind==='ok'?[523,784]: kind==='no'?[220,165]: [392,523,659];
+    f.forEach(function(fr,i){ o.frequency.setValueAtTime(fr, AC.currentTime+i*0.09); });
+    g.gain.setValueAtTime(0.12, AC.currentTime); g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime+f.length*0.09+0.12);
+    o.start(); o.stop(AC.currentTime+f.length*0.09+0.14);
+  }catch(e){}
+}
+function confetti(){
+  var em=['🎉','⭐','🎪','📜','✨','🏅'];
+  for(var i=0;i<26;i++){
+    var s=E('span','confetti',em[i%em.length]);
+    s.style.left=(Math.random()*96)+'vw'; s.style.animationDelay=(Math.random()*0.8)+'s';
+    document.body.appendChild(s);
+    (function(el){ setTimeout(function(){el.remove()},3400); })(s);
+  }
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function fmt(t){ var m=Math.floor(t/60), s=t%60; return m+':'+(s<10?'0':'')+s; }
+
+/* ---------- 计时 ---------- */
+function tick(){
+  if(S.timeLeft>0){ S.timeLeft--; document.getElementById('clk').textContent=fmt(S.timeLeft);
+    if(S.timeLeft<=60) document.getElementById('timer').classList.add('warn');
+    if(S.timeLeft===0){ S.timeUp=true; toast('⏳ 时间到！真结局已关闭，但故事仍可完成——坚持住！'); }
+  }
+}
+var timerId=null;
+function startTimer(){ if(!timerId) timerId=setInterval(tick,1000); }
+
+/* ---------- 徽章 ---------- */
+function updBadge(){ document.getElementById('bdg').textContent=S.badges.length+'/'+CFG.total; }
+function addBadge(w, el){
+  if(S.badges.indexOf(w.word)>=0) return;
+  S.badges.push(w.word); updBadge(); sfx('ok');
+  toast('🏅 获得徽章「'+w.word+' · '+w.cn+'」');
+}
+function markWrong(w){
+  S.wrong[w.word]=true;
+  toast('💎 漂亮的错误！进化石 +1——「'+w.word+'」进修炼洞窟，驯服后双倍豆');
+}
+
+/* ---------- 屏幕骨架 ---------- */
+function clear(){ app.innerHTML=''; }
+function homeLink(){ var a=E('a','home','‹ 返回大厅'); a.href='../index.html'; return a; }
+function nextBtn(label, fn){ var b=E('button','btn',label); b.setAttribute('data-auto','next'); b.addEventListener('click',function(){ sfx('go'); fn(); }); return b; }
+
+function statusTitle(kick,title,sub){
+  var p=E('div','panel');
+  p.appendChild(E('div','actkick',kick));
+  p.appendChild(E('div','acttitle',title));
+  if(sub) p.appendChild(E('div','actsub',sub));
+  return p;
+}
+
+/* ---------- 标题页 ---------- */
+function showTitle(){
+  S.screen='title'; clear();
+  var sc=E('div','screen on');
+  sc.appendChild(E('div','scenebox',CFG.svg));
+  sc.appendChild(E('h1','gtitle',CFG.title));
+  sc.appendChild(E('div','gen',CFG.en));
+  sc.appendChild(E('div','gtag',CFG.tagline));
+  var intro=E('div','panel'); intro.innerHTML='<div class="actkick">案件档案</div><div style="font-size:.9rem;line-height:1.85;color:var(--dim)">'+CFG.intro+'</div>';
+  sc.appendChild(intro);
+  sc.appendChild(nextBtn('开 始 调 查', function(){ startTimer(); showActIntro(0); }));
+  sc.appendChild(homeLink());
+  app.appendChild(sc);
+}
+
+/* ---------- 幕间页 ---------- */
+function showActIntro(i){
+  S.screen='actintro'; S.act=i; clear();
+  var a=CFG.acts[i];
+  var sc=E('div','screen on');
+  sc.appendChild(statusTitle('第 '+(i+1)+' 幕 / 共 '+CFG.acts.length+' 幕', a.title, a.intro));
+  var wd=E('div','panel');
+  wd.innerHTML='<div class="actkick">本幕目标词</div><div class="wordcards">'+
+    a.words.map(function(w){return '<span class="wcard" data-read="'+esc(w.word)+'">'+esc(w.word)+' · '+esc(w.cn)+'</span>'}).join('')+
+    '</div><div style="font-size:.75rem;color:var(--faint)">点词卡可听发音。闯关中读出/选对/拼对它们，即可收集徽章。</div>';
+  wd.querySelectorAll('[data-read]').forEach(function(c){ c.addEventListener('click',function(){ tts(c.getAttribute('data-read')); }); });
+  sc.appendChild(wd);
+  sc.appendChild(nextBtn('进入第 '+(i+1)+' 幕', function(){ renderAct(i); }));
+  app.appendChild(sc);
+}
+
+/* ---------- 幕一型：咒语门（词义三选一） ---------- */
+function renderSpellDoor(a, done){
+  clear(); S.screen='act';
+  var sc=E('div','screen on');
+  sc.appendChild(statusTitle('第 '+(S.act+1)+' 幕', a.title, a.playSub||'NPC 说出中文提示，选出对应的英文咒语并大声读出来。'));
+  var npc=CFG.suspects[0];
+  var dlg=E('div','panel dialog');
+  dlg.innerHTML='<div class="avatar">'+npc.emoji+'</div><div class="bubble" style="flex:1"><div class="who">'+npc.name+'</div><div id="npcsay">……</div></div>';
+  var tb=E('button','ttsbtn','🔊'); tb.addEventListener('click',function(){ var t=dlg.querySelector('#npcsay').getAttribute('data-en'); if(t) tts(t); });
+  dlg.appendChild(tb); sc.appendChild(dlg);
+  var optBox=E('div','opts'); sc.appendChild(optBox);
+  app.appendChild(sc);
+  var idx=0;
+  function step(){
+    if(idx>=a.words.length){ done(); return; }
+    var w=a.words[idx];
+    dlg.querySelector('#npcsay').innerHTML=w.prompt.replace(new RegExp(esc(w.word),'g'),'<b class="kw">'+esc(w.word)+'</b>');
+    dlg.querySelector('#npcsay').setAttribute('data-en', w.say||w.word);
+    var pool=a.words.filter(function(x){return x.word!==w.word});
+    pool.sort(function(){return Math.random()-0.5});
+    var opts=[w].concat(pool.slice(0,2)); opts.sort(function(){return Math.random()-0.5});
+    optBox.innerHTML='';
+    var lock=false;
+    var hint=E('div',null,'<div style="font-size:.8rem;color:var(--faint);margin-bottom:6px">中文提示：<b style="color:var(--ink)">'+esc(w.cn)+'</b>　'+(w.emoji||'')+'</div>');
+    optBox.appendChild(hint);
+    opts.forEach(function(o){
+      var b=E('button','opt','<span class="en">'+esc(o.word)+'</span>');
+      if(o.word===w.word) b.setAttribute('data-correct','1');
+      b.addEventListener('click',function(){
+        if(lock) return;
+        if(o.word===w.word){ lock=true; b.classList.add('right'); tts(w.word); addBadge(w); idx++; setTimeout(step,650); }
+        else { b.classList.add('wrong'); sfx('no'); markWrong(w); }
+      });
+      optBox.appendChild(b);
+    });
+  }
+  step();
+}
+
+/* ---------- 幕二型：自由审问 ---------- */
+function renderInterrogate(a, done){
+  clear(); S.screen='act'; S.selWord=null; S.selSuspect=null;
+  var sc=E('div','screen on');
+  sc.appendChild(statusTitle('第 '+(S.act+1)+' 幕', a.title, a.playSub||'自由审问：先点一张单词卡，再点一名嫌疑人——TA 会用这个词回答你。顺序随意，全部问完解锁线索。'));
+  var sg=E('div','grid3');
+  CFG.suspects.forEach(function(sp){
+    var d=E('div','suspect','<div class="em">'+sp.emoji+'</div><div class="nm">'+sp.name+'<br><span style="font-size:.68rem;color:var(--faint)">'+sp.role+'</span></div>');
+    d.addEventListener('click',function(){
+      sg.querySelectorAll('.suspect').forEach(function(x){x.classList.remove('sel')});
+      d.classList.add('sel'); S.selSuspect=sp; tryAsk();
+    });
+    d.setAttribute('data-suspect', sp.id);
+    sg.appendChild(d);
+  });
+  sc.appendChild(sg);
+  var wc=E('div','wordcards');
+  a.words.forEach(function(w){
+    var c=E('span','wcard',esc(w.word));
+    c.setAttribute('data-w', w.word);
+    c.addEventListener('click',function(){
+      if(c.classList.contains('done')) return;
+      wc.querySelectorAll('.wcard').forEach(function(x){x.classList.remove('sel')});
+      c.classList.add('sel'); S.selWord=w; tts(w.word); tryAsk();
+    });
+    wc.appendChild(c);
+  });
+  sc.appendChild(wc);
+  var out=E('div'); sc.appendChild(out);
+  var doneBtn=E('button','btn ghost','线索收集完毕，进入下一幕 ›');
+  doneBtn.style.display='none'; doneBtn.setAttribute('data-auto','next');
+  doneBtn.addEventListener('click',function(){ sfx('go'); done(); });
+  sc.appendChild(doneBtn);
+  app.appendChild(sc);
+
+  function tryAsk(){
+    if(!S.selWord || !S.selSuspect){ return; }
+    var w=S.selWord, sp=S.selSuspect;
+    var sentence=w.qa; // {suspect通用回答句}
+    out.innerHTML='';
+    var dlg=E('div','panel dialog');
+    dlg.innerHTML='<div class="avatar">'+sp.emoji+'</div><div class="bubble" style="flex:1"><div class="who">'+sp.name+'</div><div>'+
+      sentence.replace(new RegExp(esc(w.word),'g'),'<b class="kw">'+esc(w.word)+'</b>')+'</div></div>';
+    var tb=E('button','ttsbtn','🔊'); tb.addEventListener('click',function(){ tts(sentence); });
+    dlg.appendChild(tb); out.appendChild(dlg);
+    var q=E('div','panel');
+    q.innerHTML='<div style="font-size:.82rem;color:var(--dim);margin-bottom:8px">这个词在这里的意思是？</div>';
+    var opts=[w.cn].concat(w.decoys||[]); opts.sort(function(){return Math.random()-0.5});
+    var og=E('div','opts');
+    opts.forEach(function(t){
+      var b=E('button','opt','<span class="en" style="font-size:.95rem">'+esc(t)+'</span>');
+      if(t===w.cn) b.setAttribute('data-correct','1');
+      b.addEventListener('click',function(){
+        if(t===w.cn){
+          b.classList.add('right'); addBadge(w);
+          var card=wc.querySelector('[data-w="'+w.word+'"]');
+          if(card){ card.classList.add('done'); card.classList.remove('sel'); }
+          S.selWord=null;
+          og.querySelectorAll('.opt').forEach(function(x){ x.removeAttribute('data-correct'); x.style.pointerEvents='none'; });
+          setTimeout(function(){ q.remove(); },600);
+          var left=a.words.filter(function(x){return S.badges.indexOf(x.word)<0});
+          if(left.length===0){ doneBtn.style.display='block'; toast('🔍 审问完毕！矛盾就藏在他们的证词里。'); }
+        } else { b.classList.add('wrong'); sfx('no'); markWrong(w); }
+      });
+      og.appendChild(b);
+    });
+    q.appendChild(og); out.appendChild(q);
+  }
+}
+
+/* ---------- 幕三型：线索板 · 矛盾指认 ---------- */
+function renderClues(a, done){
+  clear(); S.screen='act'; S.selStmts=[]; S.contraDone=false;
+  var sc=E('div','screen on');
+  sc.appendChild(statusTitle('第 '+(S.act+1)+' 幕', a.title, a.playSub||'逐条解锁线索（答对单词题），然后从证词中挑出互相矛盾的两句。'));
+  var board=E('div'); sc.appendChild(board);
+  var stmtBox=E('div'); sc.appendChild(stmtBox);
+  var nextWrap=E('div'); sc.appendChild(nextWrap);
+  app.appendChild(sc);
+  var qi=0;
+  function unlockStep(){
+    if(qi>=a.words.length){ showStmts(); return; }
+    var w=a.words[qi];
+    board.innerHTML='';
+    var q=E('div','panel');
+    q.innerHTML='<div class="actkick">解锁线索 '+(qi+1)+'/'+a.words.length+'</div>'+
+      '<div style="font-size:.95rem;line-height:1.8">'+w.clueQ.replace(/___/g,'<b style="color:var(--acc2)">＿＿＿</b>')+'</div>'+
+      '<div style="font-size:.8rem;color:var(--faint);margin-top:4px">中文提示：'+esc(w.cn)+'</div>';
+    var og=E('div','opts');
+    var lock=false;
+    var pool=a.words.filter(function(x){return x.word!==w.word});
+    pool.sort(function(){return Math.random()-0.5});
+    var opts=[w].concat(pool.slice(0,2)); opts.sort(function(){return Math.random()-0.5});
+    opts.forEach(function(o){
+      var b=E('button','opt','<span class="en">'+esc(o.word)+'</span><div class="cn">'+esc(o.cn)+'</div>');
+      if(o.word===w.word) b.setAttribute('data-correct','1');
+      b.addEventListener('click',function(){
+        if(lock) return;
+        if(o.word===w.word){
+          lock=true;
+          b.classList.add('right'); tts(w.word); addBadge(w); S.cluesGot.push(w.word);
+          var cl=E('div','clue','<div class="ck">线索 '+(qi+1)+'</div>'+w.clue);
+          stmtBox.appendChild(cl); sfx('ok');
+          qi++; setTimeout(unlockStep,700);
+        } else { b.classList.add('wrong'); sfx('no'); markWrong(w); }
+      });
+      og.appendChild(b);
+    });
+    q.appendChild(og); board.appendChild(q);
+  }
+  function showStmts(){
+    board.innerHTML='';
+    var p=E('div','panel');
+    p.innerHTML='<div class="actkick">矛盾指认</div><div style="font-size:.88rem;color:var(--dim);line-height:1.7">'+a.contraIntro+'</div>';
+    board.appendChild(p);
+    a.stmts.forEach(function(st,si){
+      var d=E('div','stmt',st.t);
+      d.setAttribute('data-stmt', si);
+      if(st.contra) d.setAttribute('data-contra','1');
+      d.addEventListener('click',function(){
+        if(S.contraDone) return;
+        if(d.classList.contains('sel')){ d.classList.remove('sel'); S.selStmts=S.selStmts.filter(function(x){return x!==si}); }
+        else { d.classList.add('sel'); S.selStmts.push(si); }
+        if(S.selStmts.length===2) checkContra();
+      });
+      board.appendChild(d);
+    });
+  }
+  function checkContra(){
+    var picked=S.selStmts.map(function(i){return a.stmts[i]});
+    var ok = picked.every(function(s){return s.contra});
+    if(ok){
+      S.contraDone=true;
+      board.querySelectorAll('.stmt.sel').forEach(function(x){x.classList.add('contra')});
+      sfx('ok'); confetti();
+      var r=E('div','panel','<div class="actkick">矛盾成立！</div><div style="font-size:.92rem;line-height:1.85">'+a.contraReveal+'</div>');
+      board.appendChild(r);
+      nextWrap.innerHTML='';
+      nextWrap.appendChild(nextBtn('直捣真相 · 进入第 4 幕', done));
+    } else {
+      sfx('no'); S.timeLeft=Math.max(0,S.timeLeft-30);
+      document.getElementById('clk').textContent=fmt(S.timeLeft);
+      toast('这两句并不矛盾——再读一遍证词。⏳ -30 秒');
+      S.selStmts=[]; board.querySelectorAll('.stmt.sel').forEach(function(x){x.classList.remove('sel')});
+    }
+  }
+  unlockStep();
+}
+
+/* ---------- 幕四型：拼写 Boss + 真凶指认 ---------- */
+function renderBoss(a, done){
+  clear(); S.screen='act';
+  var sc=E('div','screen on');
+  sc.appendChild(statusTitle('第 '+(S.act+1)+' 幕', a.title, a.playSub||'最终对峙：拼出咒语单词，解开真相。'));
+  var stage=E('div'); sc.appendChild(stage);
+  app.appendChild(sc);
+  var qi=0;
+  function spellStep(){
+    if(qi>=a.words.length){ accuse(); return; }
+    var w=a.words[qi];
+    stage.innerHTML='';
+    var p=E('div','panel');
+    p.innerHTML='<div class="actkick">拼写挑战 '+(qi+1)+'/'+a.words.length+'</div>'+
+      '<div style="font-size:.95rem;line-height:1.75">'+w.bossQ+'</div>'+
+      '<div style="font-size:.8rem;color:var(--faint);margin-top:4px">中文提示：'+esc(w.cn)+'</div>';
+    var out=E('div','spellout','');
+    var tiles=E('div','tiles');
+    var letters=w.word.replace(/[^a-z]/gi,'').split('');
+    S.spellTarget=letters.join('').toLowerCase(); S.spellPicked='';
+    var shuffled=letters.slice().sort(function(){return Math.random()-0.5});
+    var picked='';
+    shuffled.forEach(function(ch,ci){
+      var t=E('div','tile',ch);
+      t.setAttribute('data-tile', ch+ci);
+      t.setAttribute('data-letter', ch.toLowerCase());
+      t.addEventListener('click',function(){
+        if(t.classList.contains('used')) return;
+        t.classList.add('used'); picked+=ch; S.spellPicked=picked; out.textContent=picked; sfx('go');
+        if(picked.length===letters.length){
+          if(picked.toLowerCase()===letters.join('').toLowerCase()){
+            tts(w.word); addBadge(w); qi++; setTimeout(spellStep,700);
+          } else {
+            sfx('no'); markWrong(w);
+            toast('差一点点！错的拼写也是线索——再看一眼词形，重来。');
+            picked=''; S.spellPicked=''; out.textContent='';
+            tiles.querySelectorAll('.tile').forEach(function(x){x.classList.remove('used')});
+          }
+        }
+      });
+      tiles.appendChild(t);
+    });
+    p.appendChild(out); p.appendChild(tiles);
+    stage.appendChild(p);
+  }
+  function accuse(){
+    stage.innerHTML='';
+    var p=E('div','panel');
+    p.innerHTML='<div class="actkick">最终指认</div><div style="font-size:.92rem;line-height:1.85">'+a.accuseIntro+'</div>';
+    var g=E('div','grid3'); g.style.marginTop='10px';
+    CFG.suspects.forEach(function(sp){
+      var d=E('div','suspect','<div class="em">'+sp.emoji+'</div><div class="nm">'+sp.name+'</div>');
+      if(sp.guilty) d.setAttribute('data-guilty','1');
+      d.addEventListener('click',function(){
+        if(sp.guilty){ sfx('ok'); done(); }
+        else {
+          sfx('no'); S.accuseWrong++; S.timeLeft=Math.max(0,S.timeLeft-60);
+          document.getElementById('clk').textContent=fmt(S.timeLeft);
+          if(S.accuseWrong>=3){
+            toast('证据链断了……但侦探不抛弃案件：完成补救问答仍可结案！');
+            S.timeUp=true; done();
+          } else toast('不是 TA——矛盾证词再想想。⏳ -60 秒');
+        }
+      });
+      g.appendChild(d);
+    });
+    p.appendChild(g); stage.appendChild(p);
+  }
+  spellStep();
+}
+
+/* ---------- 结局 ---------- */
+function showEnding(){
+  S.screen='ending'; clearInterval(timerId); timerId=null;
+  var trueEnd = !S.timeUp && S.timeLeft>=180;
+  var tier = trueEnd ? CFG.endingTrue : CFG.endingNormal;
+  var sc=E('div','screen on');
+  sc.appendChild(statusTitle('结案', tier.title, null));
+  var c=E('div','cert');
+  c.innerHTML='<div style="font-size:2rem">'+tier.emoji+'</div><div class="ct">'+tier.name+'</div>'+
+    '<div class="cn">'+tier.desc+'<br><br>徽章 '+S.badges.length+'/'+CFG.total+'　剩余时间 '+fmt(S.timeLeft)+'</div>';
+  sc.appendChild(c);
+  var wall=E('div','badgewall');
+  CFG.allWords.forEach(function(w){
+    var got=S.badges.indexOf(w.word)>=0;
+    var cave=S.wrong[w.word];
+    var b=E('div','badge'+(got?' got':'')+(cave?' cave':''),(got?'<span class="be">🏅</span>':'<span class="be">💤</span>')+esc(w.word)+(cave?'<div style="color:#ffb020;font-size:.62rem">🕳️洞窟·双倍豆</div>':''));
+    wall.appendChild(b);
+  });
+  sc.appendChild(wall);
+  var rv=E('button','btn','📜 单词复盘（点卡听发音）'); rv.setAttribute('data-auto','review'); rv.addEventListener('click',showReview); sc.appendChild(rv);
+  var rp=E('button','btn ghost','🔁 再玩一次'); rp.addEventListener('click',function(){ softRestart(); }); sc.appendChild(rp);
+  sc.appendChild(homeLink());
+  app.appendChild(sc);
+  if(trueEnd) confetti();
+  window.__ENDING_SHOWN=true;
+}
+
+/* ---------- 复盘页 ---------- */
+function showReview(){
+  S.screen='review'; clear();
+  var sc=E('div','screen on');
+  sc.appendChild(statusTitle('复盘 · 单词图鉴','点任意卡片听发音。带 🕳️ 的是修炼洞窟重点词——回牌组里驯服它，双倍能量豆。',null));
+  var g=E('div','reviewgrid');
+  CFG.allWords.forEach(function(w){
+    var cave=S.wrong[w.word];
+    var c=E('div','rcard','<div class="rw">'+esc(w.word)+'</div><div class="rc">'+esc(w.ipa||'')+' '+esc(w.cn)+'</div>'+(cave?'<div class="rt">🕳️ 修炼洞窟 · 双倍豆目标</div>':''));
+    c.addEventListener('click',function(){ tts(w.word); });
+    g.appendChild(c);
+  });
+  sc.appendChild(g);
+  var bk=E('button','btn ghost','‹ 返回结案页'); bk.addEventListener('click',showEnding); sc.appendChild(bk);
+  sc.appendChild(homeLink());
+  app.appendChild(sc);
+}
+
+/* ---------- 软重启（微信 reload 拦截双保险） ---------- */
+function softRestart(){
+  clearInterval(timerId); timerId=null;
+  var reloaded=false;
+  try{ var t=setTimeout(function(){ if(!reloaded) doReset(); },450); location.reload(); reloaded=true; clearTimeout(t);}catch(e){}
+  setTimeout(function(){ doReset(); },480);
+}
+function doReset(){
+  clearInterval(timerId); timerId=null;
+  S=freshState(); window.__ENDING_SHOWN=false;
+  document.getElementById('timer').classList.remove('warn');
+  document.getElementById('clk').textContent='8:00';
+  updBadge(); showTitle();
+}
+
+/* ---------- 主流程 ---------- */
+function renderAct(i){
+  var a=CFG.acts[i];
+  function done(){ S.actDone[i]=true; if(i+1<CFG.acts.length) showActIntro(i+1); else showEnding(); }
+  if(a.type==='spell-door') renderSpellDoor(a,done);
+  else if(a.type==='interrogate') renderInterrogate(a,done);
+  else if(a.type==='clues') renderClues(a,done);
+  else if(a.type==='boss') renderBoss(a,done);
+}
+
+document.getElementById('sfxbtn').addEventListener('click',function(){
+  sfxOn=!sfxOn; this.textContent=sfxOn?'🔊 音效':'🔇 静音';
+});
+updBadge(); showTitle();
+
+window.__DBG={
+  state:function(){ return {screen:S.screen, act:S.act, badges:S.badges.slice(), wrong:Object.keys(S.wrong), timeLeft:S.timeLeft, endingShown:!!window.__ENDING_SHOWN, spellTarget:S.spellTarget||'', spellPicked:S.spellPicked||''}; }
+};
+})();
+</script>
+</body>
+</html>
