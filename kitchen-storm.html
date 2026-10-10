@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>厨房风暴 · 英语单词剧本杀</title>
+<style>
+:root{
+  --bg:#0d0609;
+  --ink:#fbf5f7;
+  --dim:rgba(251,245,247,.62);
+  --faint:rgba(251,245,247,.38);
+  --line:rgba(255,255,255,.13);
+  --panel:rgba(255,255,255,.045);
+  --amber:#ff8fa3;
+  --amber-ink:#2a0a12;
+  --green:#3ddc97;
+  --red:#ff6b6b;
+  --serif:Georgia,'Times New Roman','Songti SC','SimSun',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{
+  font-family:var(--sans);background:var(--bg);color:var(--ink);
+  min-height:100vh;padding:0 0 60px;touch-action:manipulation;
+  background-image:radial-gradient(1200px 500px at 50% -10%,rgba(190,80,110,.15),transparent 60%);
+}
+#app{max-width:680px;margin:0 auto;padding:14px 14px 0;position:relative;z-index:1}
+
+/* ---------- 顶栏 ---------- */
+.topbar{display:flex;align-items:center;gap:10px;padding:6px 2px 8px}
+.topicon{width:34px;height:26px;flex:none}
+.topicon .steam{fill:none;stroke:var(--amber);stroke-width:1.6;stroke-linecap:round;opacity:.85}
+.topicon .pot{fill:none;stroke:#f5d8de;stroke-width:1.8}
+.topbar.alert .topicon .steam{stroke:var(--red)}
+.top-title{font-size:.72rem;letter-spacing:.26em;color:var(--faint);text-transform:uppercase;flex:1;white-space:nowrap;overflow:hidden}
+.badge-pill{font-family:var(--serif);font-size:.85rem;color:var(--amber);
+  border:1px solid rgba(255,143,163,.35);border-radius:999px;padding:4px 12px;white-space:nowrap}
+.snd-btn{border:1px solid var(--line);background:var(--panel);color:var(--dim);
+  border-radius:999px;padding:4px 12px;font-size:.75rem;cursor:pointer;transition:.15s}
+.snd-btn:active{transform:scale(.93)}
+.home-link{color:var(--dim);text-decoration:none;font-size:.75rem;border:1px solid var(--line);
+  border-radius:999px;padding:4px 10px;white-space:nowrap;background:var(--panel)}
+.home-link:active{transform:scale(.93);color:var(--amber)}
+
+/* ---------- 社交好感度 ---------- */
+.hearts{display:flex;gap:8px;padding:0 2px 12px;flex-wrap:wrap}
+.hchip{flex:1;min-width:100px;border:1px solid var(--line);background:var(--panel);border-radius:12px;
+  padding:6px 10px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.hchip .hn{font-size:.68rem;color:var(--dim);letter-spacing:.05em}
+.hchip .hh{font-size:.8rem;letter-spacing:.1em;color:var(--amber);transition:.2s}
+.hchip .hh .off{color:rgba(251,245,247,.18)}
+.hchip.bump{animation:heartPop .5s}
+@keyframes heartPop{0%{transform:scale(1)}40%{transform:scale(1.06);border-color:var(--amber)}100%{transform:scale(1)}}
+
+/* ---------- 场景 ---------- */
+.scene{position:relative;border-radius:20px;overflow:hidden;background:#140a10;
+  box-shadow:0 18px 50px rgba(0,0,0,.5);margin-bottom:14px}
+.scene svg{display:block;width:100%;height:auto}
+.scene::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(0,0,0,.42) 100%)}
+.act-tag{font-size:.7rem;letter-spacing:.3em;color:var(--faint);text-transform:uppercase;
+  margin:2px 4px 10px;display:flex;align-items:center;gap:8px}
+.act-tag::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* ---------- 对话框 ---------- */
+.dlg{background:var(--panel);border:1px solid var(--line);border-radius:18px;
+  padding:16px 18px 14px;position:relative;cursor:pointer;transition:border-color .2s}
+.dlg:active{border-color:rgba(255,255,255,.25)}
+.who{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;letter-spacing:.22em;
+  color:var(--amber);text-transform:uppercase;margin-bottom:8px}
+.who::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--amber)}
+.who.narr{color:var(--faint)}
+.who.narr::before{background:var(--faint)}
+.en{font-family:var(--serif);font-size:1.28rem;line-height:1.55;letter-spacing:.01em}
+.en .w{color:var(--amber);border-bottom:1px dashed rgba(255,143,163,.55);cursor:pointer;padding:0 1px}
+.cn{font-size:.86rem;color:var(--dim);margin-top:7px;line-height:1.6}
+.dlg-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.spk{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);
+  background:transparent;color:var(--dim);border-radius:999px;padding:5px 12px;font-size:.75rem;cursor:pointer;transition:.15s}
+.spk:active{transform:scale(.93);color:var(--amber);border-color:rgba(255,143,163,.5)}
+.next-hint{font-size:.72rem;color:var(--faint);letter-spacing:.2em;animation:blink 1.6s ease infinite}
+@keyframes blink{0%,100%{opacity:.35}50%{opacity:1}}
+
+/* ---------- 按钮 ---------- */
+.btn{display:block;width:100%;padding:15px;border-radius:14px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.28);background:transparent;color:var(--ink);
+  font-size:.95rem;letter-spacing:.18em;font-family:var(--sans);transition:.18s;margin-top:14px}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--amber);border-color:transparent;color:var(--amber-ink);font-weight:700}
+.btn.ghost{margin-top:10px;border-color:var(--line);color:var(--dim)}
+
+/* ---------- 选项 / chips ---------- */
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;
+  padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--panel);
+  color:var(--ink);font-family:var(--serif);font-size:1.08rem;cursor:pointer;transition:.15s}
+.opt:active{transform:scale(.98)}
+.opt .arrow{color:var(--faint);font-family:var(--sans);font-size:.8rem}
+.opt.ok{border-color:var(--green);background:rgba(61,220,151,.1);color:var(--green)}
+.opt.no{border-color:var(--red);background:rgba(255,107,107,.08);animation:shake .4s}
+.opt.hint-pulse{animation:pulseHint 1s ease infinite}
+.quiz-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.quiz-grid .opt{justify-content:center;text-align:center;padding:18px 10px;font-size:1.02rem}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes pulseHint{0%,100%{box-shadow:0 0 0 0 rgba(255,143,163,0)}50%{box-shadow:0 0 0 5px rgba(255,143,163,.25);border-color:var(--amber)}}
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px;justify-content:center}
+.chip{padding:10px 16px;border:1px solid var(--line);border-radius:999px;background:var(--panel);
+  color:var(--ink);font-family:var(--serif);font-size:1.02rem;cursor:pointer;transition:.15s}
+.chip:active{transform:scale(.93)}
+.chip.used{opacity:.22;pointer-events:none}
+.chip.no{border-color:var(--red);animation:shake .4s}
+.chip.hint-pulse{animation:pulseHint 1s ease infinite}
+
+/* ---------- 任务条 ---------- */
+.task{display:flex;align-items:center;gap:10px;background:rgba(255,143,163,.06);
+  border:1px solid rgba(255,143,163,.25);border-radius:14px;padding:12px 14px;margin-bottom:14px}
+.task .lab{font-size:.68rem;letter-spacing:.25em;color:var(--amber);flex:none}
+.task .txt{font-family:var(--serif);font-size:1rem;line-height:1.5}
+.task .txt b{color:var(--amber);font-weight:700;border-bottom:1px dashed rgba(255,143,163,.5)}
+.feedback{margin-top:10px;font-size:.85rem;color:var(--dim);min-height:1.4em;line-height:1.5;padding:0 4px}
+.feedback.bad{color:var(--red)}
+.feedback.good{color:var(--green)}
+
+/* ---------- 图标卡 ---------- */
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.tools.five{grid-template-columns:repeat(5,1fr)}
+.tools.seven{grid-template-columns:repeat(4,1fr)}
+.tool{border:1px solid var(--line);background:var(--panel);border-radius:16px;
+  padding:12px 6px 10px;cursor:pointer;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:6px}
+.tool:active{transform:scale(.95)}
+.tool svg{width:44px;height:54px}
+.tool .tname{font-size:.68rem;color:var(--faint);letter-spacing:.06em;opacity:0;transition:.3s;font-family:var(--serif)}
+.tool.reveal .tname{opacity:1}
+.tool.ok{border-color:var(--green);background:rgba(61,220,151,.1)}
+.tool.no{border-color:var(--red);animation:shake .4s}
+.tool.hint-pulse{animation:pulseHint 1s ease infinite}
+.tool .onum{position:absolute;top:6px;left:8px;width:20px;height:20px;border-radius:50%;background:var(--green);
+  color:#0a1f16;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.tool{position:relative}
+@media (max-width:420px){.tools.five{grid-template-columns:repeat(3,1fr)}.tools.seven{grid-template-columns:repeat(3,1fr)}}
+
+/* ---------- 接龙纸条 ---------- */
+.paper{background:#f7f0ea;color:#33232a;border-radius:6px;padding:20px 18px;margin-top:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);transform:rotate(-.6deg)}
+.paper h4{font-family:var(--serif);letter-spacing:.25em;font-size:.72rem;color:#a08a92;text-transform:uppercase;
+  border-bottom:1px solid #e0d4d8;padding-bottom:8px;margin-bottom:12px;text-align:center}
+.paper .line{font-family:var(--serif);font-size:1.02rem;line-height:2.2}
+.paper .blank{display:inline-block;min-width:76px;border-bottom:2px solid #a08a92;text-align:center;
+  color:#c2456a;font-weight:700;padding:0 6px;transition:.2s}
+.paper .blank.done{color:#2e7d4f;border-bottom-color:#2e7d4f}
+
+/* ---------- 徽章 toast / toast ---------- */
+.btoast{position:fixed;top:58px;left:50%;transform:translateX(-50%) translateY(-24px) scale(.9);
+  background:#1d0d13;border:1px solid rgba(255,143,163,.45);border-radius:16px;padding:14px 22px;
+  text-align:center;opacity:0;pointer-events:none;transition:.35s cubic-bezier(.2,1.4,.4,1);z-index:99;
+  box-shadow:0 14px 40px rgba(0,0,0,.6)}
+.btoast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+.btoast .bt-lab{font-size:.62rem;letter-spacing:.3em;color:var(--amber);margin-bottom:4px}
+.btoast .bt-word{font-family:var(--serif);font-size:1.3rem;color:var(--ink)}
+.btoast .bt-cn{font-size:.78rem;color:var(--dim);margin-top:2px}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:#ff8fa3;color:#2a0a12;padding:11px 22px;border-radius:24px;font-size:.88rem;
+  opacity:0;transition:.3s;z-index:99;font-weight:600;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- 幕间 / 标题 ---------- */
+.overlay-title{text-align:center;padding:56px 10px 30px}
+.ov-line{font-size:.7rem;letter-spacing:.4em;color:var(--amber);text-transform:uppercase;margin-bottom:18px}
+.ov-big{font-family:var(--serif);font-size:2.5rem;line-height:1.3;letter-spacing:.04em}
+.ov-big .ch{display:inline-block;opacity:0;animation:chIn .5s cubic-bezier(.2,1.2,.4,1) forwards}
+@keyframes chIn{from{opacity:0;transform:translateY(24px);filter:blur(6px)}to{opacity:1;transform:none;filter:blur(0)}}
+.ov-sub{color:var(--dim);font-size:.92rem;margin-top:14px;line-height:1.8}
+.ov-en{font-family:var(--serif);color:var(--faint);font-size:.95rem;letter-spacing:.12em;margin-top:10px}
+.fade-item{opacity:0;animation:fadeUp .55s ease forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);filter:blur(4px)}to{opacity:1;transform:none;filter:blur(0)}}
+
+/* ---------- 结局 / 复盘 ---------- */
+.cert{text-align:center;padding:26px 18px;border:1px solid rgba(255,143,163,.4);border-radius:20px;
+  background:linear-gradient(180deg,rgba(255,143,163,.08),rgba(255,143,163,.02));margin-top:16px}
+.cert .c-lab{font-size:.68rem;letter-spacing:.4em;color:var(--amber)}
+.cert .c-title{font-family:var(--serif);font-size:1.8rem;margin-top:10px;line-height:1.4}
+.cert .c-en{font-family:var(--serif);color:var(--dim);letter-spacing:.14em;margin-top:6px;font-size:.85rem}
+.cert .c-stats{color:var(--faint);font-size:.8rem;margin-top:14px;line-height:1.7}
+.badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.bcell{border:1px solid rgba(255,143,163,.3);border-radius:12px;padding:9px 4px;text-align:center;background:rgba(255,143,163,.05)}
+.bcell .bw{font-family:var(--serif);font-size:.8rem;color:var(--amber);line-height:1.3}
+.bcell .bc{font-size:.64rem;color:var(--dim);margin-top:3px}
+.word-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.wcard{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px;cursor:pointer;transition:.15s;position:relative}
+.wcard:active{transform:scale(.96)}
+.wcard .we{font-family:var(--serif);font-size:1.1rem;color:var(--ink);line-height:1.35}
+.wcard .wp{font-size:.72rem;color:var(--faint);margin-top:4px;font-family:var(--serif)}
+.wcard .wc{font-size:.8rem;color:var(--dim);margin-top:4px}
+.wcard.heard{border-color:rgba(61,220,151,.45)}
+.wcard.heard::after{content:'✓';position:absolute;top:8px;right:10px;color:var(--green);font-size:.85rem}
+.wcard .wact{font-size:.62rem;color:var(--faint);letter-spacing:.15em;margin-top:6px}
+@media (max-width:380px){.badge-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar" id="topbar">
+    <a class="home-link" href="../index.html">‹ 大厅</a>
+    <svg class="topicon" viewBox="0 0 34 26">
+      <path class="steam" d="M11 11 C9 8.5 13 6.5 11 4"><animate attributeName="opacity" values=".9;.3;.9" dur="1.8s" repeatCount="indefinite"/></path>
+      <path class="steam" d="M17 11 C15 8.5 19 6.5 17 4"><animate attributeName="opacity" values=".4;1;.4" dur="1.8s" repeatCount="indefinite"/></path>
+      <path class="steam" d="M23 11 C21 8.5 25 6.5 23 4"><animate attributeName="opacity" values=".9;.3;.9" dur="1.8s" begin=".5s" repeatCount="indefinite"/></path>
+      <path class="pot" d="M5 15 H29 M7 15 V21 Q7 24 11 24 H23 Q27 24 27 21 V15 M3 15 H5 M29 15 H31"/>
+    </svg>
+    <div class="top-title">KITCHEN STORM · 厨房风暴</div>
+    <div class="badge-pill" id="badge-pill">徽章 0/17</div>
+    <button class="snd-btn" id="snd-btn">音效·开</button>
+  </div>
+  <div class="hearts" id="hearts"></div>
+  <div id="stage"></div>
+</div>
+<div class="btoast" id="btoast"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* 整个游戏封装在独立作用域内运行，与宿主页面完全隔离 */
+(function(){
+/* ================= 单词库（17 个烹饪动词） ================= */
+var WORDS = {
+  "peel":    {ph:"/piːl/", cn:"削皮", act:"第一幕"},
+  "chop":    {ph:"/tʃɒp/", cn:"切碎", act:"第一幕"},
+  "whisk":   {ph:"/wɪsk/", cn:"打蛋", act:"第一幕"},
+  "measure": {ph:"/ˈmeʒə/", cn:"量取", act:"第一幕"},
+  "fry":     {ph:"/fraɪ/", cn:"煎炸", act:"第二幕"},
+  "boil":    {ph:"/bɔɪl/", cn:"煮沸", act:"第二幕"},
+  "steam":   {ph:"/stiːm/", cn:"蒸", act:"第二幕"},
+  "bake":    {ph:"/beɪk/", cn:"烘焙", act:"第二幕"},
+  "pour":    {ph:"/pɔː/", cn:"倒入", act:"第二幕"},
+  "stir":    {ph:"/stɜː/", cn:"搅拌", act:"第二幕"},
+  "grease":  {ph:"/ɡriːs/", cn:"抹油", act:"第三幕"},
+  "brush":   {ph:"/brʌʃ/", cn:"刷", act:"第三幕"},
+  "coat":    {ph:"/kəʊt/", cn:"裹粉", act:"第三幕"},
+  "dip":     {ph:"/dɪp/", cn:"蘸", act:"第三幕"},
+  "dredge":  {ph:"/dredʒ/", cn:"拍粉", act:"第三幕"},
+  "stuff":   {ph:"/stʌf/", cn:"填馅", act:"第三幕"},
+  "wrap":    {ph:"/ræp/", cn:"包裹", act:"第三幕"}
+};
+var WORD_ORDER = ["peel","chop","whisk","measure",
+  "fry","boil","steam","bake","pour","stir",
+  "grease","brush","coat","dip","dredge","stuff","wrap"];
+var WORD_KEYS = WORD_ORDER.slice().sort(function(a,b){return b.length-a.length;});
+var TOTAL = WORD_ORDER.length;
+
+/* ================= 剧本 ================= */
+var ACTS = [
+{ num:"第一幕", title:"破冰与备菜", en:"BREAKING THE ICE", sub:"解锁词汇：备菜四动词 · 赢得第一印象", scene:"counter",
+  steps:[
+   {t:"say", who:"旁白", en:"Tonight is the community Potluck Party. Elsa wants to impress.",
+     cn:"今晚是寄宿家庭的社区美食之夜（Potluck），邻里和同学都会来。Elsa 决定做几道拿手菜融入大家。"},
+   {t:"say", who:"Mrs. Smith", en:"Hi Elsa! Could you help me with the salad and eggs?",
+     cn:"寄宿家庭妈妈史密斯太太正在忙碌——Elsa 主动请缨帮忙。（按顺序点正确的动作图标）"},
+   {t:"order", mode:"icon", npc:"smith", task:"指令 1/2", 
+     hint:"\"Could you please peel the potatoes and chop the carrots?\" —— 按她的指令顺序操作",
+     items:[{icon:"chop",word:"chop",cn:"切碎"},{icon:"pour",word:"pour",cn:"倒入"},{icon:"peel",word:"peel",cn:"削皮"},{icon:"measure",word:"measure",cn:"量取"},{icon:"whisk",word:"whisk",cn:"打蛋"}],
+     seq:["peel","chop"], grid:"five",
+     wrong:"Mrs. Smith 露出疑惑的眼神……顺序或动作不对（好感 -1）。"},
+   {t:"say", who:"Mike", en:"Hey! Mrs. Smith, can we make a cake too?",
+     cn:"爱捣乱的同学 Mike 冲进来：我们也要做蛋糕！史密斯太太转身吩咐下一步。"},
+   {t:"order", mode:"icon", npc:"mike", task:"指令 2/2",
+     hint:"\"First, measure two cups of flour, then whisk the eggs.\" —— 别把 measure 和 whisk 搞混！",
+     items:[{icon:"whisk",word:"whisk",cn:"打蛋"},{icon:"grease",word:"grease",cn:"抹油"},{icon:"measure",word:"measure",cn:"量取"},{icon:"stir",word:"stir",cn:"搅拌"},{icon:"pour",word:"pour",cn:"倒入"}],
+     seq:["measure","whisk"], grid:"five",
+     wrong:"Mike 大笑：\"Haha! Are you making an omelet or a soup?\"（好感 -1）"},
+   {t:"say", who:"Mrs. Smith", en:"Nice work, Elsa. You're a natural!", cn:"干得好 Elsa，你很有天赋！（第一印象分到手）"}
+  ]},
+{ num:"第二幕", title:"灶台风云", en:"FIRE WATCH", sub:"解锁词汇：煎·煮·蒸·烤·倒·搅", scene:"stove",
+  steps:[
+   {t:"say", who:"Grandma Rose", en:"Child, watch the fire for me. Four stoves, four verbs.",
+     cn:"严厉的美食评委邻居 Rose 奶奶带来了拿手菜，她需要 Elsa 帮忙看火——四个灶台，四种做法，别搞砸。"},
+   {t:"pick", npc:"rose", icons:["fry","boil","steam","bake"], rounds:[
+     {en:"The eggs in the pan — fry them, don't let them burn!", cn:"平底锅里的鸡蛋——煎好，别糊了！", ans:"fry"},
+     {en:"The pasta in the pot needs to boil.", cn:"汤锅里的意面——需要煮沸。", ans:"boil"},
+     {en:"The baozi in the steamer — steam them gently.", cn:"蒸笼里的包子——慢慢蒸。", ans:"steam"},
+     {en:"The cookies in the oven — bake until golden.", cn:"烤箱里的饼干——烤到金黄。", ans:"bake"}
+   ]},
+   {t:"order", mode:"icon", npc:"rose", task:"危机爆发 · 三连指令",
+     hint:"Rose 奶奶语速极快：\"Quick! Pour the milk, stir the soup, and don't let the eggs burn — fry!\"",
+     items:[{icon:"stir",word:"stir",cn:"搅拌"},{icon:"fry",word:"fry",cn:"煎炸"},{icon:"pour",word:"pour",cn:"倒入"},{icon:"bake",word:"bake",cn:"烘焙"},{icon:"steam",word:"steam",cn:"蒸"}],
+     seq:["pour","stir","fry"], grid:"five",
+     wrong:"Rose 奶奶严厉地看着你……跟紧她的语速！（好感 -1）"},
+   {t:"say", who:"Grandma Rose", en:"Hm. Not bad, child. Not bad at all.",
+     cn:"Rose 奶奶微笑点头——从严苛的她嘴里说出这句话，分量十足。（社交达人认证）"}
+  ]},
+{ num:"第三幕", title:"秘制配方", en:"THE SECRET RECIPE", sub:"解锁词汇：进阶七动词 · 高光时刻", scene:"recipe",
+  steps:[
+   {t:"say", who:"旁白", en:"Mike hid the recipe! Only a torn hint card is left on the table.",
+     cn:"为了惊艳全场，Elsa 要做香烤鸡胸肉和酿青椒——但 Mike 把菜谱藏起来了，桌上只剩一张残缺的英文提示卡。"},
+   {t:"order", mode:"icon", npc:"mike", task:"舌尖上的解谜",
+     hint:"按提示卡顺序完成六步：抹油 → 蘸蛋液 → 裹粉 → 刷蜂蜜 → 填馅 → 锡纸包裹（小心 dredge 是干扰项！）",
+     items:[{icon:"dip",word:"dip",cn:"蘸"},{icon:"stuff",word:"stuff",cn:"填馅"},{icon:"coat",word:"coat",cn:"裹粉"},{icon:"dredge",word:"dredge",cn:"拍粉"},{icon:"grease",word:"grease",cn:"抹油"},{icon:"wrap",word:"wrap",cn:"包裹"},{icon:"brush",word:"brush",cn:"刷"}],
+     seq:["grease","dip","coat","brush","stuff","wrap"], grid:"seven",
+     wrong:"全场哄堂大笑——这个动作用在这里闹笑话了！（好感 -1）"},
+   {t:"choice", npc:"mike", who:"你（Elsa）", q:"To ___ the chicken means to pat dry flour on it.", qcn:"辨析时刻：'拍干粉'的准确说法是哪一个？",
+     opts:["coat","dip","dredge"], ans:"dredge", badge:"dredge",
+     done:"Dredge the chicken in flour.",
+     wrong:"提示：coat 是'裹上一层'，dredge 是'拍上干粉'——先蘸后裹再拍粉。"},
+   {t:"say", who:"Mike", en:"OK... that was actually cool. Teach me?",
+     cn:"Mike 挠挠头：好吧……刚才那波操作确实帅。教教我？"}
+  ]},
+{ num:"第四幕", title:"终极晚宴", en:"THE GRAND FEAST", sub:"终极考验：一口气英文串讲", scene:"feast",
+  steps:[
+   {t:"say", who:"Grandma Rose", en:"Now, Elsa — tell everyone how you made it.",
+     cn:"菜做好了，所有人赞不绝口。Rose 奶奶举杯：Elsa，来，告诉大家你是怎么做的。"},
+   {t:"chain", npc:"rose"},
+   {t:"say", who:"Mike", en:"Elsa, you're officially cooler than me now.",
+     cn:"Mike 举起果汁：Elsa，你现在正式比我酷了。"},
+   {t:"say", who:"旁白", en:"You saved the potluck — and you belong here now.",
+     cn:"你不仅拯救了晚宴，还正式融入了这个社区的社交圈。"}
+  ]}
+];
+
+/* 第四幕：单词接龙（过去式串讲） */
+var CHAIN_STRIPS = [
+  "First, I ___ and ___ the vegetables.",
+  "Then I ___ and ___ the eggs.",
+  "I ___ the pan, ___ the chicken, ___ it, and ___ it to perfection."
+];
+var CHAIN_SEQ = ["peeled","chopped","measured","whisked","greased","dipped","coated","baked"];
+var CHAIN_CHIPS = ["whisked","peeled","greased","chopped","dipped","measured","baked","coated"];
+
+/* ================= 全局状态 ================= */
+var S = { act:-1, step:0, badges:{}, muted:false, heard:{} };
+var HEART = { smith:2, rose:2, mike:2 };
+var NPC_CN = { smith:"Mrs. Smith", rose:"Grandma Rose", mike:"Mike" };
+var stage = document.getElementById('stage');
+var topbar = document.getElementById('topbar');
+
+/* ---------- 社交好感度 ---------- */
+function drawHearts(){
+  var el = document.getElementById('hearts');
+  var h = '';
+  ["smith","rose","mike"].forEach(function(k){
+    var hh = '';
+    for(var i=0;i<3;i++) hh += '<span'+(i<HEART[k]?'':' class="off"')+'>♥</span>';
+    h += '<div class="hchip" id="hc-'+k+'"><span class="hn">'+NPC_CN[k]+'</span><span class="hh">'+hh+'</span></div>';
+  });
+  el.innerHTML = h;
+}
+function bump(npc, d){
+  if(!npc || HEART[npc]===undefined) return;
+  HEART[npc] = Math.max(0, Math.min(3, HEART[npc]+d));
+  drawHearts();
+  var c = document.getElementById('hc-'+npc);
+  if(c) c.classList.add('bump');
+}
+
+/* ================= 语音 & 音效 ================= */
+var VOICE = null;
+function pickVoice(){
+  if(!('speechSynthesis' in window)) return;
+  var vs = speechSynthesis.getVoices();
+  VOICE = null;
+  for(var i=0;i<vs.length;i++){ if(/^en[-_]US/i.test(vs[i].lang)){ VOICE=vs[i]; break; } }
+  if(!VOICE){ for(var j=0;j<vs.length;j++){ if(/^en/i.test(vs[j].lang)){ VOICE=vs[j]; break; } } }
+}
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+
+function speak(text){
+  if(S.muted || !('speechSynthesis' in window) || !text) return;
+  try{
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    if(VOICE) u.voice = VOICE;
+    u.lang = 'en-US'; u.rate = 0.85; u.pitch = 1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+var AC = null;
+function tone(freq, delay, dur, type, vol){
+  if(S.muted) return;
+  try{
+    if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended') AC.resume();
+    var o = AC.createOscillator(), g = AC.createGain();
+    o.type = type||'sine'; o.frequency.value = freq;
+    var t0 = AC.currentTime + (delay||0);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol||0.12, t0+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+    o.connect(g); g.connect(AC.destination);
+    o.start(t0); o.stop(t0+dur+0.05);
+  }catch(e){}
+}
+function sfxDing(){ tone(880,0,.14); tone(1318,.09,.18); }
+function sfxBuzz(){ tone(150,0,.22,'sawtooth',.08); topbar.classList.add('alert'); setTimeout(function(){topbar.classList.remove('alert');},700); }
+function sfxBadge(){ tone(660,0,.12); tone(880,.1,.12); tone(1320,.2,.22); }
+function sfxWin(){ tone(523,0,.16); tone(659,.14,.16); tone(784,.28,.16); tone(1047,.42,.4); }
+
+/* ================= 提示 ================= */
+var toastTimer=null;
+function toast(m){
+  var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove('show');},2200);
+}
+var btoastTimer=null;
+function showBadge(word){
+  var w = WORDS[word]; if(!w) return;
+  var b = document.getElementById('btoast');
+  b.innerHTML = '<div class="bt-lab">获得单词徽章</div><div class="bt-word">'+word+'</div>'+
+    '<div class="bt-cn">'+w.ph+' · '+w.cn+'</div>';
+  b.classList.add('show'); sfxBadge(); speak(word);
+  clearTimeout(btoastTimer);
+  btoastTimer=setTimeout(function(){b.classList.remove('show');},2400);
+}
+function earn(word){
+  if(!word || S.badges[word]) return;
+  S.badges[word]=true;
+  document.getElementById('badge-pill').textContent = '徽章 '+Object.keys(S.badges).length+'/'+TOTAL;
+  showBadge(word);
+}
+
+/* ================= 引擎 ================= */
+function curAct(){ return ACTS[S.act]; }
+function curStep(){ return curAct().steps[S.step]; }
+function go(a,s){ S.act=a; S.step=s; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function next(){
+  var act = curAct();
+  if(S.step+1 < act.steps.length){ go(S.act, S.step+1); }
+  else if(S.act+1 < ACTS.length){ renderActIntro(S.act+1); }
+  else { renderEnding(); }
+}
+function render(){
+  var st = curStep();
+  var html = '<div class="act-tag fade-item">'+curAct().num+' · '+curAct().title+'</div>';
+  html += '<div class="scene fade-item">'+SCENES[st.scene || curAct().scene]()+'</div>';
+  stage.innerHTML = html + '<div id="stepbox"></div>';
+  var box = document.getElementById('stepbox');
+  ({ say:renderSay, choice:renderChoice, pick:renderPick, order:renderOrder,
+     chain:renderChain }[st.t])(box, st);
+}
+
+/* 高亮 EN 文本里的目标单词 */
+function hotEN(text){
+  var out = text;
+  WORD_KEYS.forEach(function(w){
+    var re = new RegExp('\\b('+w+')(s|ed|ing)?\\b','i');
+    out = out.replace(re, function(m){ return '<span class="w" data-w="'+w+'">'+m+'</span>'; });
+  });
+  return out;
+}
+function bindHotWords(root){
+  var els = root.querySelectorAll('.w');
+  for(var i=0;i<els.length;i++){
+    (function(el){
+      el.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        speak(el.getAttribute('data-w'));
+      });
+    })(els[i]);
+  }
+}
+function spkBtn(text){
+  return '<button class="spk" data-say="'+text.replace(/"/g,'&quot;')+'">'+
+    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+
+    '<path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>朗读</button>';
+}
+function bindSpk(root){
+  var els = root.querySelectorAll('.spk');
+  for(var i=0;i<els.length;i++){
+    (function(el){
+      el.addEventListener('click', function(ev){
+        ev.stopPropagation(); speak(el.getAttribute('data-say'));
+      });
+    })(els[i]);
+  }
+}
+
+/* ---------- 对白 ---------- */
+function renderSay(box, st){
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var narr = (st.who==='旁白');
+  div.innerHTML =
+    '<div class="dlg">'+
+      '<div class="who'+(narr?' narr':'')+'">'+st.who+'</div>'+
+      (st.en?'<div class="en">'+hotEN(st.en)+'</div>':'')+
+      (st.cn?'<div class="cn">'+st.cn+'</div>':'')+
+      '<div class="dlg-foot">'+(st.en?spkBtn(st.en):'<span></span>')+
+      '<span class="next-hint">点击继续 ▸</span></div>'+
+    '</div>';
+  box.appendChild(div);
+  bindHotWords(div); bindSpk(div);
+  var done=false;
+  div.querySelector('.dlg').addEventListener('click', function(){
+    if(done) return; done=true;
+    if(st.badge) earn(st.badge);
+    setTimeout(next, st.badge?900:150);
+  });
+  if(st.en) setTimeout(function(){ speak(st.en); }, 400);
+}
+
+/* ---------- 选择 ---------- */
+function renderChoice(box, st){
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var h = '<div class="task"><span class="lab">咒语</span><span class="txt">'+hotEN(st.q)+'</span></div>';
+  h += '<div class="cn" style="padding:0 4px">'+st.qcn+'</div><div class="opts">';
+  st.opts.forEach(function(o){
+    h += '<button class="opt" data-o="'+o.replace(/"/g,'&quot;')+'"><span>'+o+'</span><span class="arrow">▸</span></button>';
+  });
+  h += '</div><div class="feedback"></div>';
+  div.innerHTML = h;
+  box.appendChild(div);
+  bindHotWords(div);
+  var fb = div.querySelector('.feedback'), fails=0, locked=false;
+  var opts = div.querySelectorAll('.opt');
+  for(var i=0;i<opts.length;i++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        if(locked) return;
+        var o = btn.getAttribute('data-o');
+        speak(o);
+        if(o===st.ans){
+          locked=true; btn.classList.add('ok'); sfxDing(); bump(st.npc,+1);
+          div.querySelector('.task .txt').innerHTML = hotEN(st.done);
+          fb.className='feedback good'; fb.textContent='✓ 正确！';
+          if(st.badge) earn(st.badge);
+          speak(st.done);
+          setTimeout(next, 1600);
+        }else{
+          btn.classList.add('no'); sfxBuzz(); fails++; bump(st.npc,-1);
+          fb.className='feedback bad';
+          fb.textContent = st.wrong || '再想一想。';
+          setTimeout(function(){btn.classList.remove('no');},450);
+          if(fails>=2){
+            for(var j=0;j<opts.length;j++)
+              if(opts[j].getAttribute('data-o')===st.ans) opts[j].classList.add('hint-pulse');
+          }
+        }
+      });
+    })(opts[i]);
+  }
+}
+
+/* ---------- 图标指令接力（灶台四连） ---------- */
+function renderPick(box, st){
+  var ri=0, fails=0, locked=false;
+  var div = document.createElement('div');
+  div.className='fade-item';
+  box.appendChild(div);
+  function draw(){
+    var R = st.rounds[ri];
+    var h = '<div class="task"><span class="lab">指令 '+(ri+1)+'/'+st.rounds.length+'</span>'+
+      '<span class="txt">'+hotEN(R.en)+'</span></div>'+
+      '<div class="cn" style="padding:0 4px">'+R.cn+'</div>';
+    h += '<div class="tools">';
+    st.icons.forEach(function(ic){
+      h += '<button class="tool" data-t="'+ic+'">'+ICONS[ic]+'<span class="tname">'+ic+'</span></button>';
+    });
+    h += '</div><div class="feedback"></div>';
+    div.innerHTML = h;
+    bindHotWords(div);
+    speak(R.en);
+    locked=false;
+    var fb = div.querySelector('.feedback');
+    var tools = div.querySelectorAll('.tool');
+    for(var i=0;i<tools.length;i++){
+      (function(btn){
+        btn.addEventListener('click', function(){
+          if(locked) return;
+          var t = btn.getAttribute('data-t');
+          if(t===R.ans){
+            locked=true; btn.classList.add('ok','reveal'); sfxDing(); earn(t); bump(st.npc,+1);
+            fb.className='feedback good'; fb.textContent='✓ '+t+'（'+WORDS[t].cn+'）——Rose 奶奶点头。';
+            ri++; fails=0;
+            if(ri>=st.rounds.length){ setTimeout(next, 1300); }
+            else setTimeout(draw, 1300);
+          }else{
+            btn.classList.add('no'); sfxBuzz(); fails++; bump(st.npc,-1);
+            fb.className='feedback bad';
+            fb.textContent='Rose 奶奶皱眉："The recipe says '+R.ans+'!"';
+            speak("The recipe says "+R.ans+"!");
+            setTimeout(function(){btn.classList.remove('no');},450);
+            if(fails>=2){
+              for(var j=0;j<tools.length;j++)
+                if(tools[j].getAttribute('data-t')===R.ans) tools[j].classList.add('hint-pulse');
+            }
+          }
+        });
+      })(tools[i]);
+    }
+  }
+  draw();
+}
+
+/* ---------- 顺序操作（双动词指令 / 三连急令 / 六步配方） ---------- */
+function renderOrder(box, st){
+  var idx=0, fails=0;
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var h = '<div class="task"><span class="lab">'+st.task+'</span><span class="txt">'+st.hint+'</span></div>';
+  h += '<div class="tools '+(st.grid||'')+'">';
+  st.items.forEach(function(it){
+    h += '<button class="tool" data-v="'+it.word+'">'+ICONS[it.icon]+'<span class="tname">'+it.word+' · '+it.cn+'</span></button>';
+  });
+  h += '</div><div class="feedback"></div>';
+  div.innerHTML = h;
+  box.appendChild(div);
+  bindHotWords(div);
+  var fb = div.querySelector('.feedback');
+  var cards = div.querySelectorAll('[data-v]');
+  for(var i=0;i<cards.length;i++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        if(btn.classList.contains('ok')) return;
+        var v = btn.getAttribute('data-v');
+        if(v===st.seq[idx]){
+          btn.classList.add('ok','reveal'); sfxDing(); bump(st.npc,+1);
+          var num = document.createElement('span');
+          num.className='onum'; num.textContent = idx+1;
+          btn.appendChild(num);
+          earn(v); speak(v);
+          idx++;
+          if(idx>=st.seq.length){
+            fb.className='feedback good';
+            fb.textContent = '✓ 全部按序完成！';
+            setTimeout(next, 1500);
+          }
+        }else{
+          btn.classList.add('no'); sfxBuzz(); fails++; bump(st.npc,-1);
+          fb.className='feedback bad';
+          fb.textContent = st.wrong || '顺序不对，再想想。';
+          setTimeout(function(){btn.classList.remove('no');},450);
+          if(fails>=2){
+            for(var j=0;j<cards.length;j++)
+              if(cards[j].getAttribute('data-v')===st.seq[idx] && !cards[j].classList.contains('ok'))
+                cards[j].classList.add('hint-pulse');
+          }
+        }
+      });
+    })(cards[i]);
+  }
+}
+
+/* ---------- 第四幕：单词接龙（过去式串讲） ---------- */
+function renderChain(box, st){
+  var idx=0, fails=0;
+  var div = document.createElement('div');
+  div.className='fade-item';
+  var h = '<div class="task"><span class="lab">接龙</span><span class="txt">按顺序点过去式单词，帮 Elsa 一口气串讲做菜全过程</span></div>';
+  h += '<div class="paper"><h4>Elsa 的高光串讲</h4>';
+  CHAIN_STRIPS.forEach(function(line){
+    h += '<div class="line">'+line.replace(/___/g, '<span class="blank">&nbsp;</span>')+'</div>';
+  });
+  h += '</div><div class="chips">';
+  CHAIN_CHIPS.forEach(function(w){ h += '<button class="chip" data-w="'+w+'">'+w+'</button>'; });
+  h += '</div><div class="feedback"></div>';
+  div.innerHTML = h;
+  box.appendChild(div);
+  var fb = div.querySelector('.feedback');
+  var blanks = div.querySelectorAll('.blank');
+  var chips = div.querySelectorAll('.chip');
+  for(var i=0;i<chips.length;i++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        var w = btn.getAttribute('data-w');
+        if(w===CHAIN_SEQ[idx]){
+          btn.classList.add('used'); sfxDing(); bump(st.npc,+1);
+          blanks[idx].textContent = w; blanks[idx].classList.add('done');
+          speak(w);
+          idx++;
+          if(idx>=CHAIN_SEQ.length){
+            fb.className='feedback good';
+            fb.textContent='✓ 串讲完毕，全场鼓掌！';
+            speak("First, I peeled and chopped the vegetables. Then I measured and whisked the eggs. I greased the pan, dipped the chicken, coated it, and baked it to perfection.");
+            setTimeout(next, 2400);
+          }
+        }else{
+          btn.classList.add('no'); sfxBuzz(); fails++; bump(st.npc,-1);
+          fb.className='feedback bad';
+          fb.textContent='卡壳了——下一个词是 "'+CHAIN_SEQ[idx]+'"。';
+          setTimeout(function(){btn.classList.remove('no');},450);
+          if(fails>=2){
+            for(var j=0;j<chips.length;j++)
+              if(chips[j].getAttribute('data-w')===CHAIN_SEQ[idx] && !chips[j].classList.contains('used'))
+                chips[j].classList.add('hint-pulse');
+          }
+        }
+      });
+    })(chips[i]);
+  }
+}
+
+/* ---------- 标题页 ---------- */
+function renderTitle(){
+  S.act=-1;
+  var html =
+    '<div class="scene fade-item">'+SCENES.title()+'</div>'+
+    '<div class="overlay-title">'+
+      '<div class="ov-line fade-item">厨房英语剧本杀 · 单人闯关 · Elsa 社交篇</div>'+
+      '<div class="ov-big">'+kinetic('厨房风暴')+'</div>'+
+      '<div class="ov-en fade-item" style="animation-delay:.5s">KITCHEN STORM · Elsa\'s Potluck Night</div>'+
+      '<div class="ov-sub fade-item" style="animation-delay:.7s">交换生 Elsa 要在社区美食之夜证明自己。<br>'+
+      '说出正确的烹饪动词，赢得三位邻居的心（♥），<br>'+
+      '收集 <b style="color:var(--amber)">17 枚动词徽章</b>，惊艳全场。</div>'+
+    '</div>'+
+    '<button class="btn primary fade-item" id="start-btn" style="animation-delay:.9s">走 进 派 对 厨 房</button>'+
+    '<div class="ov-sub fade-item" style="text-align:center;font-size:.75rem;animation-delay:1.05s">玩法：听 · 读 · 排 · 讲 —— 做对了涨好感，出错了扣心</div>';
+  stage.innerHTML = html;
+  document.getElementById('start-btn').addEventListener('click', function(){
+    sfxWin(); renderActIntro(0);
+  });
+}
+function kinetic(text){
+  var h='';
+  for(var i=0;i<text.length;i++)
+    h += '<span class="ch" style="animation-delay:'+(0.12*i)+'s">'+text[i]+'</span>';
+  return h;
+}
+
+/* ---------- 幕间 ---------- */
+function renderActIntro(a){
+  S.act=a; S.step=0;
+  var act = ACTS[a];
+  var html =
+    '<div class="scene fade-item">'+SCENES[act.scene]()+'</div>'+
+    '<div class="overlay-title">'+
+      '<div class="ov-line fade-item">'+act.num+'</div>'+
+      '<div class="ov-big">'+kinetic(act.title)+'</div>'+
+      '<div class="ov-en fade-item" style="animation-delay:.5s">'+act.en+'</div>'+
+      '<div class="ov-sub fade-item" style="animation-delay:.65s">'+act.sub+'</div>'+
+    '</div>'+
+    '<button class="btn primary fade-item" id="act-btn" style="animation-delay:.8s">进 入 本 幕</button>';
+  stage.innerHTML = html;
+  document.getElementById('act-btn').addEventListener('click', function(){ go(a,0); });
+}
+
+/* ---------- 结局（好感度分档） ---------- */
+function renderEnding(){
+  sfxWin();
+  var got = Object.keys(S.badges).length;
+  var hearts = HEART.smith + HEART.rose + HEART.mike;
+  var outcome, outEn;
+  if(hearts>=8){ outcome='完美社交夜 · 全场都记住了你的名字'; outEn='A PERFECT NIGHT'; }
+  else if(hearts>=5){ outcome='温暖收官 · 小有插曲，但友谊满分'; outEn='A WARM ENDING'; }
+  else { outcome='礼貌的小尴尬 · 下次派对惊艳全场'; outEn='A POLITE SAVE'; }
+  var html =
+    '<div class="scene fade-item">'+SCENES.feast()+'</div>'+
+    '<div class="cert fade-item">'+
+      '<div class="c-lab">'+outcome+'</div>'+
+      '<div class="c-title">社区社交之星 × 厨房英语大师</div>'+
+      '<div class="c-en">POTLUCK STAR & KITCHEN ENGLISH MASTER</div>'+
+      '<div class="c-stats">收集徽章 '+got+'/'+TOTAL+' 枚 · 社交好感 '+hearts+'/9 颗心 · '+outEn+'</div>'+
+    '</div>'+
+    '<div class="badge-grid fade-item" style="animation-delay:.2s">';
+  WORD_ORDER.forEach(function(w){
+    var has = S.badges[w];
+    html += '<div class="bcell" style="'+(has?'':'opacity:.25')+'"><div class="bw">'+w+'</div><div class="bc">'+WORDS[w].cn+'</div></div>';
+  });
+  html += '</div>'+
+    '<button class="btn primary fade-item" id="review-btn" style="animation-delay:.35s">📖 复盘单词 · 跟读一遍</button>'+
+    '<button class="btn ghost fade-item" id="again-btn" style="animation-delay:.45s">🔁 再玩一次</button>'+
+    '<a class="btn ghost fade-item" href="../index.html" style="animation-delay:.55s;display:block;text-align:center;text-decoration:none;line-height:1">🏠 返回剧本杀大厅</a>';
+  stage.innerHTML = html;
+  document.getElementById('review-btn').addEventListener('click', renderReview);
+  document.getElementById('again-btn').addEventListener('click', function(){
+    S.badges={}; S.heard={}; HEART.smith=2; HEART.rose=2; HEART.mike=2;
+    document.getElementById('badge-pill').textContent='徽章 0/'+TOTAL;
+    drawHearts();
+    renderTitle();
+  });
+}
+
+/* ---------- 复盘 ---------- */
+function renderReview(){
+  var html =
+    '<div class="act-tag">复盘 · 跟读挑战</div>'+
+    '<div class="task"><span class="lab">彩蛋</span><span class="txt">点卡片听发音并跟读——抽到哪个词，就试试用英文说出那道菜的做法。<b id="heard-n">0</b>/'+TOTAL+'</span></div>'+
+    '<div class="word-grid">';
+  WORD_ORDER.forEach(function(w){
+    var d = WORDS[w];
+    html += '<div class="wcard'+(S.heard[w]?' heard':'')+'" data-w="'+w+'">'+
+      '<div class="we">'+w+'</div><div class="wp">'+d.ph+'</div><div class="wc">'+d.cn+'</div>'+
+      '<div class="wact">'+d.act+'</div></div>';
+  });
+  html += '</div><button class="btn ghost" id="back-end">返回结局</button>';
+  stage.innerHTML = html;
+  updateHeard();
+  var cards = stage.querySelectorAll('.wcard');
+  for(var i=0;i<cards.length;i++){
+    (function(c){
+      c.addEventListener('click', function(){
+        var w = c.getAttribute('data-w');
+        speak(w);
+        if(!S.heard[w]){ S.heard[w]=true; c.classList.add('heard'); sfxDing(); updateHeard(); }
+      });
+    })(cards[i]);
+  }
+  document.getElementById('back-end').addEventListener('click', renderEnding);
+}
+function updateHeard(){
+  var n = Object.keys(S.heard).length;
+  var el = document.getElementById('heard-n');
+  if(el) el.textContent = n;
+  if(n>=TOTAL) toast('🎉 跟读完成！你是真正的厨房英语大师！');
+}
+
+/* ---------- 音效开关 ---------- */
+document.getElementById('snd-btn').addEventListener('click', function(){
+  S.muted = !S.muted;
+  this.textContent = S.muted ? '音效·关' : '音效·开';
+  if(S.muted && 'speechSynthesis' in window) speechSynthesis.cancel();
+  else sfxDing();
+});
+
+/* ================= 场景绘制（全代码手绘 SVG） ================= */
+var SCENES = {};
+
+/* 标题：社区 Potluck 黄昏 */
+SCENES.title = function(){
+  var bulbs = "";
+  var cols = ["#ff8fa3","#ffc069","#3ddc97","#7fb0ff"];
+  for(var i=0;i<11;i++){
+    var x = 22+i*36, y = 24+Math.sin(i/10*Math.PI)*15;
+    bulbs += '<circle cx="'+x+'" cy="'+(y+7)+'" r="3.2" fill="'+cols[i%4]+'"><animate attributeName="opacity" values="1;.35;1" dur="'+(1.4+i%3*.4)+'s" repeatCount="indefinite"/></circle>';
+  }
+  var flags = "";
+  for(var f=0;f<9;f++){
+    var fx = 30+f*42, fy = 66+Math.sin(f/8*Math.PI)*10;
+    flags += '<polygon points="'+fx+','+fy+' '+(fx+20)+','+fy+' '+(fx+10)+','+(fy+16)+'" fill="'+cols[f%4]+'" opacity=".85"/>';
+  }
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs>'+
+    '<linearGradient id="pdusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c0a14"/><stop offset=".6" stop-color="#6b2a3a"/><stop offset="1" stop-color="#c86a5a"/></linearGradient>'+
+    '<radialGradient id="plamp"><stop offset="0" stop-color="#ffd9c4" stop-opacity=".45"/><stop offset="1" stop-color="#ffd9c4" stop-opacity="0"/></radialGradient>'+
+  '</defs>'+
+  '<rect width="400" height="250" fill="url(#pdusk)"/>'+
+  '<circle cx="330" cy="40" r="16" fill="#f5e8ec" opacity=".9"/>'+
+  '<path d="M0 28 Q 200 62 400 28" fill="none" stroke="#3a1c26" stroke-width="1.5"/>'+bulbs+
+  '<path d="M0 68 Q 200 96 400 68" fill="none" stroke="#3a1c26" stroke-width="1.5"/>'+flags+
+  '<rect x="110" y="120" width="180" height="100" fill="#24121c"/>'+
+  '<polygon points="100,120 200,66 300,120" fill="#341826"/>'+
+  '<rect x="132" y="140" width="42" height="34" fill="#ffc069" opacity=".9"/>'+
+  '<rect x="226" y="140" width="42" height="34" fill="#ffc069" opacity=".75"/>'+
+  '<line x1="153" y1="140" x2="153" y2="174" stroke="#24121c" stroke-width="3"/><line x1="132" y1="157" x2="174" y2="157" stroke="#24121c" stroke-width="3"/>'+
+  '<line x1="247" y1="140" x2="247" y2="174" stroke="#24121c" stroke-width="3"/><line x1="226" y1="157" x2="268" y2="157" stroke="#24121c" stroke-width="3"/>'+
+  '<rect x="184" y="150" width="32" height="70" fill="#3a2430"/><circle cx="210" cy="186" r="2.5" fill="#ffc069"/>'+
+  '<circle cx="200" cy="100" r="46" fill="url(#plamp)"/>'+
+  '<rect x="146" y="88" width="108" height="26" rx="5" fill="#3a1c26" stroke="#5a2c3a" stroke-width="1.5"/>'+
+  '<text x="200" y="105" text-anchor="middle" font-size="11.5" fill="#f5d8de" font-family="Georgia" letter-spacing="2">POTLUCK NIGHT</text>'+
+  '<rect y="220" width="400" height="30" fill="#1c0e16"/>'+
+  '<path d="M30 220 q30 -18 60 0 M310 220 q30 -18 60 0" stroke="#341826" stroke-width="6" fill="none"/>'+
+  '</svg>';
+};
+
+/* 第一幕：备菜台面 */
+SCENES.counter = function(){
+  var tiles = "";
+  for(var r=0;r<4;r++) for(var c=0;c<8;c++)
+    tiles += '<rect x="'+(c*50+2)+'" y="'+(r*38+2)+'" width="46" height="34" fill="none" stroke="#2c1620" stroke-width="1"/>';
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs><radialGradient id="cglow5"><stop offset="0" stop-color="#ffd9c4" stop-opacity=".45"/><stop offset="1" stop-color="#ffd9c4" stop-opacity="0"/></radialGradient></defs>'+
+  '<rect width="400" height="250" fill="#1e1018"/>'+tiles+
+  '<rect x="60" y="18" width="280" height="6" fill="#3a1c26"/>'+
+  '<rect x="90" y="0" width="18" height="18" rx="3" fill="#5a2c3a"/><rect x="140" y="2" width="22" height="16" rx="3" fill="#6b3a4a"/><rect x="240" y="0" width="18" height="18" rx="3" fill="#5a2c3a"/><rect x="290" y="2" width="20" height="16" rx="3" fill="#6b3a4a"/>'+
+  '<ellipse cx="200" cy="120" rx="180" ry="90" fill="url(#cglow5)"/>'+
+  '<rect y="168" width="400" height="82" fill="#2c1620"/><rect y="168" width="400" height="5" fill="#4a2430"/>'+
+  '<rect x="30" y="150" width="110" height="52" rx="6" fill="#6b3a4a" stroke="#4a2430" stroke-width="2"/>'+
+  '<circle cx="56" cy="178" r="10" fill="#d8a86b"/><circle cx="78" cy="182" r="9" fill="#c89858"/>'+
+  '<path d="M100 170 Q 98 160 110 155 Q 120 151 121 156 Q 122 161 114 167 Q 104 174 100 170 Z" fill="#ff8a3d"/>'+
+  '<path d="M119 154 L125 147 M121 157 L127 151" stroke="#3ddc97" stroke-width="2.2"/>'+
+  '<rect x="108" y="146" width="24" height="16" rx="2" fill="#c8d4e4" stroke="#8a9ab4" stroke-width="1.5"/><rect x="132" y="140" width="10" height="8" rx="2" fill="#8a9ab4"/>'+
+  '<ellipse cx="176" cy="186" rx="12" ry="9" fill="#f5e3c8"/><ellipse cx="196" cy="188" rx="12" ry="9" fill="#f5e3c8"/>'+
+  '<path d="M236 196 Q 236 176 266 176 Q 296 176 296 196 Z" fill="#c8b89a"/><ellipse cx="266" cy="196" rx="30" ry="5" fill="#a89878"/>'+
+  '<rect x="316" y="150" width="34" height="46" rx="3" fill="#f0e4d8"/><rect x="320" y="142" width="26" height="10" rx="2" fill="#e0d4c8"/>'+
+  '<text x="333" y="176" text-anchor="middle" font-size="7" fill="#a08a92" font-family="Georgia">FLOUR</text>'+
+  '</svg>';
+};
+
+/* 第二幕：灶台四工位 */
+SCENES.stove = function(){
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs><radialGradient id="sglow5"><stop offset="0" stop-color="#ffd9c4" stop-opacity=".4"/><stop offset="1" stop-color="#ffd9c4" stop-opacity="0"/></radialGradient></defs>'+
+  '<rect width="400" height="250" fill="#1e1018"/>'+
+  '<rect y="180" width="400" height="70" fill="#16121a"/><rect y="180" width="400" height="6" fill="#2e2434"/>'+
+  '<ellipse cx="200" cy="90" rx="190" ry="80" fill="url(#sglow5)"/>'+
+  '<circle cx="70" cy="196" r="17" fill="none" stroke="#3a3a46" stroke-width="2"/>'+
+  '<circle cx="70" cy="196" r="12" fill="#ff6b3d" opacity=".35"><animate attributeName="opacity" values=".4;.15;.4" dur="1s" repeatCount="indefinite"/></circle>'+
+  '<ellipse cx="70" cy="178" rx="30" ry="8" fill="#1c1c22" stroke="#3a3a46" stroke-width="2"/>'+
+  '<line x1="98" y1="174" x2="126" y2="168" stroke="#3a3a46" stroke-width="4"/>'+
+  '<circle cx="62" cy="174" r="2.5" fill="#f5c85c"><animate attributeName="cy" values="174;170;174" dur=".8s" repeatCount="indefinite"/></circle>'+
+  '<circle cx="76" cy="176" r="2" fill="#f5c85c"><animate attributeName="cy" values="176;171;176" dur=".7s" repeatCount="indefinite"/></circle>'+
+  '<circle cx="170" cy="196" r="17" fill="none" stroke="#3a3a46" stroke-width="2"/>'+
+  '<rect x="146" y="158" width="48" height="30" rx="4" fill="#23232e" stroke="#3a3a46" stroke-width="2"/>'+
+  '<path d="M146 158 Q 170 144 194 158" fill="#2e2e3c" stroke="#3a3a46" stroke-width="2"/>'+
+  '<circle cx="160" cy="172" r="3" fill="#7fb0ff"><animate attributeName="cy" values="176;164;176" dur="1.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.6s" repeatCount="indefinite"/></circle>'+
+  '<circle cx="172" cy="174" r="2.4" fill="#7fb0ff"><animate attributeName="cy" values="178;166;178" dur="1.3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.3s" repeatCount="indefinite"/></circle>'+
+  '<rect x="226" y="158" width="52" height="12" rx="3" fill="#8a6a3c" stroke="#5a4423" stroke-width="1.5"/>'+
+  '<rect x="226" y="171" width="52" height="12" rx="3" fill="#9a7a4c" stroke="#5a4423" stroke-width="1.5"/>'+
+  '<path d="M238 150 C 234 142 242 138 238 130" fill="none" stroke="#f5d8de" stroke-width="2" opacity=".6"><animate attributeName="opacity" values=".7;.2;.7" dur="1.6s" repeatCount="indefinite"/></path>'+
+  '<path d="M252 150 C 248 142 256 138 252 130" fill="none" stroke="#f5d8de" stroke-width="2" opacity=".6"><animate attributeName="opacity" values=".3;.8;.3" dur="1.6s" repeatCount="indefinite"/></path>'+
+  '<path d="M266 150 C 262 142 270 138 266 130" fill="none" stroke="#f5d8de" stroke-width="2" opacity=".6"><animate attributeName="opacity" values=".7;.2;.7" dur="1.6s" begin=".5s" repeatCount="indefinite"/></path>'+
+  '<rect x="308" y="130" width="72" height="62" rx="5" fill="#1c1c24" stroke="#3a3a46" stroke-width="2"/>'+
+  '<rect x="316" y="140" width="56" height="34" rx="3" fill="#0e0e14" stroke="#3a3a46" stroke-width="1.5"/>'+
+  '<rect x="316" y="140" width="56" height="34" rx="3" fill="#ff9d5c" opacity=".12"><animate attributeName="opacity" values=".18;.06;.18" dur="2s" repeatCount="indefinite"/></rect>'+
+  '<circle cx="334" cy="158" r="6" fill="#d8a86b"/><circle cx="354" cy="158" r="6" fill="#d8a86b"/>'+
+  '<circle cx="320" cy="136" r="2" fill="#5a5a6a"/><circle cx="330" cy="136" r="2" fill="#5a5a6a"/><circle cx="340" cy="136" r="2" fill="#5a5a6a"/>'+
+  '<text x="70" y="230" text-anchor="middle" font-size="9" fill="#a08a92" font-family="Georgia">FRY</text>'+
+  '<text x="170" y="230" text-anchor="middle" font-size="9" fill="#a08a92" font-family="Georgia">BOIL</text>'+
+  '<text x="252" y="230" text-anchor="middle" font-size="9" fill="#a08a92" font-family="Georgia">STEAM</text>'+
+  '<text x="344" y="230" text-anchor="middle" font-size="9" fill="#a08a92" font-family="Georgia">BAKE</text>'+
+  '</svg>';
+};
+
+/* 第三幕：残缺提示卡 */
+SCENES.recipe = function(){
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs><radialGradient id="rglow5"><stop offset="0" stop-color="#ffd9c4" stop-opacity=".35"/><stop offset="1" stop-color="#ffd9c4" stop-opacity="0"/></radialGradient></defs>'+
+  '<rect width="400" height="250" fill="#1a0e14"/>'+
+  '<rect y="190" width="400" height="60" fill="#24121a"/><rect y="190" width="400" height="4" fill="#3a1c26"/>'+
+  '<ellipse cx="200" cy="110" rx="180" ry="85" fill="url(#rglow5)"/>'+
+  '<g transform="rotate(-3 200 110)"><rect x="110" y="40" width="180" height="130" rx="3" fill="#f7f0ea"/>'+
+  '<text x="200" y="62" text-anchor="middle" font-size="8" fill="#a08a92" font-family="Georgia" letter-spacing="3">HINT CARD</text>'+
+  '<line x1="126" y1="72" x2="274" y2="72" stroke="#e0d4d8" stroke-width="1.5"/>'+
+  '<text x="124" y="88" font-size="8.5" fill="#5a4450" font-family="Georgia">1. Grease the pan first.</text>'+
+  '<text x="124" y="102" font-size="8.5" fill="#5a4450" font-family="Georgia">2. Dip in egg, then coat it.</text>'+
+  '<text x="124" y="116" font-size="8.5" fill="#5a4450" font-family="Georgia">3. Brush honey on top.</text>'+
+  '<text x="124" y="130" font-size="8.5" fill="#5a4450" font-family="Georgia">4. Stuff the peppers.</text>'+
+  '<text x="124" y="144" font-size="8.5" fill="#5a4450" font-family="Georgia">5. Wrap in foil.</text>'+
+  '<path d="M270 160 L 290 150 L 290 172 Z" fill="#1a0e14"/></g>'+
+  '<ellipse cx="70" cy="212" rx="26" ry="9" fill="#d8a86b"/>'+
+  '<path d="M52 208 q6 -12 18 -6 q12 -6 18 6" fill="#c8814a"/>'+
+  '<path d="M316 196 Q 330 188 336 202 Q 340 214 326 216 Q 312 216 312 206 Q 312 198 316 196 Z" fill="#3ddc97" opacity=".8"/>'+
+  '<path d="M328 194 q2 -8 8 -10" stroke="#2a7d4f" stroke-width="2.5" fill="none"/>'+
+  '<rect x="356" y="196" width="18" height="24" rx="4" fill="#c8d4e4" opacity=".8"/><rect x="356" y="196" width="18" height="24" rx="4" fill="none" stroke="#8a9ab4" stroke-width="1.5"/>'+
+  '<path d="M360 202 q6 4 12 0 M360 210 q6 4 12 0" stroke="#8a9ab4" stroke-width="1.2" fill="none"/>'+
+  '</svg>';
+};
+
+/* 第四幕/结局：Potluck 晚宴长桌 */
+SCENES.feast = function(){
+  var bulbs = "";
+  var cols = ["#ff8fa3","#ffc069","#3ddc97","#7fb0ff"];
+  for(var i=0;i<9;i++){
+    var x = 30+i*42, y = 20+Math.sin(i/8*Math.PI)*13;
+    bulbs += '<circle cx="'+x+'" cy="'+(y+6)+'" r="3" fill="'+cols[i%4]+'"><animate attributeName="opacity" values="1;.4;1" dur="'+(1.5+i%3*.3)+'s" repeatCount="indefinite"/></circle>';
+  }
+  return '<svg viewBox="0 0 400 250">'+
+  '<defs><radialGradient id="fglow5"><stop offset="0" stop-color="#ffd9c4" stop-opacity=".5"/><stop offset="1" stop-color="#ffd9c4" stop-opacity="0"/></radialGradient></defs>'+
+  '<rect width="400" height="250" fill="#180b12"/>'+
+  '<path d="M0 24 Q 200 52 400 24" fill="none" stroke="#3a1c26" stroke-width="1.5"/>'+bulbs+
+  '<ellipse cx="200" cy="130" rx="180" ry="90" fill="url(#fglow5)"/>'+
+  '<ellipse cx="200" cy="200" rx="195" ry="54" fill="#3a1c26"/>'+
+  '<ellipse cx="200" cy="192" rx="195" ry="54" fill="#4a2430"/>'+
+  '<ellipse cx="200" cy="184" rx="48" ry="16" fill="#f5f0e4"/>'+
+  '<path d="M172 180 Q 190 162 216 168 Q 234 172 228 182 Q 202 192 172 180 Z" fill="#c8814a"/>'+
+  '<path d="M214 172 q6 -4 8 2" stroke="#f5c85c" stroke-width="2.5" fill="none"/>'+
+  '<ellipse cx="104" cy="196" rx="28" ry="10" fill="#f5f0e4"/>'+
+  '<path d="M92 192 q4 -8 10 0 q4 -8 10 0 q4 -8 8 0" fill="none" stroke="#d8cbb2" stroke-width="4"/>'+
+  '<ellipse cx="298" cy="196" rx="28" ry="10" fill="#f5f0e4"/>'+
+  '<path d="M284 192 Q 296 180 306 190 Q 314 198 302 200 Q 288 202 284 192 Z" fill="#3ddc97" opacity=".75"/>'+
+  '<circle cx="316" cy="192" r="5" fill="#d8a86b"/><circle cx="326" cy="195" r="5" fill="#d8a86b"/>'+
+  '<ellipse cx="150" cy="216" rx="24" ry="9" fill="#f5f0e4"/><ellipse cx="150" cy="214" rx="18" ry="6" fill="#c8503c"/>'+
+  '<ellipse cx="252" cy="216" rx="24" ry="9" fill="#f5f0e4"/><ellipse cx="252" cy="214" rx="18" ry="6" fill="#c8503c"/>'+
+  '<rect x="58" y="150" width="6" height="30" fill="#f5d8de"/><rect x="336" y="150" width="6" height="30" fill="#f5d8de"/>'+
+  '<path d="M61 146 C 57 140 65 136 61 130 C 67 136 65 142 61 146 Z" fill="#ffcf6b"><animate attributeName="opacity" values="1;.6;1" dur=".9s" repeatCount="indefinite"/></path>'+
+  '<path d="M339 146 C 335 140 343 136 339 130 C 345 136 343 142 339 146 Z" fill="#ffcf6b"><animate attributeName="opacity" values=".6;1;.6" dur=".9s" repeatCount="indefinite"/></path>'+
+  '<circle cx="120" cy="140" r="4" fill="#f5d8de" opacity=".7"/><circle cx="132" cy="134" r="3" fill="#f5d8de" opacity=".5"/>'+
+  '<circle cx="280" cy="140" r="4" fill="#f5d8de" opacity=".7"/><circle cx="292" cy="134" r="3" fill="#f5d8de" opacity=".5"/>'+
+  '</svg>';
+};
+
+/* ================= 17 个烹饪动作图标 ================= */
+function ic(inner){
+  return '<svg viewBox="0 0 44 54" fill="none" stroke="#f5d8de" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>';
+}
+var ICONS = {
+  peel: ic('<path d="M14 40 Q11 30 23 21 Q33 14 35 19 Q37 25 27 34 Q17 44 14 40 Z" fill="#ff8a3d" stroke="none"/>'+
+    '<path d="M33 16 L39 9 M35 19 L42 13" stroke="#3ddc97" stroke-width="2.5"/>'+
+    '<path d="M8 12 h12 M14 8 v8" stroke="#c8d4e4"/>'+
+    '<path d="M28 40 q7 3 9 -4" stroke="#ff8fa3" stroke-dasharray="2 3"/>'),
+  chop: ic('<rect x="8" y="38" width="30" height="7" rx="2" fill="#4a2430" stroke="none"/>'+
+    '<rect x="16" y="14" width="16" height="13" rx="2" fill="#c8d4e4" stroke="none"/><rect x="30" y="10" width="9" height="6" rx="2" fill="#8a9ab4" stroke="none"/>'+
+    '<rect x="13" y="31" width="5" height="5" fill="#ff8a3d" stroke="none"/><rect x="21" y="32" width="5" height="5" fill="#ff8a3d" stroke="none"/><rect x="29" y="31" width="5" height="5" fill="#ff8a3d" stroke="none"/>'),
+  measure: ic('<path d="M13 14 H29 L27 44 H15 Z"/>'+
+    '<path d="M29 20 q9 4 0 14"/>'+
+    '<line x1="17" y1="22" x2="23" y2="22"/><line x1="17" y1="30" x2="24" y2="30"/><line x1="17" y1="38" x2="23" y2="38"/>'+
+    '<rect x="16" y="32" width="10" height="9" fill="#f5f0e4" opacity=".3" stroke="none"/>'),
+  pour: ic('<g transform="rotate(28 24 18)"><rect x="16" y="8" width="13" height="18" rx="1" fill="#f5f0e4" stroke="none"/><path d="M16 8 L22.5 2 L29 8"/></g>'+
+    '<path d="M19 30 q-2 6 1 10" stroke-dasharray="2 3"/>'+
+    '<path d="M10 42 q11 9 22 0"/>'),
+  grease: ic('<ellipse cx="22" cy="38" rx="15" ry="5.5"/>'+
+    '<line x1="37" y1="36" x2="45" y2="32"/>'+
+    '<path d="M13 36 q6 -3 18 0" stroke="#ff8fa3"/>'+
+    '<rect x="18" y="8" width="5" height="13" rx="2"/><path d="M17 21 h7 l-2 7 h-3 Z" fill="#ff8fa3" stroke="none"/>'+
+    '<circle cx="26" cy="28" r="1.5" fill="#ff8fa3" stroke="none"/>'),
+  whisk: ic('<rect x="19" y="4" width="6" height="11" rx="2.5"/>'+
+    '<path d="M22 15 C 10 22 12 38 22 43 C 32 38 34 22 22 15 Z"/>'+
+    '<path d="M22 15 C 15 22 16 38 22 43 M22 15 C 29 22 28 38 22 43"/>'),
+  stir: ic('<rect x="9" y="26" width="26" height="17" rx="3"/>'+
+    '<line x1="31" y1="6" x2="23" y2="28" stroke-width="3"/><ellipse cx="22" cy="31" rx="3" ry="5" transform="rotate(-18 22 31)"/>'+
+    '<path d="M14 34 q8 6 16 0" stroke="#ff8fa3"/>'),
+  dip: ic('<circle cx="21" cy="18" r="8" fill="#d8a86b" stroke="none"/>'+
+    '<line x1="27" y1="24" x2="33" y2="31" stroke-width="3.5"/><circle cx="35" cy="33" r="2.6"/>'+
+    '<path d="M7 40 q15 11 30 0"/>'+
+    '<circle cx="17" cy="32" r="1.6" fill="#f5c85c" stroke="none"/><circle cx="24" cy="35" r="1.6" fill="#f5c85c" stroke="none"/>'),
+  coat: ic('<circle cx="22" cy="22" r="10" fill="#d8a86b" stroke="none"/>'+
+    '<circle cx="22" cy="22" r="10"/>'+
+    '<line x1="29" y1="29" x2="35" y2="36" stroke-width="3.5"/><circle cx="37" cy="38" r="2.6"/>'+
+    '<circle cx="10" cy="12" r="1.4" fill="#f5f0e4" stroke="none"/><circle cx="34" cy="10" r="1.4" fill="#f5f0e4" stroke="none"/><circle cx="38" cy="20" r="1.4" fill="#f5f0e4" stroke="none"/><circle cx="8" cy="30" r="1.4" fill="#f5f0e4" stroke="none"/>'),
+  dredge: ic('<circle cx="22" cy="20" r="8"/>'+
+    '<line x1="28" y1="26" x2="34" y2="33" stroke-width="3.5"/><circle cx="36" cy="35" r="2.4"/>'+
+    '<circle cx="12" cy="10" r="4" fill="#f5f0e4" opacity=".25" stroke="none"/><circle cx="20" cy="7" r="5" fill="#f5f0e4" opacity=".2" stroke="none"/><circle cx="30" cy="9" r="4" fill="#f5f0e4" opacity=".25" stroke="none"/>'+
+    '<path d="M10 44 h24" stroke-dasharray="3 3"/><circle cx="16" cy="40" r="1.3" fill="#f5f0e4" stroke="none"/><circle cx="26" cy="41" r="1.3" fill="#f5f0e4" stroke="none"/>'),
+  fry: ic('<path d="M7 32 q15 9 30 0"/><line x1="37" y1="30" x2="44" y2="26"/>'+
+    '<circle cx="16" cy="29" r="1.8" fill="#f5c85c" stroke="none"/><circle cx="24" cy="30" r="1.8" fill="#f5c85c" stroke="none"/><circle cx="31" cy="28" r="1.5" fill="#f5c85c" stroke="none"/>'+
+    '<path d="M14 40 q3 5 0 8 M24 41 q3 5 0 8 M33 40 q3 5 0 8" stroke="#ff6b3d"/>'+
+    '<path d="M18 20 C 15 15 21 13 18 8 M28 20 C 25 15 31 13 28 8" opacity=".7"/>'),
+  boil: ic('<rect x="11" y="22" width="24" height="21" rx="3"/>'+
+    '<path d="M11 22 Q 23 12 35 22"/>'+
+    '<circle cx="18" cy="34" r="2" fill="#7fb0ff" stroke="none"><animate attributeName="cy" values="38;26;38" dur="1.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.4s" repeatCount="indefinite"/></circle>'+
+    '<circle cx="26" cy="36" r="1.6" fill="#7fb0ff" stroke="none"><animate attributeName="cy" values="40;28;40" dur="1.1s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="1.1s" repeatCount="indefinite"/></circle>'+
+    '<path d="M18 14 C 15 10 21 8 18 4 M28 14 C 25 10 31 8 28 4" opacity=".7"/>'),
+  steam: ic('<rect x="8" y="24" width="28" height="9" rx="2"/><rect x="8" y="34" width="28" height="9" rx="2"/>'+
+    '<circle cx="15" cy="28.5" r="1.2" fill="#0d0609" stroke="none"/><circle cx="22" cy="28.5" r="1.2" fill="#0d0609" stroke="none"/><circle cx="29" cy="28.5" r="1.2" fill="#0d0609" stroke="none"/>'+
+    '<circle cx="15" cy="38.5" r="1.2" fill="#0d0609" stroke="none"/><circle cx="22" cy="38.5" r="1.2" fill="#0d0609" stroke="none"/><circle cx="29" cy="38.5" r="1.2" fill="#0d0609" stroke="none"/>'+
+    '<path d="M14 18 C 11 13 17 11 14 6 M22 18 C 19 13 25 11 22 6 M30 18 C 27 13 33 11 30 6"/>'),
+  bake: ic('<rect x="8" y="10" width="30" height="34" rx="3"/>'+
+    '<rect x="13" y="18" width="20" height="15" rx="2"/>'+
+    '<circle cx="19" cy="25" r="3.4" fill="#d8a86b" stroke="none"/><circle cx="27" cy="26" r="3.4" fill="#d8a86b" stroke="none"/>'+
+    '<circle cx="14" cy="14" r="1.4"/><circle cx="20" cy="14" r="1.4"/><circle cx="26" cy="14" r="1.4"/>'+
+    '<path d="M14 6 q2 -3 4 0 M24 6 q2 -3 4 0" stroke="#ff8fa3"/>'),
+  brush: ic('<line x1="28" y1="6" x2="20" y2="20" stroke-width="3.5"/>'+
+    '<rect x="15" y="18" width="9" height="6" rx="1.5" transform="rotate(38 19 21)"/>'+
+    '<path d="M13 24 l7 7 h-9 Z" fill="#ff8fa3" stroke="none"/>'+
+    '<path d="M8 36 q8 -4 16 0 q8 4 14 0" stroke="#c8503c" stroke-width="3"/>'+
+    '<circle cx="12" cy="44" r="1.6" fill="#c8503c" stroke="none"/><circle cx="26" cy="45" r="1.6" fill="#c8503c" stroke="none"/>'),
+  stuff: ic('<ellipse cx="22" cy="38" rx="16" ry="7"/>'+
+    '<path d="M15 36 Q 22 28 29 36 Z" fill="#c8814a" stroke="none"/>'+
+    '<line x1="30" y1="8" x2="25" y2="24" stroke-width="3"/><ellipse cx="24" cy="27" rx="3" ry="4.6" transform="rotate(-14 24 27)"/>'+
+    '<path d="M12 44 q10 4 20 0" opacity=".6"/>'),
+  wrap: ic('<rect x="8" y="22" width="22" height="15" rx="7.5"/>'+
+    '<circle cx="32" cy="29.5" r="6.5"/>'+
+    '<path d="M32 25.5 a4 4 0 0 1 0 8 a2.5 2.5 0 0 1 0 -5" stroke-width="1.6"/>'+
+    '<path d="M11 25 q4 3 8 0 q4 -3 8 0" stroke="#c8503c" stroke-width="2"/>'+
+    '<path d="M10 42 q11 6 22 0" opacity=".5" stroke-dasharray="2 3"/>')
+};
+
+/* ---------- 调试钩子 ---------- */
+window.__WM = { state:function(){ return { act:S.act, step:S.step, badges:Object.keys(S.badges).length, heard:Object.keys(S.heard).length, hearts:(HEART.smith+HEART.rose+HEART.mike) }; } };
+
+/* ---------- 启动 ---------- */
+drawHearts();
+renderTitle();
+})();
+</script>
+</body>
+</html>

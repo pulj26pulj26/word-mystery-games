@@ -6,7 +6,7 @@
 
 ## 在线开玩
 
-👉 **https://pulj26pulj26.github.io/word-mystery-games/**
+👉 **https://<你的GitHub用户名>.github.io/word-mystery-games/**
 
 （把 `<你的GitHub用户名>` 替换成实际用户名；部署方法见文末「上架到自己的 GitHub」）
 
@@ -14,11 +14,11 @@
 
 | # | 游戏 | 场景 | 词汇主题 | 文件 |
 | --- | --- | --- | --- | --- |
-| 1 | 急诊室之夜 | 深夜急诊室 | 医疗急救 | `games/er-night.html` |
-| 2 | 美高派对疑云 | 美高 Friendsgiving 派对 | 派对社交 | `games/friendsgiving.html` |
-| 3 | 厨房风暴 | 餐厅后厨 | 厨房烹饪 | `games/kitchen-storm.html` |
-| 4 | 马戏团之夜：谁藏起了红鼻子 | 马戏团后台 | 外研版选必一 U1 | `games/circus-night.html` |
-| 5 | 午夜编辑部：被掉包的退稿信 | 报社编辑部 | 外研版选必一 U2 | `games/midnight-archive.html` |
+| 1 | 急诊室之夜 | 深夜急诊室 | 医疗急救 | `er-night.html` |
+| 2 | 美高派对疑云 | 美高 Friendsgiving 派对 | 派对社交 | `friendsgiving.html` |
+| 3 | 厨房风暴 | 餐厅后厨 | 厨房烹饪 | `kitchen-storm.html` |
+| 4 | 马戏团之夜：谁藏起了红鼻子 | 马戏团后台 | 外研版选必一 U1 | `circus-night.html` |
+| 5 | 午夜编辑部：被掉包的退稿信 | 报社编辑部 | 外研版选必一 U2 | `midnight-archive.html` |
 
 ## 玩法机制
 
@@ -32,21 +32,34 @@
 ## 三种打开方式
 
 1. **在线玩**：打开上面的 GitHub Pages 链接，进大厅任选一部。
-2. **本地玩**：下载任意一个 `games/*.html`，双击用浏览器打开即可，无需联网、无需安装。
+2. **本地玩**：下载任意一个游戏 html 文件，双击用浏览器打开即可，无需联网、无需安装。
 3. **微信里玩**：把 html 文件直接转发到微信聊天/家长群，收到后点开 → 用浏览器打开就能玩（存档只存在本机浏览器里）。
 
 ## 目录结构
 
 ```javascript
 ├── index.html               # 合集大厅（纯静态入口页，零脚本）
-├── games/
-│   ├── er-night.html        # 急诊室之夜
-│   ├── friendsgiving.html   # 美高派对疑云
-│   ├── kitchen-storm.html   # 厨房风暴
-│   ├── circus-night.html    # 马戏团之夜（U1）
-│   └── midnight-archive.html# 午夜编辑部（U2）
+├── tracker.html             # Elsa 追赶追踪器（32 周计划驾驶舱 + 地基过筛）
+├── er-night.html            # 急诊室之夜
+├── friendsgiving.html       # 美高派对疑云
+├── kitchen-storm.html       # 厨房风暴
+├── circus-night.html        # 马戏团之夜（U1）
+├── midnight-archive.html    # 午夜编辑部（U2）
 └── README.md
 ```
+
+## 配套：追赶追踪器（tracker.html）
+
+为 32 周英语追赶计划做的每日驾驶舱，六个模块：
+
+- 🔍 **地基过筛**：小学三上到初中九下共 14 册 1796 个课后词逐册过筛，自动定位断层（首册判定 ≥10 词且认识率 <85% 即判为断点），漏词进"地基洞窟"驯服，每周可存快照看地基回升曲线
+- 🎯 **今日打卡**：每日五格任务 + 课文 632X 原典法计数（听 6 → 读 3 → 回听 2 → X 扩展），六篇课文全文内嵌，可一键 TTS 朗读
+- 🃏 **词汇驯服**：451 张单词卡牌按等级盒间隔重复，错卡自动回流
+- ⚔️ **句型闯关**：句型三关 + 语法八考点三档进度 + 作文弹药库（应用文 10 类 + 续写 6 类句库）
+- 🎧 **听力库**：黑猫/书虫等音频导入一次即可离线点播（存在本机浏览器 IndexedDB）
+- 🏅 **我的**：勇气豆、徽章墙、容错五规则、每周自动生成的家长周报
+
+所有进度只存在本机浏览器（localStorage），换设备可导出/导入存档。
 
 ## 技术说明
 
@@ -58,7 +71,7 @@
 ## 上架到自己的 GitHub
 
 1. 新建一个名为 `word-mystery-games` 的公开仓库
-2. 把本目录的 `index.html`、`README.md` 和整个 `games/` 文件夹上传到仓库根目录（保持结构不变）
+2. 把本目录的所有 `*.html` 和 `README.md` 上传到仓库根目录（保持结构不变）
 3. 仓库 **Settings → Pages**，Source 选 `main` 分支 + `/(root)`，保存后等 1~3 分钟
 4. 访问 `https://<你的用户名>.github.io/word-mystery-games/` 即可
 
